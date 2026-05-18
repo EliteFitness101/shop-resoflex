@@ -61,8 +61,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "ResoFlex OS" },
       { property: "og:type", content: "website" },
       { property: "og:title", content: "ResoFlex OS™ — Sovereign Performance Operating System" },
-      { property: "og:description", content: "Nigerian luxury fitness & wellness ecosystem. Elite supplements, programs, and referral commerce." },
+      { property: "og:description", content: "Nigerian luxury fitness & wellness commerce. Elite supplements, meal plans, referral monetization, and sovereign training programs." },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "ResoFlex OS™ — Sovereign Performance Operating System" },
+      { name: "twitter:description", content: "Nigerian luxury fitness & wellness commerce. Elite supplements, meal plans, referral monetization, and sovereign training programs." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/6Eau1IDWDDhZUhfxU2V2gQiCmo03/social-images/social-1779092194932-IMG_1140.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/6Eau1IDWDDhZUhfxU2V2gQiCmo03/social-images/social-1779092194932-IMG_1140.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
