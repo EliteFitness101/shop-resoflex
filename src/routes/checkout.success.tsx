@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { verifyPayment } from "@/lib/paystack";
+import { issueAssetDownload } from "@/lib/assets.functions";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { GoldButton } from "@/components/GoldButton";
 import { products } from "@/lib/mock-data";
 import { PriceTag } from "@/components/PriceTag";
-import { CheckCircle2, Download, Sparkles, RefreshCw } from "lucide-react";
+import { CheckCircle2, Download, Sparkles, RefreshCw, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/checkout/success")({
   validateSearch: (s: Record<string, unknown>) => ({ reference: (s.reference as string) ?? "" }),
@@ -27,9 +28,20 @@ function Success() {
   } | null>(null);
   const [upsellIndex, setUpsellIndex] = useState(0);
   const [tick, setTick] = useState(0);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [issuing, setIssuing] = useState(false);
 
   useEffect(() => {
-    verifyPayment(reference).then((r) => r && setInfo(r));
+    verifyPayment(reference).then((r) => {
+      if (!r) return;
+      setInfo(r);
+      // Mint signed asset URL the moment we've verified the order.
+      setIssuing(true);
+      issueAssetDownload({ data: { reference, productId: r.productId } })
+        .then((res) => setDownloadUrl(res.url))
+        .catch(() => setDownloadUrl(null))
+        .finally(() => setIssuing(false));
+    });
   }, [reference]);
 
   // Rotate live telemetry tick — gives the post-checkout screen its
@@ -97,24 +109,26 @@ function Success() {
                 PAID ₦{info.amountNGN.toLocaleString()}
               </div>
             </div>
-            <GoldButton
-              onClick={() => {
-                const blob = new Blob(
-                  [
-                    `ResoFlex OS Receipt\nRef: ${reference}\n${info.productName}\n₦${info.amountNGN}`,
-                  ],
-                  { type: "text/plain" },
-                );
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `resoflex-${reference}.txt`;
-                a.click();
-                URL.revokeObjectURL(url);
-              }}
-            >
-              <Download className="size-4" /> Download asset
-            </GoldButton>
+            {downloadUrl ? (
+              <a href={downloadUrl} download>
+                <GoldButton>
+                  <Download className="size-4" /> Download asset
+                </GoldButton>
+              </a>
+            ) : (
+              <GoldButton disabled>
+                {issuing ? (
+                  <><Loader2 className="size-4 animate-spin" /> Issuing link…</>
+                ) : (
+                  <><Download className="size-4" /> Preparing…</>
+                )}
+              </GoldButton>
+            )}
+            {downloadUrl && (
+              <div className="basis-full text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                Signed link · expires in 7 days · bound to ref {reference}
+              </div>
+            )}
           </div>
         </TacticalPanel>
       )}
