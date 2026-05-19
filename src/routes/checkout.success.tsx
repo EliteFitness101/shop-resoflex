@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { verifyPayment } from "@/lib/paystack";
+import { issueAssetDownload } from "@/lib/assets.functions";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { GoldButton } from "@/components/GoldButton";
 import { products } from "@/lib/mock-data";
 import { PriceTag } from "@/components/PriceTag";
-import { CheckCircle2, Download, Sparkles, RefreshCw } from "lucide-react";
+import { CheckCircle2, Download, Sparkles, RefreshCw, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/checkout/success")({
   validateSearch: (s: Record<string, unknown>) => ({ reference: (s.reference as string) ?? "" }),

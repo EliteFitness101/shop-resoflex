@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { buildSignedAssetUrl } from "@/lib/asset-signing.server";
 
 // Real Paystack webhook endpoint.
 // Verifies HMAC SHA512 of the raw body against PAYSTACK_SECRET_KEY,
@@ -57,16 +58,28 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
         // Acknowledge fast, process async-style (no DB yet).
         switch (event.event) {
           case "charge.success": {
-            const ref = event.data?.reference;
+            const ref = event.data?.reference ?? "";
             const amountNGN = (event.data?.amount ?? 0) / 100;
             const email = event.data?.customer?.email;
+            const productId =
+              (event.data?.metadata?.productId as string | undefined) ??
+              (event.data?.metadata?.product_id as string | undefined) ??
+              "unknown";
+
+            // Mint signed digital-asset download URL bound to this order.
+            // 7-day expiry; HMAC-signed so it's tamper-proof without a DB.
+            const host = request.headers.get("host") ?? "";
+            const proto = request.headers.get("x-forwarded-proto") ?? "https";
+            const origin = `${proto}://${host}`;
+            const downloadUrl = buildSignedAssetUrl(origin, ref, productId);
+
             console.log(
-              `[paystack-webhook] charge.success ref=${ref} amount=NGN${amountNGN} email=${email}`,
+              `[paystack-webhook] charge.success ref=${ref} amount=NGN${amountNGN} email=${email} pid=${productId} url=${downloadUrl}`,
             );
             // TODO (Lovable Cloud phase):
-            //   - upsert order row (status=paid)
+            //   - upsert order row (status=paid, downloadUrl, expiresAt)
             //   - accrue referral commission to wallet
-            //   - email digital asset link
+            //   - email `downloadUrl` to `email` via Resend
             //   - enqueue upsell sequence
             break;
           }
