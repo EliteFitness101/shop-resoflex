@@ -109,24 +109,26 @@ function Success() {
                 PAID ₦{info.amountNGN.toLocaleString()}
               </div>
             </div>
-            <GoldButton
-              onClick={() => {
-                const blob = new Blob(
-                  [
-                    `ResoFlex OS Receipt\nRef: ${reference}\n${info.productName}\n₦${info.amountNGN}`,
-                  ],
-                  { type: "text/plain" },
-                );
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `resoflex-${reference}.txt`;
-                a.click();
-                URL.revokeObjectURL(url);
-              }}
-            >
-              <Download className="size-4" /> Download asset
-            </GoldButton>
+            {downloadUrl ? (
+              <a href={downloadUrl} download>
+                <GoldButton>
+                  <Download className="size-4" /> Download asset
+                </GoldButton>
+              </a>
+            ) : (
+              <GoldButton disabled>
+                {issuing ? (
+                  <><Loader2 className="size-4 animate-spin" /> Issuing link…</>
+                ) : (
+                  <><Download className="size-4" /> Preparing…</>
+                )}
+              </GoldButton>
+            )}
+            {downloadUrl && (
+              <div className="basis-full text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                Signed link · expires in 7 days · bound to ref {reference}
+              </div>
+            )}
           </div>
         </TacticalPanel>
       )}
