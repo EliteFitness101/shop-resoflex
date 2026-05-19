@@ -28,9 +28,20 @@ function Success() {
   } | null>(null);
   const [upsellIndex, setUpsellIndex] = useState(0);
   const [tick, setTick] = useState(0);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [issuing, setIssuing] = useState(false);
 
   useEffect(() => {
-    verifyPayment(reference).then((r) => r && setInfo(r));
+    verifyPayment(reference).then((r) => {
+      if (!r) return;
+      setInfo(r);
+      // Mint signed asset URL the moment we've verified the order.
+      setIssuing(true);
+      issueAssetDownload({ data: { reference, productId: r.productId } })
+        .then((res) => setDownloadUrl(res.url))
+        .catch(() => setDownloadUrl(null))
+        .finally(() => setIssuing(false));
+    });
   }, [reference]);
 
   // Rotate live telemetry tick — gives the post-checkout screen its
