@@ -37,9 +37,13 @@ export const Route = createFileRoute("/shop/$productId")({
 
 function ProductPage() {
   const { product } = Route.useLoaderData();
+  const { user } = useAuth();
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
-  const nav = useNavigate();
+
+  useEffect(() => {
+    if (user?.email) setEmail(user.email);
+  }, [user?.email]);
 
   const handleCheckout = async () => {
     if (!email.includes("@")) {
@@ -47,14 +51,20 @@ function ProductPage() {
       return;
     }
     setBusy(true);
-    const { authorizationUrl } = await initiatePayment({
-      email,
-      amountKobo: product.priceNGN * 100,
-      productId: product.id,
-      productName: product.name,
-    });
-    toast.success("Routing to Paystack…");
-    setTimeout(() => nav({ to: authorizationUrl as any }), 600);
+    try {
+      const { authorizationUrl } = await initiatePayment({
+        email,
+        amountKobo: product.priceNGN * 100,
+        productId: product.id,
+        productName: product.name,
+        userId: user?.id ?? null,
+      });
+      toast.success("Routing to Paystack…");
+      window.location.href = authorizationUrl;
+    } catch (e) {
+      setBusy(false);
+      toast.error(e instanceof Error ? e.message : "Checkout failed");
+    }
   };
 
   return (
