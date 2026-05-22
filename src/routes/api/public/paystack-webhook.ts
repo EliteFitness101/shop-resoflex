@@ -64,7 +64,7 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
               .from("orders")
               .update({
                 status: "paid",
-                paystack_data: event.data,
+                paystack_data: event.data as unknown as Record<string, unknown> as never,
                 download_url: downloadUrl,
                 download_expires_at: expiresAt,
                 amount_ngn: amountNGN,
