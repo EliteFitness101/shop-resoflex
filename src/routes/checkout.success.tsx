@@ -136,6 +136,33 @@ function Success() {
         </TacticalPanel>
       )}
 
+      {info && (
+        <TacticalPanel label="ONBOARDING · WHATSAPP" status="DIRECT" className="mt-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="text-sm text-muted-foreground max-w-md">
+              Send your reference + signed asset link straight to the ResoFlex onboarding line. Concierge picks up within minutes.
+            </div>
+            <a
+              href={`https://wa.me/${ONBOARDING_WHATSAPP_E164}?text=${encodeURIComponent(
+                [
+                  `ResoFlex OS — onboarding`,
+                  `Ref: ${reference}`,
+                  `Product: ${info.productName}`,
+                  `Paid: NGN ${info.amountNGN.toLocaleString()}`,
+                  downloadUrl ? `Asset: ${downloadUrl}` : `Asset: (issuing…)`,
+                ].join("\n"),
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <GoldButton variant="outline">
+                <MessageCircle className="size-4" /> Open WhatsApp
+              </GoldButton>
+            </a>
+          </div>
+        </TacticalPanel>
+      )}
+
       <div className="mt-6 glass-panel rounded-xl overflow-hidden">
         <div className="p-5 border-b border-gold/10 flex items-center justify-between">
           <div className="flex items-center gap-2">
