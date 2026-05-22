@@ -4,7 +4,8 @@ import { PriceTag } from "@/components/PriceTag";
 import { GoldButton } from "@/components/GoldButton";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { initiatePayment } from "@/lib/paystack";
-import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, Shield, Truck, BadgeCheck } from "lucide-react";
 
