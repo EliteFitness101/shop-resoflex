@@ -14,16 +14,238 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      meal_plan_templates: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          product_id: string
+          storage_path: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          product_id: string
+          storage_path: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          product_id?: string
+          storage_path?: string
+          version?: number
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          amount_ngn: number
+          created_at: string
+          customer_email: string
+          download_expires_at: string | null
+          download_url: string | null
+          id: string
+          paystack_data: Json | null
+          product_id: string
+          product_name: string
+          reference: string
+          status: Database["public"]["Enums"]["order_status"]
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount_ngn: number
+          created_at?: string
+          customer_email: string
+          download_expires_at?: string | null
+          download_url?: string | null
+          id?: string
+          paystack_data?: Json | null
+          product_id: string
+          product_name: string
+          reference: string
+          status?: Database["public"]["Enums"]["order_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount_ngn?: number
+          created_at?: string
+          customer_email?: string
+          download_expires_at?: string | null
+          download_url?: string | null
+          id?: string
+          paystack_data?: Json | null
+          product_id?: string
+          product_name?: string
+          reference?: string
+          status?: Database["public"]["Enums"]["order_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      personalized_plans: {
+        Row: {
+          ai_summary: string | null
+          created_at: string
+          id: string
+          order_id: string | null
+          plan_type: Database["public"]["Enums"]["plan_type"]
+          product_id: string
+          storage_path: string
+          user_id: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          plan_type: Database["public"]["Enums"]["plan_type"]
+          product_id: string
+          storage_path: string
+          user_id: string
+        }
+        Update: {
+          ai_summary?: string | null
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          plan_type?: Database["public"]["Enums"]["plan_type"]
+          product_id?: string
+          storage_path?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personalized_plans_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          dietary_pref: string | null
+          email: string
+          fitness_goal: string | null
+          full_name: string | null
+          height_cm: number | null
+          id: string
+          referral_code: string
+          updated_at: string
+          wallet_balance_ngn: number
+          weight_kg: number | null
+          whatsapp_e164: string | null
+        }
+        Insert: {
+          created_at?: string
+          dietary_pref?: string | null
+          email: string
+          fitness_goal?: string | null
+          full_name?: string | null
+          height_cm?: number | null
+          id: string
+          referral_code?: string
+          updated_at?: string
+          wallet_balance_ngn?: number
+          weight_kg?: number | null
+          whatsapp_e164?: string | null
+        }
+        Update: {
+          created_at?: string
+          dietary_pref?: string | null
+          email?: string
+          fitness_goal?: string | null
+          full_name?: string | null
+          height_cm?: number | null
+          id?: string
+          referral_code?: string
+          updated_at?: string
+          wallet_balance_ngn?: number
+          weight_kg?: number | null
+          whatsapp_e164?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      workout_templates: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          product_id: string
+          storage_path: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          product_id: string
+          storage_path: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          product_id?: string
+          storage_path?: string
+          version?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "operator" | "recruit"
+      order_status: "pending" | "paid" | "failed" | "refunded"
+      plan_type: "meal" | "workout"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +372,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "operator", "recruit"],
+      order_status: ["pending", "paid", "failed", "refunded"],
+      plan_type: ["meal", "workout"],
+    },
   },
 } as const
