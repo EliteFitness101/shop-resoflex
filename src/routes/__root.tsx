@@ -110,15 +110,17 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <CurrencyProvider>
-        <TopNav />
-        <main className="min-h-[calc(100vh-3.5rem)] pb-20 md:pb-0">
-          <Outlet />
-        </main>
-        <Footer />
-        <BottomNav />
-        <Toaster />
-      </CurrencyProvider>
+      <AuthProvider>
+        <CurrencyProvider>
+          <TopNav />
+          <main className="min-h-[calc(100vh-3.5rem)] pb-20 md:pb-0">
+            <Outlet />
+          </main>
+          <Footer />
+          <BottomNav />
+          <Toaster />
+        </CurrencyProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
