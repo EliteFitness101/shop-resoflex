@@ -6,7 +6,10 @@ import { TacticalPanel } from "@/components/TacticalPanel";
 import { GoldButton } from "@/components/GoldButton";
 import { products } from "@/lib/mock-data";
 import { PriceTag } from "@/components/PriceTag";
-import { CheckCircle2, Download, Sparkles, RefreshCw, Loader2 } from "lucide-react";
+import { CheckCircle2, Download, Sparkles, RefreshCw, Loader2, MessageCircle } from "lucide-react";
+
+// ResoFlex onboarding WhatsApp line — swap when ops gives the final number.
+const ONBOARDING_WHATSAPP_E164 = "2348000000000";
 
 export const Route = createFileRoute("/checkout/success")({
   validateSearch: (s: Record<string, unknown>) => ({ reference: (s.reference as string) ?? "" }),
