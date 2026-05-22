@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { GoldButton } from "@/components/GoldButton";
 import { toast } from "sonner";
 import { useState, type FormEvent } from "react";
 import { Lock } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -18,11 +19,23 @@ export const Route = createFileRoute("/login")({
 
 function Login() {
   const [busy, setBusy] = useState(false);
-  const onSubmit = (e: FormEvent) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const nav = useNavigate();
+
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    setTimeout(() => { toast.success("Auth scaffold — enable Cloud to go live"); setBusy(false); }, 700);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setBusy(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Session initiated");
+    nav({ to: "/" });
   };
+
   return (
     <div className="min-h-[calc(100vh-3.5rem)] grid place-items-center px-4 py-10">
       <div className="w-full max-w-md glass-panel rounded-xl p-8">
@@ -32,8 +45,8 @@ function Login() {
           <h1 className="font-display text-3xl font-bold mt-1">Operator Login</h1>
         </div>
         <form className="space-y-4" onSubmit={onSubmit}>
-          <Field label="OPERATOR EMAIL" type="email" placeholder="operator@resofit.fit"/>
-          <Field label="PASSPHRASE" type="password" placeholder="••••••••" />
+          <Field label="OPERATOR EMAIL" type="email" placeholder="operator@resofit.fit" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <Field label="PASSPHRASE" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
           <GoldButton size="lg" className="w-full" disabled={busy} type="submit">{busy ? "Authenticating…" : "Initiate session"}</GoldButton>
         </form>
         <div className="mt-6 text-center text-sm text-muted-foreground">

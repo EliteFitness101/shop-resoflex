@@ -36,9 +36,8 @@ function Success() {
 
   useEffect(() => {
     verifyPayment(reference).then((r) => {
-      if (!r) return;
-      setInfo(r);
-      // Mint signed asset URL the moment we've verified the order.
+      if (!r || r.status !== "success") return;
+      setInfo({ productName: r.productName, amountNGN: r.amountNGN, productId: r.productId });
       setIssuing(true);
       issueAssetDownload({ data: { reference, productId: r.productId } })
         .then((res) => setDownloadUrl(res.url))
