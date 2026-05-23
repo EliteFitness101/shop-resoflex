@@ -6,6 +6,7 @@ import { UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/register")({
+  validateSearch: (s: Record<string, unknown>) => ({ ref: (s.ref as string) ?? "" }),
   component: Register,
   head: () => ({
     meta: [
