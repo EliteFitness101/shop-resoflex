@@ -6,6 +6,7 @@ import { UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/register")({
+  validateSearch: (s: Record<string, unknown>) => ({ ref: (s.ref as string) ?? "" }),
   component: Register,
   head: () => ({
     meta: [
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/register")({
 });
 
 function Register() {
+  const { ref } = Route.useSearch();
   const [busy, setBusy] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,7 +34,7 @@ function Register() {
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/`,
-        data: { full_name: fullName },
+        data: { full_name: fullName, ref_code: ref || undefined },
       },
     });
     setBusy(false);

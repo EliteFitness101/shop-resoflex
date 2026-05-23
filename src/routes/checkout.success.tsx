@@ -2,11 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { verifyPayment } from "@/lib/paystack";
 import { issueAssetDownload } from "@/lib/assets.functions";
+import { generatePersonalizedPlan } from "@/lib/personalize.functions";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { GoldButton } from "@/components/GoldButton";
 import { products } from "@/lib/mock-data";
 import { PriceTag } from "@/components/PriceTag";
-import { CheckCircle2, Download, Sparkles, RefreshCw, Loader2, MessageCircle } from "lucide-react";
+import { CheckCircle2, Download, Sparkles, RefreshCw, Loader2, MessageCircle, Wand2 } from "lucide-react";
 
 // ResoFlex onboarding WhatsApp line — swap when ops gives the final number.
 const ONBOARDING_WHATSAPP_E164 = "2348000000000";

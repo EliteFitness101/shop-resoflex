@@ -24,7 +24,8 @@ export interface Product {
   commissionPct: number;
   category: "supplement" | "gear" | "program" | "digital";
   badge?: string;
-  imageGradient: string; // CSS gradient used in lieu of media
+  imageGradient: string; // CSS gradient used as fallback
+  imageUrl?: string | null; // admin-uploaded image (overrides gradient)
 }
 
 export interface MealPlan {

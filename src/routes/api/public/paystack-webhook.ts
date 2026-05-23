@@ -60,7 +60,7 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
             const downloadUrl = buildSignedAssetUrl(origin, ref, productId);
             const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
-            const { error } = await supabaseAdmin
+            const { data: updated, error } = await supabaseAdmin
               .from("orders")
               .update({
                 status: "paid",
@@ -70,14 +70,62 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
                 amount_ngn: amountNGN,
                 customer_email: email ?? undefined,
               })
-              .eq("reference", ref);
+              .eq("reference", ref)
+              .select("id, user_id")
+              .maybeSingle();
 
             if (error) {
               console.error("[paystack-webhook] order update failed:", error);
             } else {
               console.log(`[paystack-webhook] charge.success ref=${ref} amount=NGN${amountNGN}`);
             }
-            // TODO: enqueue AI personalization once admin uploads base templates.
+
+            // Credit referral commission to the buyer's referrer, if any.
+            try {
+              if (updated?.user_id) {
+                const { data: buyer } = await supabaseAdmin
+                  .from("profiles")
+                  .select("referred_by, full_name")
+                  .eq("id", updated.user_id)
+                  .maybeSingle();
+                if (buyer?.referred_by) {
+                  const { data: prod } = await supabaseAdmin
+                    .from("products")
+                    .select("commission_pct, name")
+                    .eq("slug", productId)
+                    .maybeSingle();
+                  const pct = Number(prod?.commission_pct ?? 0);
+                  if (pct > 0 && amountNGN > 0) {
+                    const commission = Math.round((amountNGN * pct) / 100);
+                    const { error: txErr } = await supabaseAdmin
+                      .from("wallet_transactions")
+                      .insert({
+                        user_id: buyer.referred_by,
+                        amount_ngn: commission,
+                        kind: "commission",
+                        order_id: updated.id,
+                        note: `${pct}% on ${prod?.name ?? productId}`,
+                      });
+                    if (!txErr) {
+                      const { data: refp } = await supabaseAdmin
+                        .from("profiles")
+                        .select("wallet_balance_ngn")
+                        .eq("id", buyer.referred_by)
+                        .maybeSingle();
+                      await supabaseAdmin
+                        .from("profiles")
+                        .update({ wallet_balance_ngn: Number(refp?.wallet_balance_ngn ?? 0) + commission })
+                        .eq("id", buyer.referred_by);
+                      console.log(`[paystack-webhook] credited NGN${commission} to ${buyer.referred_by}`);
+                    } else if (!txErr.message.includes("duplicate")) {
+                      console.error("[paystack-webhook] commission insert failed:", txErr);
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              console.error("[paystack-webhook] commission flow error:", e);
+            }
             break;
           }
           case "charge.failed": {
