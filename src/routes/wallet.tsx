@@ -1,25 +1,45 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { GoldButton } from "@/components/GoldButton";
-import { transactions } from "@/lib/mock-data";
-import { ArrowDownToLine, ArrowUpRight } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { getWalletState } from "@/lib/wallet.functions";
+import { ArrowDownToLine, ArrowUpRight, Share2 } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/wallet")({
   component: Wallet,
   head: () => ({
     meta: [
       { title: "Referral Wallet — ResoFlex OS™" },
-      { name: "description", content: "Operator wallet. Real-time commission accruals, withdrawal queue, and transaction ledger." },
-      { property: "og:title", content: "Operator Wallet" },
-      { property: "og:description", content: "Real-time commission accruals and withdrawal queue." },
-      { property: "og:url", content: "/wallet" },
+      { name: "description", content: "Operator wallet. Real-time commission accruals from referred orders." },
     ],
-    links: [{ rel: "canonical", href: "/wallet" }],
   }),
 });
 
 function Wallet() {
-  const balance = transactions.reduce((a, t) => a + t.amountNGN, 0);
+  const { user, loading } = useAuth();
+  const [state, setState] = useState<Awaited<ReturnType<typeof getWalletState>> | null>(null);
+
+  useEffect(() => {
+    if (loading || !user) return;
+    getWalletState().then(setState).catch(() => setState(null));
+  }, [loading, user]);
+
+  if (loading) return <div className="p-10 text-center text-muted-foreground">Authenticating…</div>;
+  if (!user)
+    return (
+      <div className="p-10 max-w-md mx-auto text-center">
+        <p>Sign in to view your referral wallet.</p>
+        <Link to="/login" className="mt-4 inline-block text-gold font-mono text-xs uppercase tracking-widest">→ Login</Link>
+      </div>
+    );
+
+  const balance = state?.balance ?? 0;
+  const shareUrl = typeof window !== "undefined" && state?.referralCode
+    ? `${window.location.origin}/register?ref=${state.referralCode}`
+    : "";
+
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10">
       <div className="text-telemetry mb-2">// WALLET</div>
@@ -31,39 +51,67 @@ function Wallet() {
           <div className="text-telemetry">AVAILABLE BALANCE</div>
           <div className="font-display font-bold text-5xl sm:text-6xl text-gold mt-2">₦{balance.toLocaleString()}</div>
           <div className="mt-6 flex flex-wrap gap-3">
-            <GoldButton><ArrowDownToLine className="size-4"/>Withdraw</GoldButton>
-            <GoldButton variant="outline"><ArrowUpRight className="size-4"/>Reinvest</GoldButton>
+            <GoldButton onClick={() => toast.info("Withdrawals open at ₦10,000")}>
+              <ArrowDownToLine className="size-4" /> Withdraw
+            </GoldButton>
+            <GoldButton
+              variant="outline"
+              onClick={() => {
+                if (shareUrl) {
+                  navigator.clipboard.writeText(shareUrl);
+                  toast.success("Referral link copied");
+                }
+              }}
+            >
+              <Share2 className="size-4" /> Copy referral link
+            </GoldButton>
           </div>
+          {state?.referralCode && (
+            <div className="mt-3 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+              CODE · <span className="text-gold">{state.referralCode}</span>
+            </div>
+          )}
         </div>
       </div>
 
       <div className="grid sm:grid-cols-3 gap-3 mt-4">
-        <TacticalPanel label="PENDING">
-          <div className="font-display font-bold text-2xl text-gold">₦24,800</div>
-        </TacticalPanel>
         <TacticalPanel label="THIS MONTH">
-          <div className="font-display font-bold text-2xl text-gold">₦42,460</div>
+          <div className="font-display font-bold text-2xl text-gold">₦{(state?.thisMonth ?? 0).toLocaleString()}</div>
         </TacticalPanel>
         <TacticalPanel label="ALL-TIME">
-          <div className="font-display font-bold text-2xl text-gold">₦318,440</div>
+          <div className="font-display font-bold text-2xl text-gold">₦{(state?.allTime ?? 0).toLocaleString()}</div>
+        </TacticalPanel>
+        <TacticalPanel label="ACTIVE REFERRALS">
+          <div className="font-display font-bold text-2xl text-gold">{state?.referralCount ?? 0}</div>
         </TacticalPanel>
       </div>
 
-      <TacticalPanel label="TRANSACTION LEDGER" status="LIVE" className="mt-4">
-        <ul className="divide-y divide-gold/10">
-          {transactions.map((t) => (
-            <li key={t.id} className="py-3 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className="text-sm font-medium truncate">{t.note}</div>
-                <div className="text-telemetry mt-0.5">{t.type} · {t.createdAt}</div>
-              </div>
-              <div className={`font-mono font-semibold text-sm shrink-0 ${t.amountNGN >= 0 ? "text-gold" : "text-muted-foreground"}`}>
-                {t.amountNGN >= 0 ? "+" : ""}₦{t.amountNGN.toLocaleString()}
-              </div>
-            </li>
-          ))}
-        </ul>
+      <TacticalPanel label="COMMISSION LEDGER" status="LIVE" className="mt-4">
+        {!state?.transactions?.length ? (
+          <p className="text-xs text-muted-foreground">No transactions yet. Share your referral link to start earning.</p>
+        ) : (
+          <ul className="divide-y divide-gold/10">
+            {state.transactions.map((t: any) => (
+              <li key={t.id} className="py-3 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium truncate">{t.note ?? t.kind}</div>
+                  <div className="text-telemetry mt-0.5">
+                    {t.kind} · {new Date(t.created_at).toLocaleDateString()}
+                  </div>
+                </div>
+                <div className={`font-mono font-semibold text-sm shrink-0 ${Number(t.amount_ngn) >= 0 ? "text-gold" : "text-muted-foreground"}`}>
+                  {Number(t.amount_ngn) >= 0 ? "+" : ""}₦{Number(t.amount_ngn).toLocaleString()}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </TacticalPanel>
+
+      <div className="mt-6 text-xs text-muted-foreground">
+        Commissions credit automatically when a paid Paystack order is attributed to one of your referrals.
+        <ArrowUpRight className="size-3 inline ml-1" />
+      </div>
     </div>
   );
 }
