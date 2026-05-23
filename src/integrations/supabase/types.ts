@@ -133,6 +133,60 @@ export type Database = {
           },
         ]
       }
+      products: {
+        Row: {
+          active: boolean
+          badge: string | null
+          category: string | null
+          commission_pct: number
+          compare_price_ngn: number | null
+          created_at: string
+          description: string | null
+          hero_url: string | null
+          id: string
+          image_url: string | null
+          name: string
+          price_ngn: number
+          slug: string
+          tagline: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          badge?: string | null
+          category?: string | null
+          commission_pct?: number
+          compare_price_ngn?: number | null
+          created_at?: string
+          description?: string | null
+          hero_url?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          price_ngn?: number
+          slug: string
+          tagline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          badge?: string | null
+          category?: string | null
+          commission_pct?: number
+          compare_price_ngn?: number | null
+          created_at?: string
+          description?: string | null
+          hero_url?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          price_ngn?: number
+          slug?: string
+          tagline?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -143,6 +197,7 @@ export type Database = {
           height_cm: number | null
           id: string
           referral_code: string
+          referred_by: string | null
           updated_at: string
           wallet_balance_ngn: number
           weight_kg: number | null
@@ -157,6 +212,7 @@ export type Database = {
           height_cm?: number | null
           id: string
           referral_code?: string
+          referred_by?: string | null
           updated_at?: string
           wallet_balance_ngn?: number
           weight_kg?: number | null
@@ -171,12 +227,21 @@ export type Database = {
           height_cm?: number | null
           id?: string
           referral_code?: string
+          referred_by?: string | null
           updated_at?: string
           wallet_balance_ngn?: number
           weight_kg?: number | null
           whatsapp_e164?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -198,6 +263,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      wallet_transactions: {
+        Row: {
+          amount_ngn: number
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["wallet_tx_kind"]
+          note: string | null
+          order_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_ngn: number
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["wallet_tx_kind"]
+          note?: string | null
+          order_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_ngn?: number
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["wallet_tx_kind"]
+          note?: string | null
+          order_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       workout_templates: {
         Row: {
@@ -246,6 +349,7 @@ export type Database = {
       app_role: "admin" | "operator" | "recruit"
       order_status: "pending" | "paid" | "failed" | "refunded"
       plan_type: "meal" | "workout"
+      wallet_tx_kind: "commission" | "withdrawal" | "adjustment" | "bonus"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -376,6 +480,7 @@ export const Constants = {
       app_role: ["admin", "operator", "recruit"],
       order_status: ["pending", "paid", "failed", "refunded"],
       plan_type: ["meal", "workout"],
+      wallet_tx_kind: ["commission", "withdrawal", "adjustment", "bonus"],
     },
   },
 } as const
