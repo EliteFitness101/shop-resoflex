@@ -1,23 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { CurrencySwitcher } from "@/components/PriceTag";
-import { products } from "@/lib/mock-data";
+import { products as mockProducts } from "@/lib/mock-data";
+import { listProducts } from "@/lib/products.functions";
 
 export const Route = createFileRoute("/shop")({
   component: Shop,
   head: () => ({
     meta: [
       { title: "Sovereign Shop — ResoFlex OS™" },
-      { name: "description", content: "Premium Nigerian fitness commerce. Supplements, gear, and digital programs with built-in referral commissions." },
-      { property: "og:title", content: "Sovereign Shop — ResoFlex OS™" },
-      { property: "og:description", content: "Premium Nigerian fitness commerce with built-in referral commissions." },
-      { property: "og:url", content: "/shop" },
+      { name: "description", content: "Premium Nigerian fitness commerce with built-in referral commissions." },
     ],
     links: [{ rel: "canonical", href: "/shop" }],
   }),
 });
 
 function Shop() {
+  const [imageMap, setImageMap] = useState<Record<string, string>>({});
+  useEffect(() => {
+    listProducts()
+      .then((r) => {
+        const m: Record<string, string> = {};
+        for (const p of r.products) if (p.image_url) m[p.slug] = p.image_url;
+        setImageMap(m);
+      })
+      .catch(() => {});
+  }, []);
+
+  const products = mockProducts.map((p) => ({ ...p, imageUrl: imageMap[p.slug] ?? null }));
+
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
       <div className="flex flex-wrap items-end justify-between gap-4 mb-8">

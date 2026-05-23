@@ -74,10 +74,10 @@ function ProductPage() {
       </Link>
       <div className="grid md:grid-cols-2 gap-8">
         <div
-          className="aspect-square rounded-xl relative overflow-hidden glass-panel"
-          style={{ backgroundImage: product.imageGradient }}
+          className="aspect-square rounded-xl relative overflow-hidden glass-panel bg-cover bg-center"
+          style={product.imageUrl ? { backgroundImage: `url(${product.imageUrl})` } : { backgroundImage: product.imageGradient }}
         >
-          <div className="absolute inset-0 telemetry-grid opacity-40 mix-blend-overlay" />
+          {!product.imageUrl && <div className="absolute inset-0 telemetry-grid opacity-40 mix-blend-overlay" />}
           {product.badge && (
             <span className="absolute top-4 left-4 text-xs font-mono uppercase tracking-widest bg-gold text-primary-foreground px-3 py-1.5 rounded">
               {product.badge}
