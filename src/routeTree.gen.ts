@@ -16,6 +16,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as MealsRouteImport } from './routes/meals'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EliteRouteImport } from './routes/elite'
+import { Route as AutopilotRouteImport } from './routes/autopilot'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -58,6 +59,11 @@ const LoginRoute = LoginRouteImport.update({
 const EliteRoute = EliteRouteImport.update({
   id: '/elite',
   path: '/elite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AutopilotRoute = AutopilotRouteImport.update({
+  id: '/autopilot',
+  path: '/autopilot',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgentsRoute = AgentsRouteImport.update({
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/agents': typeof AgentsRoute
+  '/autopilot': typeof AutopilotRoute
   '/elite': typeof EliteRoute
   '/login': typeof LoginRoute
   '/meals': typeof MealsRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/agents': typeof AgentsRoute
+  '/autopilot': typeof AutopilotRoute
   '/elite': typeof EliteRoute
   '/login': typeof LoginRoute
   '/meals': typeof MealsRoute
@@ -141,6 +149,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/agents': typeof AgentsRoute
+  '/autopilot': typeof AutopilotRoute
   '/elite': typeof EliteRoute
   '/login': typeof LoginRoute
   '/meals': typeof MealsRoute
@@ -160,6 +169,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/agents'
+    | '/autopilot'
     | '/elite'
     | '/login'
     | '/meals'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/agents'
+    | '/autopilot'
     | '/elite'
     | '/login'
     | '/meals'
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/agents'
+    | '/autopilot'
     | '/elite'
     | '/login'
     | '/meals'
@@ -212,6 +224,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AgentsRoute: typeof AgentsRoute
+  AutopilotRoute: typeof AutopilotRoute
   EliteRoute: typeof EliteRoute
   LoginRoute: typeof LoginRoute
   MealsRoute: typeof MealsRoute
@@ -274,6 +287,13 @@ declare module '@tanstack/react-router' {
       path: '/elite'
       fullPath: '/elite'
       preLoaderRoute: typeof EliteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/autopilot': {
+      id: '/autopilot'
+      path: '/autopilot'
+      fullPath: '/autopilot'
+      preLoaderRoute: typeof AutopilotRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agents': {
@@ -349,6 +369,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AgentsRoute: AgentsRoute,
+  AutopilotRoute: AutopilotRoute,
   EliteRoute: EliteRoute,
   LoginRoute: LoginRoute,
   MealsRoute: MealsRoute,
@@ -364,13 +385,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
