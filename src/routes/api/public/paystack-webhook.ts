@@ -114,7 +114,7 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
                         .maybeSingle();
                       await supabaseAdmin
                         .from("profiles")
-                        .update({ wallet_balance_ngn: Number(ref?.wallet_balance_ngn ?? 0) + commission })
+                        .update({ wallet_balance_ngn: Number(refp?.wallet_balance_ngn ?? 0) + commission })
                         .eq("id", buyer.referred_by);
                       console.log(`[paystack-webhook] credited NGN${commission} to ${buyer.referred_by}`);
                     } else if (!txErr.message.includes("duplicate")) {
