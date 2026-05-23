@@ -107,9 +107,7 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
                         note: `${pct}% on ${prod?.name ?? productId}`,
                       });
                     if (!txErr) {
-                      await supabaseAdmin.rpc("exec_sql" as never, {} as never).catch(() => null);
-                      // Bump cached balance on profile
-                      const { data: ref } = await supabaseAdmin
+                      const { data: refp } = await supabaseAdmin
                         .from("profiles")
                         .select("wallet_balance_ngn")
                         .eq("id", buyer.referred_by)
