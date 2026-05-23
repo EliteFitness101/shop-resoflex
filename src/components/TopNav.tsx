@@ -6,6 +6,7 @@ const links = [
   { to: "/meals", label: "Meal Plans" },
   { to: "/elite", label: "Elite" },
   { to: "/agents", label: "Agents" },
+  { to: "/autopilot", label: "Autopilot" },
   { to: "/wallet", label: "Wallet" },
 ] as const;
 
