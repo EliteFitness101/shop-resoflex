@@ -15,6 +15,7 @@ import { Footer } from "@/components/Footer";
 import { CurrencyProvider } from "@/lib/currency";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/hooks/use-auth";
+import { ChatB2K } from "@/components/ChatB2K";
 
 function NotFoundComponent() {
   return (
@@ -118,6 +119,7 @@ function RootComponent() {
           </main>
           <Footer />
           <BottomNav />
+          <ChatB2K />
           <Toaster />
         </CurrencyProvider>
       </AuthProvider>
