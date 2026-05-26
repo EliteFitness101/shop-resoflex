@@ -4,6 +4,7 @@ import { TacticalPanel } from "@/components/TacticalPanel";
 import { ProductCard } from "@/components/ProductCard";
 import { GoldButton } from "@/components/GoldButton";
 import { FAQAccordion } from "@/components/FAQAccordion";
+import { PlusSizeHero } from "@/components/PlusSizeHero";
 import { products, mealPlans, stats } from "@/lib/mock-data";
 import { Activity, Coins, Flame, ShieldCheck, TrendingUp, Users } from "lucide-react";
 
@@ -25,6 +26,9 @@ function Landing() {
   return (
     <>
       <ScarcityBanner />
+      <PlusSizeHero />
+
+
 
       {/* HERO */}
       <section className="relative">

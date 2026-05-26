@@ -35,15 +35,24 @@ export const Route = createFileRoute("/shop/$productId")({
   errorComponent: ({ error }) => <div className="p-10 text-center text-muted-foreground">{error.message}</div>,
 });
 
+const BULK_MIN_QTY = 10;
+const BULK_UNIT_NGN = 8500;
+
 function ProductPage() {
   const { product } = Route.useLoaderData();
   const { user } = useAuth();
   const [email, setEmail] = useState("");
+  const [qty, setQty] = useState(1);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (user?.email) setEmail(user.email);
   }, [user?.email]);
+
+  const isBulk = qty >= BULK_MIN_QTY;
+  const unitPrice = isBulk ? Math.min(BULK_UNIT_NGN, product.priceNGN) : product.priceNGN;
+  const total = unitPrice * qty;
+  const savings = isBulk ? (product.priceNGN - unitPrice) * qty : 0;
 
   const handleCheckout = async () => {
     if (!email.includes("@")) {
@@ -54,9 +63,9 @@ function ProductPage() {
     try {
       const { authorizationUrl } = await initiatePayment({
         email,
-        amountKobo: product.priceNGN * 100,
+        amountKobo: total * 100,
         productId: product.id,
-        productName: product.name,
+        productName: qty > 1 ? `${product.name} ×${qty}${isBulk ? " (bulk)" : ""}` : product.name,
         userId: user?.id ?? null,
       });
       toast.success("Routing to Paystack…");
@@ -105,7 +114,35 @@ function ProductPage() {
             </TacticalPanel>
           </div>
 
-          <div className="mt-8 glass-panel rounded-lg p-5 space-y-3">
+          {/* Bulk / wholesale tier */}
+          <div id="bulk-tier" className={`mt-6 rounded-lg p-4 border transition ${isBulk ? "border-emerald-400/60 bg-emerald-400/5" : "border-gold/15 bg-background/40"}`}>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <div className="text-telemetry">// WHOLESALE TIER</div>
+                <div className="text-sm mt-1">
+                  10+ pieces drop to <span className="text-emerald-400 font-semibold">₦{BULK_UNIT_NGN.toLocaleString()}</span> per unit
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} className="size-8 rounded border border-gold/20 hover:border-gold/40">−</button>
+                <input
+                  type="number"
+                  min={1}
+                  value={qty}
+                  onChange={(e) => setQty(Math.max(1, Math.min(999, parseInt(e.target.value) || 1)))}
+                  className="w-16 bg-background/60 border border-gold/20 rounded px-2 py-1.5 text-center text-sm"
+                />
+                <button type="button" onClick={() => setQty((q) => Math.min(999, q + 1))} className="size-8 rounded border border-gold/20 hover:border-gold/40">+</button>
+              </div>
+            </div>
+            {isBulk && (
+              <div className="mt-3 text-xs font-mono uppercase tracking-widest text-emerald-400">
+                ✓ Bulk unlocked · You save ₦{savings.toLocaleString()}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-6 glass-panel rounded-lg p-5 space-y-3">
             <label className="block">
               <span className="text-telemetry">OPERATOR EMAIL</span>
               <input
@@ -116,8 +153,14 @@ function ProductPage() {
                 className="mt-2 w-full bg-background/60 border border-gold/20 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-gold transition"
               />
             </label>
+            <div className="flex items-center justify-between text-sm font-mono">
+              <span className="text-muted-foreground uppercase tracking-widest text-[10px]">
+                {qty} × ₦{unitPrice.toLocaleString()}
+              </span>
+              <span className="text-gold font-bold text-base">₦{total.toLocaleString()}</span>
+            </div>
             <GoldButton size="lg" className="w-full" disabled={busy} onClick={handleCheckout}>
-              {busy ? "Routing…" : `Pay ₦${product.priceNGN.toLocaleString()} via Paystack`}
+              {busy ? "Routing…" : `Pay ₦${total.toLocaleString()} via Paystack`}
             </GoldButton>
             <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground flex items-center justify-center gap-1.5">
               <Shield className="size-3"/> Secure · NGN settlement · Instant receipt
