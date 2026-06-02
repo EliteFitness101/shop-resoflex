@@ -39,7 +39,7 @@
   --color-gold-deep: var(--gold-deep);
   --color-telemetry: var(--telemetry);
 
-  --font-display: "Sora", system-ui, sans-serif;
+  --font-display: "Playfair Display", "Sora", ui-serif, Georgia, serif;
   --font-body: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
