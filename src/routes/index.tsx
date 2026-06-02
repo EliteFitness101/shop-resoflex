@@ -25,7 +25,6 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
-  const [assessOpen, setAssessOpen] = useState(false);
   return (
     <>
       <ScarcityBanner />
