@@ -48,13 +48,14 @@ function Landing() {
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link to="/shop"><GoldButton size="lg">Enter the Shop</GoldButton></Link>
-            <button
-              type="button"
-              onClick={() => setAssessOpen(true)}
+            <a
+              href={CHATB2K_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 font-mono uppercase tracking-widest text-xs sm:text-sm px-5 py-3 rounded border border-gold/50 text-gold hover:bg-gold/10 hover:shadow-gold transition"
             >
-              <Sparkles className="size-4" /> ChatB2K Assessment
-            </button>
+              <Sparkles className="size-4" /> ChatB2K Assessment <ExternalLink className="size-3.5 opacity-70" />
+            </a>
           </div>
           <div className="mt-3 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
             // Free 60-second readiness scan · unified backend · no signup required
