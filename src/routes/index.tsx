@@ -1,12 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { ScarcityBanner } from "@/components/ScarcityBanner";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { ProductCard } from "@/components/ProductCard";
 import { GoldButton } from "@/components/GoldButton";
 import { FAQAccordion } from "@/components/FAQAccordion";
 import { PlusSizeHero } from "@/components/PlusSizeHero";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { products, mealPlans, stats } from "@/lib/mock-data";
-import { Activity, Coins, Flame, ShieldCheck, TrendingUp, Users } from "lucide-react";
+import { Activity, Coins, Flame, ShieldCheck, Sparkles, TrendingUp, Users, X } from "lucide-react";
+
+const CHATB2K_URL = "https://reso-fit.lovable.app";
 
 export const Route = createFileRoute("/")({
   component: Landing,
