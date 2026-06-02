@@ -27,6 +27,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const [assessOpen, setAssessOpen] = useState(false);
   return (
     <>
       <ScarcityBanner />
@@ -46,11 +47,20 @@ function Landing() {
             Engineer your <span className="text-gold">sovereign</span><br className="hidden sm:block" /> physical state.
           </h1>
           <p className="mt-5 max-w-2xl mx-auto text-muted-foreground text-base sm:text-lg">
-            ResoFlex OS™ is Nigeria's elite performance operating system — premium supplements, tactical programs, regional meal protocols, and a referral economy engineered for operators who refuse mediocrity.
+            ResoFlex™ Empire OS — Nigeria's elite performance operating system. Premium supplements, tactical programs, regional meal protocols, and a sovereign referral economy.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link to="/shop"><GoldButton size="lg">Enter the Shop</GoldButton></Link>
-            <Link to="/elite"><GoldButton size="lg" variant="outline">View Blueprint</GoldButton></Link>
+            <button
+              type="button"
+              onClick={() => setAssessOpen(true)}
+              className="inline-flex items-center gap-2 font-mono uppercase tracking-widest text-xs sm:text-sm px-5 py-3 rounded border border-gold/50 text-gold hover:bg-gold/10 hover:shadow-gold transition"
+            >
+              <Sparkles className="size-4" /> ChatB2K Assessment
+            </button>
+          </div>
+          <div className="mt-3 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+            // Free 60-second readiness scan · unified backend · no signup required
           </div>
 
           {/* Metric strip */}
