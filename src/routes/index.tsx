@@ -1,12 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { ScarcityBanner } from "@/components/ScarcityBanner";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { ProductCard } from "@/components/ProductCard";
 import { GoldButton } from "@/components/GoldButton";
 import { FAQAccordion } from "@/components/FAQAccordion";
 import { PlusSizeHero } from "@/components/PlusSizeHero";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { products, mealPlans, stats } from "@/lib/mock-data";
-import { Activity, Coins, Flame, ShieldCheck, TrendingUp, Users } from "lucide-react";
+import { Activity, Coins, Flame, ShieldCheck, Sparkles, TrendingUp, Users, X } from "lucide-react";
+
+const CHATB2K_URL = "https://reso-fit.lovable.app";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -23,6 +27,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const [assessOpen, setAssessOpen] = useState(false);
   return (
     <>
       <ScarcityBanner />
@@ -42,11 +47,20 @@ function Landing() {
             Engineer your <span className="text-gold">sovereign</span><br className="hidden sm:block" /> physical state.
           </h1>
           <p className="mt-5 max-w-2xl mx-auto text-muted-foreground text-base sm:text-lg">
-            ResoFlex OS™ is Nigeria's elite performance operating system — premium supplements, tactical programs, regional meal protocols, and a referral economy engineered for operators who refuse mediocrity.
+            ResoFlex™ Empire OS — Nigeria's elite performance operating system. Premium supplements, tactical programs, regional meal protocols, and a sovereign referral economy.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link to="/shop"><GoldButton size="lg">Enter the Shop</GoldButton></Link>
-            <Link to="/elite"><GoldButton size="lg" variant="outline">View Blueprint</GoldButton></Link>
+            <button
+              type="button"
+              onClick={() => setAssessOpen(true)}
+              className="inline-flex items-center gap-2 font-mono uppercase tracking-widest text-xs sm:text-sm px-5 py-3 rounded border border-gold/50 text-gold hover:bg-gold/10 hover:shadow-gold transition"
+            >
+              <Sparkles className="size-4" /> ChatB2K Assessment
+            </button>
+          </div>
+          <div className="mt-3 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+            // Free 60-second readiness scan · unified backend · no signup required
           </div>
 
           {/* Metric strip */}
@@ -159,6 +173,38 @@ function Landing() {
           { q: "Are meal plans halal-compatible?", a: "Yes — every regional protocol includes halal and non-halal swaps documented per meal." },
         ]} />
       </section>
+
+      {/* ChatB2K Assessment — inline portal */}
+      <Dialog open={assessOpen} onOpenChange={setAssessOpen}>
+        <DialogContent className="max-w-5xl w-[96vw] h-[88vh] p-0 overflow-hidden bg-background border-gold/30 shadow-gold">
+          <DialogHeader className="px-5 py-3 border-b border-gold/20 flex-row items-center justify-between space-y-0">
+            <div>
+              <DialogTitle className="font-display text-base text-gold flex items-center gap-2">
+                <Sparkles className="size-4" /> ChatB2K Assessment
+              </DialogTitle>
+              <DialogDescription className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                // Unified backend · secure portal · reso-fit.lovable.app
+              </DialogDescription>
+            </div>
+            <button
+              type="button"
+              onClick={() => setAssessOpen(false)}
+              aria-label="Close assessment"
+              className="size-8 grid place-items-center rounded-md border border-gold/30 text-gold hover:bg-gold/10 transition"
+            >
+              <X className="size-4" />
+            </button>
+          </DialogHeader>
+          <iframe
+            src={CHATB2K_URL}
+            title="ChatB2K Assessment"
+            loading="lazy"
+            className="w-full h-full bg-background"
+            allow="clipboard-write; payment; camera; microphone"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
