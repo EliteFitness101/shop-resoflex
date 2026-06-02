@@ -172,37 +172,6 @@ function Landing() {
         ]} />
       </section>
 
-      {/* ChatB2K Assessment — inline portal */}
-      <Dialog open={assessOpen} onOpenChange={setAssessOpen}>
-        <DialogContent className="max-w-5xl w-[96vw] h-[88vh] p-0 overflow-hidden bg-background border-gold/30 shadow-gold">
-          <DialogHeader className="px-5 py-3 border-b border-gold/20 flex-row items-center justify-between space-y-0">
-            <div>
-              <DialogTitle className="font-display text-base text-gold flex items-center gap-2">
-                <Sparkles className="size-4" /> ChatB2K Assessment
-              </DialogTitle>
-              <DialogDescription className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-                // Unified backend · secure portal · reso-fit.lovable.app
-              </DialogDescription>
-            </div>
-            <button
-              type="button"
-              onClick={() => setAssessOpen(false)}
-              aria-label="Close assessment"
-              className="size-8 grid place-items-center rounded-md border border-gold/30 text-gold hover:bg-gold/10 transition"
-            >
-              <X className="size-4" />
-            </button>
-          </DialogHeader>
-          <iframe
-            src={CHATB2K_URL}
-            title="ChatB2K Assessment"
-            loading="lazy"
-            className="w-full h-full bg-background"
-            allow="clipboard-write; payment; camera; microphone"
-            referrerPolicy="strict-origin-when-cross-origin"
-          />
-        </DialogContent>
-      </Dialog>
     </>
   );
 }
