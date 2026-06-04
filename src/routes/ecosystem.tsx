@@ -218,7 +218,7 @@ function Ecosystem() {
       {/* Network map */}
       <div className="mt-10 glass-panel rounded-2xl p-3 sm:p-6 relative overflow-hidden">
         <div className="absolute inset-0 telemetry-grid opacity-20 pointer-events-none" />
-        <svg viewBox="0 0 800 600" className="relative w-full h-auto" role="img" aria-label="Ecosystem network">
+        <svg viewBox={vb} className="relative w-full h-auto" role="img" aria-label="Ecosystem network">
           <defs>
             <radialGradient id="hubGlow" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="hsl(var(--gold) / 0.55)" />
@@ -231,15 +231,15 @@ function Ecosystem() {
             </linearGradient>
           </defs>
 
-          <circle cx={POS.os.x} cy={POS.os.y} r="160" fill="url(#hubGlow)" />
+          <circle cx={pos.os.x} cy={pos.os.y} r={hubGlowR} fill="url(#hubGlow)" />
 
           {NODES.filter((n) => n.id !== "os").map((n) => {
             const active = hover === n.id || hover === "os";
             return (
               <g key={`e-${n.id}`}>
                 <line
-                  x1={POS.os.x} y1={POS.os.y}
-                  x2={POS[n.id].x} y2={POS[n.id].y}
+                  x1={pos.os.x} y1={pos.os.y}
+                  x2={pos[n.id].x} y2={pos[n.id].y}
                   stroke="url(#edge)"
                   strokeWidth={active ? 2 : 1}
                   strokeDasharray={active ? "0" : "4 6"}
@@ -251,7 +251,7 @@ function Ecosystem() {
                     <animateMotion
                       dur="1.8s"
                       repeatCount="indefinite"
-                      path={`M ${POS.os.x} ${POS.os.y} L ${POS[n.id].x} ${POS[n.id].y}`}
+                      path={`M ${pos.os.x} ${pos.os.y} L ${pos[n.id].x} ${pos[n.id].y}`}
                     />
                   </circle>
                 )}
@@ -260,9 +260,9 @@ function Ecosystem() {
           })}
 
           {NODES.map((n) => {
-            const p = POS[n.id];
+            const p = pos[n.id];
             const isHub = n.id === "os";
-            const r = isHub ? 56 : 42;
+            const r = isHub ? hubR : nodeR;
             const active = hover === n.id;
             return (
               <g
@@ -270,7 +270,8 @@ function Ecosystem() {
                 transform={`translate(${p.x} ${p.y})`}
                 onMouseEnter={() => setHover(n.id)}
                 onMouseLeave={() => setHover(null)}
-                style={{ cursor: "pointer", transition: "transform 250ms ease" }}
+                onClick={() => setHover((cur) => (cur === n.id ? null : n.id))}
+                style={{ cursor: "pointer", transition: "transform 250ms ease", touchAction: "manipulation" }}
               >
                 {(active || isHub) && (
                   <circle r={r + 14} fill="none" stroke="hsl(var(--gold) / 0.4)" strokeWidth="1">
@@ -287,8 +288,8 @@ function Ecosystem() {
                 />
                 <foreignObject x={-r} y={-r} width={r * 2} height={r * 2}>
                   <div className="w-full h-full flex flex-col items-center justify-center text-center px-1">
-                    <n.Icon className={`text-gold ${isHub ? "size-7" : "size-5"}`} />
-                    <div className={`mt-1 font-display font-semibold leading-tight ${isHub ? "text-[11px] sm:text-sm" : "text-[9px] sm:text-[11px]"}`}>
+                    <n.Icon className={`text-gold ${isHub ? "size-8" : "size-6"}`} />
+                    <div className={`mt-1 font-display font-semibold leading-tight ${isHub ? "text-[12px] sm:text-sm" : "text-[10px] sm:text-[11px]"}`}>
                       {n.name}
                     </div>
                   </div>
@@ -297,6 +298,7 @@ function Ecosystem() {
             );
           })}
         </svg>
+
 
         <div className="relative mt-4 flex flex-wrap gap-2 justify-center text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
           {["Growth", "Creator", "Wellness", "Commerce", "Analytics", "AI", "Vaults", "Community"].map((t) => (
