@@ -156,6 +156,20 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
 function Ecosystem() {
   const [hover, setHover] = useState<string | null>(null);
   const [investor, setInvestor] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  const pos = isMobile ? POS_M : POS;
+  const vb = isMobile ? "0 0 600 720" : "0 0 800 600";
+  const hubR = isMobile ? 64 : 56;
+  const nodeR = isMobile ? 52 : 42;
+  const hubGlowR = isMobile ? 180 : 160;
+
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
