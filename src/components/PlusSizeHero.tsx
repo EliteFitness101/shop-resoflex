@@ -3,10 +3,19 @@ import { useEffect, useState } from "react";
 import { GoldButton } from "@/components/GoldButton";
 import { listProducts, type DbProduct } from "@/lib/products.functions";
 import { Ruler, ShieldCheck, Truck } from "lucide-react";
+import forzaOlive from "@/assets/forzafit-olive-back.asset.json";
+import forzaRoyal from "@/assets/forzafit-royal-tank.asset.json";
+import forzaCobalt from "@/assets/forzafit-cobalt-tank.asset.json";
+import forzaGreen from "@/assets/forzafit-green-tank.asset.json";
+import forzaCharcoal from "@/assets/forzafit-charcoal-tank.asset.json";
+import hzhWhite from "@/assets/hzh-white-singlet.asset.json";
+
+const FALLBACK_GALLERY = [
+  forzaOlive.url, forzaRoyal.url, forzaCobalt.url,
+  forzaGreen.url, forzaCharcoal.url, hzhWhite.url,
+];
 
 // Plus-size "Elite Drip" hero + styling gallery.
-// Pulls real product images from admin-managed catalog; gracefully
-// degrades to a gradient placeholder if none are uploaded yet.
 export function PlusSizeHero() {
   const [gallery, setGallery] = useState<DbProduct[]>([]);
 
@@ -15,6 +24,7 @@ export function PlusSizeHero() {
       .then((r) => setGallery(r.products.filter((p) => p.image_url).slice(0, 6)))
       .catch(() => {});
   }, []);
+
 
   return (
     <section className="relative border-b border-gold/10">
@@ -81,6 +91,9 @@ export function PlusSizeHero() {
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             {Array.from({ length: 6 }).map((_, i) => {
               const p = gallery[i];
+              const fallbackUrl = FALLBACK_GALLERY[i];
+              const src = p?.image_url ?? fallbackUrl;
+              const alt = p?.name ?? `Elite drip ${i + 1}`;
               return (
                 <div
                   key={i}
@@ -88,10 +101,10 @@ export function PlusSizeHero() {
                     i === 0 ? "col-span-2 row-span-2 aspect-square" : "aspect-square"
                   }`}
                 >
-                  {p?.image_url ? (
+                  {src ? (
                     <img
-                      src={p.image_url}
-                      alt={p.name}
+                      src={src}
+                      alt={alt}
                       loading="lazy"
                       decoding="async"
                       className="absolute inset-0 size-full object-cover"
@@ -114,6 +127,7 @@ export function PlusSizeHero() {
                   )}
                 </div>
               );
+
             })}
           </div>
         </div>
