@@ -1,4 +1,10 @@
 import type { Product, MealPlan, Referral, Order, Transaction, TelemetryEvent } from "./types";
+import hzhTee from "@/assets/hzh-compression-tee.asset.json";
+import hzhLong from "@/assets/hzh-longsleeve-run.asset.json";
+import forzaCharcoal from "@/assets/forzafit-charcoal-tank.asset.json";
+import forzaBlue from "@/assets/forzafit-blue-runner.asset.json";
+import forzaGreen from "@/assets/forzafit-green-tank.asset.json";
+import hzhWhite from "@/assets/hzh-white-singlet.asset.json";
 
 export const products: Product[] = [
   {
