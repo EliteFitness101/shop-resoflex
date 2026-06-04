@@ -5,6 +5,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { GoldButton } from "@/components/GoldButton";
 import { FAQAccordion } from "@/components/FAQAccordion";
 import { PlusSizeHero } from "@/components/PlusSizeHero";
+import { HeroCarousel } from "@/components/HeroCarousel";
 import { products, mealPlans, stats } from "@/lib/mock-data";
 import { Activity, Coins, Flame, ShieldCheck, Sparkles, TrendingUp, Users, ExternalLink } from "lucide-react";
 
@@ -28,7 +29,9 @@ function Landing() {
   return (
     <>
       <ScarcityBanner />
+      <HeroCarousel />
       <PlusSizeHero />
+
 
 
 
