@@ -2,15 +2,23 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { CurrencySwitcher } from "@/components/PriceTag";
+import { RouteHero } from "@/components/RouteHero";
 import { products as mockProducts } from "@/lib/mock-data";
 import { listProducts } from "@/lib/products.functions";
+import heroShop from "@/assets/hero-shop.jpg";
 
 export const Route = createFileRoute("/shop")({
   component: Shop,
   head: () => ({
     meta: [
-      { title: "Sovereign Shop — ResoFlex OS™" },
-      { name: "description", content: "Premium Nigerian fitness commerce with built-in referral commissions." },
+      { title: "Tactical Commerce Arsenal — ResoFlex™ Hardware Ecosystem" },
+      { name: "description", content: "Access premium high-performance fitness hardware arrays and digital SaaS expansion tools built for absolute biometric telemetry tracking." },
+      { property: "og:title", content: "Tactical Commerce Arsenal — ResoFlex™ Hardware Ecosystem" },
+      { property: "og:description", content: "Access premium high-performance fitness hardware arrays and digital SaaS expansion tools built for absolute biometric telemetry tracking." },
+      { property: "og:url", content: "/shop" },
+      { property: "og:image", content: heroShop },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: heroShop },
     ],
     links: [{ rel: "canonical", href: "/shop" }],
   }),
@@ -31,22 +39,29 @@ function Shop() {
   const products = mockProducts.map((p) => ({ ...p, imageUrl: imageMap[p.slug] ?? null }));
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
-      <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
-        <div>
-          <div className="text-telemetry mb-2">// ARSENAL · LIVE INVENTORY</div>
-          <h1 className="font-display text-4xl font-bold">Sovereign Shop</h1>
-          <p className="text-muted-foreground text-sm mt-2">Every SKU vetted. Every commission tracked. Every order audited.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-telemetry">CURRENCY</span>
-          <CurrencySwitcher />
-        </div>
-      </div>
+    <>
+      <RouteHero
+        eyebrow="ARSENAL · LIVE INVENTORY"
+        title="Tactical Commerce Arsenal"
+        subtitle="Premium high-performance fitness hardware arrays and digital SaaS expansion tools — built for absolute biometric telemetry tracking."
+        ctaLabel="Equip Operator Node"
+        ctaHref="#arsenal-grid"
+        image={heroShop}
+      />
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {products.map((p) => <ProductCard key={p.id} product={p} />)}
+      <div id="arsenal-grid" className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div className="text-telemetry">// SKU MATRIX</div>
+          <div className="flex items-center gap-3">
+            <span className="text-telemetry">CURRENCY</span>
+            <CurrencySwitcher />
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {products.map((p) => <ProductCard key={p.id} product={p} />)}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
