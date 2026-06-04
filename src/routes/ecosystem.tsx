@@ -75,6 +75,7 @@ const NODES: Node[] = [
 ];
 
 // SVG node positions (viewBox 800x600), arranged as a halo around the OS hub.
+// Desktop layout (viewBox 800x600)
 const POS: Record<string, { x: number; y: number }> = {
   elite:     { x: 400, y:  90 },
   joy:       { x: 660, y: 190 },
@@ -84,6 +85,18 @@ const POS: Record<string, { x: number; y: number }> = {
   legacy:    { x: 100, y: 410 },
   os:        { x: 400, y: 300 },
 };
+
+// Mobile layout (viewBox 600x720) — wider node spread, larger touch targets
+const POS_M: Record<string, { x: number; y: number }> = {
+  elite:     { x: 300, y:  90 },
+  joy:       { x: 510, y: 230 },
+  shop:      { x: 510, y: 490 },
+  evolution: { x: 300, y: 630 },
+  resonance: { x:  90, y: 490 },
+  legacy:    { x:  90, y: 230 },
+  os:        { x: 300, y: 360 },
+};
+
 
 const INVESTOR_METRICS = [
   { label: "Ecosystem Reach",         value: 1_250_000, suffix: "+" },
