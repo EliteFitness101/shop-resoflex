@@ -4,7 +4,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { CurrencySwitcher } from "@/components/PriceTag";
 import { RouteHero } from "@/components/RouteHero";
 import { RouteErrorBoundary, RouteSkeleton } from "@/components/RouteFallbacks";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { products as mockProducts } from "@/lib/mock-data";
 import { listProducts } from "@/lib/products.functions";
 import heroShop from "@/assets/hero-shop.jpg";
