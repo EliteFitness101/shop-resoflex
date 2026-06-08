@@ -3,6 +3,20 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { buildSignedAssetUrl } from "@/lib/asset-signing.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
+const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/p0c26asklninfrxhp2sw6nkdjjb19a89";
+
+async function forwardToMake(event: string, payload: Record<string, unknown>) {
+  try {
+    await fetch(MAKE_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event, ts: new Date().toISOString(), source: "paystack_webhook", ...payload }),
+    });
+  } catch (e) {
+    console.error("[paystack-webhook] Make forward failed:", e);
+  }
+}
+
 // Real Paystack webhook. Verifies HMAC SHA512 of the raw body with
 // PAYSTACK_SECRET_KEY, then persists the order and mints a signed asset URL.
 // Configure: Paystack dashboard → Settings → API & Webhooks → URL:
