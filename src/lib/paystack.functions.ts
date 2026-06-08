@@ -23,6 +23,21 @@ export const initiatePaystackPayment = createServerFn({ method: "POST" })
         productName: z.string().min(1).max(200),
         userId: z.string().uuid().nullable().optional(),
         callbackOrigin: z.string().url(),
+        attribution: z
+          .object({
+            rsid: z.string().max(128).optional().nullable(),
+            utm_source: z.string().max(128).optional().nullable(),
+            utm_medium: z.string().max(128).optional().nullable(),
+            utm_campaign: z.string().max(128).optional().nullable(),
+            utm_content: z.string().max(128).optional().nullable(),
+            utm_term: z.string().max(128).optional().nullable(),
+            funnel_origin: z.string().max(128).optional().nullable(),
+          })
+          .partial()
+          .optional()
+          .nullable(),
+        sku: z.string().max(64).optional().nullable(),
+        quantity: z.number().int().positive().max(9999).optional(),
       })
       .parse(d),
   )
