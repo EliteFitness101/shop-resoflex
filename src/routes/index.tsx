@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { ScarcityBanner } from "@/components/ScarcityBanner";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { ProductCard } from "@/components/ProductCard";
@@ -6,7 +7,10 @@ import { GoldButton } from "@/components/GoldButton";
 import { FAQAccordion } from "@/components/FAQAccordion";
 import { PlusSizeHero } from "@/components/PlusSizeHero";
 import { HeroCarousel } from "@/components/HeroCarousel";
+import { StickyCTA } from "@/components/StickyCTA";
 import { products, mealPlans, stats } from "@/lib/mock-data";
+import { attachScrollDepthTracking, track } from "@/lib/analytics";
+import { decorateUrl, ensureAttribution } from "@/lib/attribution";
 import { Activity, Coins, Flame, ShieldCheck, Sparkles, TrendingUp, Users, ExternalLink } from "lucide-react";
 
 const CHATB2K_URL = "https://reso-fit.lovable.app";
@@ -26,11 +30,18 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  useEffect(() => {
+    ensureAttribution();
+    track("landing_view");
+    const cleanup = attachScrollDepthTracking();
+    return cleanup;
+  }, []);
   return (
     <>
       <ScarcityBanner />
       <HeroCarousel />
       <PlusSizeHero />
+      <StickyCTA />
 
 
 
@@ -50,12 +61,15 @@ function Landing() {
             ResoFlex™ Empire OS — Nigeria's elite performance operating system. Premium supplements, tactical programs, regional meal protocols, and a sovereign referral economy.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link to="/shop"><GoldButton size="lg">Enter the Shop</GoldButton></Link>
+            <Link to="/shop" onClick={() => track("cta_click", { cta: "hero_shop" })}>
+              <GoldButton size="lg">Enter the Shop</GoldButton>
+            </Link>
             <a
-              href={CHATB2K_URL}
+              href={decorateUrl(CHATB2K_URL)}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 font-mono uppercase tracking-widest text-xs sm:text-sm px-5 py-3 rounded border border-gold/50 text-gold hover:bg-gold/10 hover:shadow-gold transition"
+              onClick={() => track("cta_click", { cta: "chatb2k_assessment", target: "external" })}
+              className="inline-flex items-center gap-2 font-mono uppercase tracking-widest text-xs sm:text-sm px-5 py-3 rounded border border-gold/50 text-gold hover:bg-gold/10 hover:shadow-gold transition min-h-11"
             >
               <Sparkles className="size-4" /> ChatB2K Assessment <ExternalLink className="size-3.5 opacity-70" />
             </a>

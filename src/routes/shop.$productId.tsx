@@ -7,6 +7,7 @@ import { initiatePayment } from "@/lib/paystack";
 import { useAuth } from "@/hooks/use-auth";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { track } from "@/lib/analytics";
 import { ArrowLeft, Shield, Truck, BadgeCheck } from "lucide-react";
 
 export const Route = createFileRoute("/shop/$productId")({
@@ -49,6 +50,10 @@ function ProductPage() {
     if (user?.email) setEmail(user.email);
   }, [user?.email]);
 
+  useEffect(() => {
+    track("product_view", { productId: product.id, sku: product.slug, name: product.name, priceNGN: product.priceNGN });
+  }, [product.id, product.slug, product.name, product.priceNGN]);
+
   const isBulk = qty >= BULK_MIN_QTY;
   const unitPrice = isBulk ? Math.min(BULK_UNIT_NGN, product.priceNGN) : product.priceNGN;
   const total = unitPrice * qty;
@@ -60,6 +65,7 @@ function ProductPage() {
       return;
     }
     setBusy(true);
+    track("checkout_started", { productId: product.id, sku: product.slug, qty, total });
     try {
       const { authorizationUrl } = await initiatePayment({
         email,
@@ -67,12 +73,15 @@ function ProductPage() {
         productId: product.id,
         productName: qty > 1 ? `${product.name} ×${qty}${isBulk ? " (bulk)" : ""}` : product.name,
         userId: user?.id ?? null,
+        sku: product.slug,
+        quantity: qty,
       });
+      if (!authorizationUrl) throw new Error("Paystack did not return a checkout URL.");
       toast.success("Routing to Paystack…");
       window.location.href = authorizationUrl;
     } catch (e) {
       setBusy(false);
-      toast.error(e instanceof Error ? e.message : "Checkout failed");
+      toast.error(e instanceof Error ? e.message : "Checkout failed — please retry.");
     }
   };
 

@@ -23,6 +23,21 @@ export const initiatePaystackPayment = createServerFn({ method: "POST" })
         productName: z.string().min(1).max(200),
         userId: z.string().uuid().nullable().optional(),
         callbackOrigin: z.string().url(),
+        attribution: z
+          .object({
+            rsid: z.string().max(128).optional().nullable(),
+            utm_source: z.string().max(128).optional().nullable(),
+            utm_medium: z.string().max(128).optional().nullable(),
+            utm_campaign: z.string().max(128).optional().nullable(),
+            utm_content: z.string().max(128).optional().nullable(),
+            utm_term: z.string().max(128).optional().nullable(),
+            funnel_origin: z.string().max(128).optional().nullable(),
+          })
+          .partial()
+          .optional()
+          .nullable(),
+        sku: z.string().max(64).optional().nullable(),
+        quantity: z.number().int().positive().max(9999).optional(),
       })
       .parse(d),
   )
@@ -57,6 +72,15 @@ export const initiatePaystackPayment = createServerFn({ method: "POST" })
           productId: data.productId,
           productName: data.productName,
           userId: data.userId ?? null,
+          sku: data.sku ?? data.productId,
+          quantity: data.quantity ?? 1,
+          rsid: data.attribution?.rsid ?? null,
+          utm_source: data.attribution?.utm_source ?? null,
+          utm_medium: data.attribution?.utm_medium ?? null,
+          utm_campaign: data.attribution?.utm_campaign ?? null,
+          utm_content: data.attribution?.utm_content ?? null,
+          utm_term: data.attribution?.utm_term ?? null,
+          funnel_origin: data.attribution?.funnel_origin ?? null,
         },
       }),
     });
