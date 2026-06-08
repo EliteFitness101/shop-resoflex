@@ -2,11 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { mealPlans } from "@/lib/mock-data";
 import { GoldButton } from "@/components/GoldButton";
 import { RouteHero } from "@/components/RouteHero";
+import { RouteErrorBoundary, RouteSkeleton } from "@/components/RouteFallbacks";
 import { Check } from "lucide-react";
 import heroMeals from "@/assets/hero-meals.jpg";
 
 export const Route = createFileRoute("/meals")({
   component: Meals,
+  pendingComponent: () => <RouteSkeleton rows={4} />,
+  errorComponent: ({ error, reset }) => <RouteErrorBoundary error={error} reset={reset} />,
   head: () => ({
     meta: [
       { title: "Regional Metabolic Protocols — Macro-Precise Nigerian Nutrition" },
