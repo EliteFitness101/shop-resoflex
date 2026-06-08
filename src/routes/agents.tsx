@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { GoldButton } from "@/components/GoldButton";
 import { RouteHero } from "@/components/RouteHero";
+import { RouteErrorBoundary, RouteSkeleton } from "@/components/RouteFallbacks";
 import { referrals } from "@/lib/mock-data";
 import { Copy, Radio } from "lucide-react";
 import { toast } from "sonner";
@@ -9,6 +10,8 @@ import heroAgents from "@/assets/hero-agents.jpg";
 
 export const Route = createFileRoute("/agents")({
   component: Agents,
+  pendingComponent: () => <RouteSkeleton rows={3} />,
+  errorComponent: ({ error, reset }) => <RouteErrorBoundary error={error} reset={reset} />,
   head: () => ({
     meta: [
       { title: "Sovereign Agent Economy Network — Earn While You Build" },

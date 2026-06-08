@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { GoldButton } from "@/components/GoldButton";
 import { RouteHero } from "@/components/RouteHero";
+import { RouteErrorBoundary, RouteSkeleton } from "@/components/RouteFallbacks";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
 import { getWalletState } from "@/lib/wallet.functions";
 import { ArrowDownToLine, ArrowUpRight, Share2 } from "lucide-react";
@@ -11,6 +13,8 @@ import heroWallet from "@/assets/hero-wallet.jpg";
 
 export const Route = createFileRoute("/wallet")({
   component: Wallet,
+  pendingComponent: () => <RouteSkeleton rows={3} />,
+  errorComponent: ({ error, reset }) => <RouteErrorBoundary error={error} reset={reset} />,
   head: () => ({
     meta: [
       { title: "Real-Time Telemetry Wallet — Outbound Revenue Settlement Node" },
@@ -29,19 +33,34 @@ export const Route = createFileRoute("/wallet")({
 function Wallet() {
   const { user, loading } = useAuth();
   const [state, setState] = useState<Awaited<ReturnType<typeof getWalletState>> | null>(null);
+  const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
     if (loading || !user) return;
-    getWalletState().then(setState).catch(() => setState(null));
+    setFetching(true);
+    getWalletState().then(setState).catch(() => setState(null)).finally(() => setFetching(false));
   }, [loading, user]);
 
-  if (loading) return <div className="p-10 text-center text-muted-foreground">Authenticating…</div>;
+  if (loading) return <RouteSkeleton rows={3} />;
   if (!user)
     return (
       <div className="p-10 max-w-md mx-auto text-center">
         <p>Sign in to view your referral wallet.</p>
         <Link to="/login" className="mt-4 inline-block text-gold font-mono text-xs uppercase tracking-widest">→ Login</Link>
       </div>
+    );
+  if (fetching && !state)
+    return (
+      <>
+        <RouteHero eyebrow="WALLET · SETTLEMENT NODE" title="Real-Time Telemetry Wallet" subtitle="Loading settlement node telemetry…" ctaLabel="Initialize" ctaHref="#wallet-vault" image={heroWallet} />
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-12 space-y-4">
+          <Skeleton className="h-40 w-full !rounded-none bg-gold/10" />
+          <div className="grid sm:grid-cols-3 gap-3">
+            {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-20 !rounded-none bg-gold/5" />)}
+          </div>
+          <Skeleton className="h-48 w-full !rounded-none bg-gold/5" />
+        </div>
+      </>
     );
 
   const balance = state?.balance ?? 0;

@@ -21,16 +21,16 @@ export function RouteHero({ eyebrow, title, subtitle, ctaLabel, ctaHref, image }
       <div className="absolute inset-0 bg-gradient-to-r from-[#060607] via-[#060607]/85 to-[#060607]/30" aria-hidden />
       <div className="absolute inset-0 telemetry-grid opacity-20 mix-blend-overlay" aria-hidden />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-14 sm:py-20 grid lg:grid-cols-[1.1fr_0.9fr] gap-8 items-center">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-10 sm:py-16 lg:py-20 grid lg:grid-cols-[1.1fr_0.9fr] gap-6 lg:gap-8 items-center">
         <div>
-          <div className="text-telemetry mb-3">// {eyebrow}</div>
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05]">
+          <div className="text-telemetry mb-2 sm:mb-3">// {eyebrow}</div>
+          <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05]">
             {title}
           </h1>
-          <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-xl leading-relaxed">{subtitle}</p>
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            <a href={ctaHref}>
-              <GoldButton size="lg" className="!rounded-none font-mono tracking-widest text-xs uppercase">
+          <p className="mt-3 sm:mt-5 text-sm sm:text-lg text-muted-foreground max-w-xl leading-relaxed">{subtitle}</p>
+          <div className="mt-5 sm:mt-7 flex flex-wrap items-center gap-3">
+            <a href={ctaHref} className="inline-block">
+              <GoldButton size="lg" className="!rounded-none font-mono tracking-widest text-xs uppercase min-h-12 px-5">
                 {ctaLabel} <ArrowDown className="size-4 -rotate-45" />
               </GoldButton>
             </a>
