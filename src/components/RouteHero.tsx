@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { GoldButton } from "@/components/GoldButton";
 import { ArrowDown } from "lucide-react";
 
@@ -11,6 +12,16 @@ interface RouteHeroProps {
 }
 
 export function RouteHero({ eyebrow, title, subtitle, ctaLabel, ctaHref, image }: RouteHeroProps) {
+  // Deterministic initial render (SSR-safe), then randomize on the client to avoid React #418 hydration mismatch.
+  const seed = useMemo(() => Array.from({ length: 6 }, (_, i) => (i + 1) * 17.5), []);
+  const [channels, setChannels] = useState<number[]>(seed);
+  useEffect(() => {
+    setChannels(Array.from({ length: 6 }, () => Math.random() * 99));
+    const t = setInterval(() => {
+      setChannels(Array.from({ length: 6 }, () => Math.random() * 99));
+    }, 4000);
+    return () => clearInterval(t);
+  }, []);
   return (
     <section className="relative isolate overflow-hidden border-y border-gold/15 bg-[#060607]">
       <div
@@ -45,10 +56,10 @@ export function RouteHero({ eyebrow, title, subtitle, ctaLabel, ctaHref, image }
             <div className="absolute -bottom-px right-0 h-px w-24 bg-gold" />
             <div className="text-telemetry mb-4">SIGNAL · {eyebrow}</div>
             <div className="grid grid-cols-2 gap-3 font-mono text-[11px]">
-              {Array.from({ length: 6 }).map((_, i) => (
+              {channels.map((v, i) => (
                 <div key={i} className="border border-gold/10 bg-black/30 p-3">
                   <div className="text-gold/60 uppercase tracking-widest text-[9px]">CH {String(i + 1).padStart(2, "0")}</div>
-                  <div className="text-gold font-semibold mt-1">{(Math.random() * 99).toFixed(2)}%</div>
+                  <div className="text-gold font-semibold mt-1">{v.toFixed(2)}%</div>
                 </div>
               ))}
             </div>
