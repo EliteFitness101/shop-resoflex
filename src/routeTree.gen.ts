@@ -24,6 +24,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as CheckoutCallbackRouteImport } from './routes/checkout.callback'
+import { Route as AdminRevenueAiRouteImport } from './routes/admin.revenue-ai'
 import { Route as ApiPublicPaystackWebhookRouteImport } from './routes/api/public/paystack-webhook'
 import { Route as ApiPublicAssetProductIdRouteImport } from './routes/api/public/asset.$productId'
 
@@ -102,6 +103,11 @@ const CheckoutCallbackRoute = CheckoutCallbackRouteImport.update({
   path: '/checkout/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRevenueAiRoute = AdminRevenueAiRouteImport.update({
+  id: '/revenue-ai',
+  path: '/revenue-ai',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiPublicPaystackWebhookRoute =
   ApiPublicPaystackWebhookRouteImport.update({
     id: '/api/public/paystack-webhook',
@@ -116,7 +122,7 @@ const ApiPublicAssetProductIdRoute = ApiPublicAssetProductIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/agents': typeof AgentsRoute
   '/autopilot': typeof AutopilotRoute
   '/ecosystem': typeof EcosystemRoute
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRouteWithChildren
   '/wallet': typeof WalletRoute
+  '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -135,7 +142,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/agents': typeof AgentsRoute
   '/autopilot': typeof AutopilotRoute
   '/ecosystem': typeof EcosystemRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRouteWithChildren
   '/wallet': typeof WalletRoute
+  '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -155,7 +163,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/agents': typeof AgentsRoute
   '/autopilot': typeof AutopilotRoute
   '/ecosystem': typeof EcosystemRoute
@@ -166,6 +174,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRouteWithChildren
   '/wallet': typeof WalletRoute
+  '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/shop'
     | '/wallet'
+    | '/admin/revenue-ai'
     | '/checkout/callback'
     | '/checkout/success'
     | '/shop/$productId'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/shop'
     | '/wallet'
+    | '/admin/revenue-ai'
     | '/checkout/callback'
     | '/checkout/success'
     | '/shop/$productId'
@@ -225,6 +236,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/shop'
     | '/wallet'
+    | '/admin/revenue-ai'
     | '/checkout/callback'
     | '/checkout/success'
     | '/shop/$productId'
@@ -234,7 +246,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AgentsRoute: typeof AgentsRoute
   AutopilotRoute: typeof AutopilotRoute
   EcosystemRoute: typeof EcosystemRoute
@@ -358,6 +370,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/revenue-ai': {
+      id: '/admin/revenue-ai'
+      path: '/revenue-ai'
+      fullPath: '/admin/revenue-ai'
+      preLoaderRoute: typeof AdminRevenueAiRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/public/paystack-webhook': {
       id: '/api/public/paystack-webhook'
       path: '/api/public/paystack-webhook'
@@ -375,6 +394,16 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminRevenueAiRoute: typeof AdminRevenueAiRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminRevenueAiRoute: AdminRevenueAiRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface ShopRouteChildren {
   ShopProductIdRoute: typeof ShopProductIdRoute
 }
@@ -387,7 +416,7 @@ const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   AgentsRoute: AgentsRoute,
   AutopilotRoute: AutopilotRoute,
   EcosystemRoute: EcosystemRoute,
@@ -406,3 +435,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
