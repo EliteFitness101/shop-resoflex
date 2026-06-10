@@ -1,5 +1,8 @@
 // Lightweight Make.com webhook dispatcher. Fire-and-forget; never blocks UI.
+// Also mirrors the event into our Supabase `funnel_events` table via a
+// server function so we have a sovereign source of truth.
 import { ensureAttribution } from "./attribution";
+import { ingestFunnelEvent } from "./revenue.functions";
 
 const MAKE_WEBHOOK_URL =
   "https://hook.eu1.make.com/p0c26asklninfrxhp2sw6nkdjjb19a89";
