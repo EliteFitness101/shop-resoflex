@@ -143,6 +143,29 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
 
             // Forward to Make for cross-channel attribution & automations.
             const meta = (event.data?.metadata ?? {}) as Record<string, unknown>;
+
+            // Sovereign source of truth — Supabase revenue_events.
+            try {
+              await supabaseAdmin.from("revenue_events").insert({
+                reference: ref,
+                rsid: (meta.rsid as string) ?? null,
+                sku: (meta.sku as string) ?? productId,
+                variant: (meta.variant as string) ?? null,
+                amount_ngn: amountNGN,
+                currency: "NGN",
+                utm_source: (meta.utm_source as string) ?? null,
+                utm_medium: (meta.utm_medium as string) ?? null,
+                utm_campaign: (meta.utm_campaign as string) ?? null,
+                utm_content: (meta.utm_content as string) ?? null,
+                utm_term: (meta.utm_term as string) ?? null,
+                funnel_origin: (meta.funnel_origin as string) ?? "resofit",
+                customer_email: email ?? null,
+                raw: event.data as unknown as Record<string, unknown> as never,
+              });
+            } catch (e) {
+              console.error("[paystack-webhook] revenue_events insert failed:", e);
+            }
+
             await forwardToMake("payment_success", {
               reference: ref,
               amountNGN,
