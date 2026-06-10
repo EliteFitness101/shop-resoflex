@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { track } from "@/lib/analytics";
+import { smartCtaLabel } from "@/lib/cta-intelligence";
 
 // Mobile-only sticky bar with the primary "Shop" CTA. Appears after first scroll.
 export function StickyCTA() {
@@ -22,7 +23,7 @@ export function StickyCTA() {
         onClick={() => track("cta_click", { cta: "sticky_shop", surface: "mobile" })}
         className="pointer-events-auto block w-full text-center font-mono uppercase tracking-widest text-xs min-h-12 py-3.5 bg-gradient-gold text-primary-foreground shadow-gold rounded-none"
       >
-        Enter the Shop →
+        {smartCtaLabel("Enter the Shop")} →
       </Link>
     </div>
   );

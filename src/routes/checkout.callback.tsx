@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { verifyPayment } from "@/lib/paystack";
 import { GoldButton } from "@/components/GoldButton";
 import { track } from "@/lib/analytics";
+import { recordRsidValue } from "@/lib/cta-intelligence";
 
 export const Route = createFileRoute("/checkout/callback")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -36,6 +37,7 @@ function Callback() {
         const result = await verifyPayment(reference);
         if (result?.status === "success") {
           track("payment_success", { reference, amountNGN: result.amountNGN, productId: result.productId });
+          recordRsidValue(result.amountNGN);
           setState("success");
           nav({ to: "/checkout/success", search: { reference } });
           return;
