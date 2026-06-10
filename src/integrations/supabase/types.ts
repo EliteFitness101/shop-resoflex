@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      funnel_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          funnel_origin: string | null
+          id: string
+          metadata: Json | null
+          path: string | null
+          rsid: string | null
+          sku: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          funnel_origin?: string | null
+          id?: string
+          metadata?: Json | null
+          path?: string | null
+          rsid?: string | null
+          sku?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          funnel_origin?: string | null
+          id?: string
+          metadata?: Json | null
+          path?: string | null
+          rsid?: string | null
+          sku?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: []
+      }
       meal_plan_templates: {
         Row: {
           created_at: string
@@ -242,6 +290,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      revenue_events: {
+        Row: {
+          amount_ngn: number
+          created_at: string
+          currency: string
+          customer_email: string | null
+          funnel_origin: string | null
+          id: string
+          raw: Json | null
+          reference: string | null
+          rsid: string | null
+          sku: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          variant: string | null
+        }
+        Insert: {
+          amount_ngn?: number
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          funnel_origin?: string | null
+          id?: string
+          raw?: Json | null
+          reference?: string | null
+          rsid?: string | null
+          sku?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          variant?: string | null
+        }
+        Update: {
+          amount_ngn?: number
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          funnel_origin?: string | null
+          id?: string
+          raw?: Json | null
+          reference?: string | null
+          rsid?: string | null
+          sku?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          variant?: string | null
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
