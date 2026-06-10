@@ -31,6 +31,24 @@ export function track(event: AnalyticsEvent, payload: Record<string, unknown> = 
       attribution,
       ...payload,
     });
+    // Mirror to Supabase (sovereign truth) — fire-and-forget.
+    void ingestFunnelEvent({
+      data: {
+        event_type: event,
+        sku: (payload.sku as string) ?? (payload.productId as string) ?? null,
+        path: window.location.pathname,
+        attribution: {
+          rsid: attribution.rsid,
+          utm_source: attribution.utm_source,
+          utm_medium: attribution.utm_medium,
+          utm_campaign: attribution.utm_campaign,
+          utm_content: attribution.utm_content,
+          utm_term: attribution.utm_term,
+          funnel_origin: attribution.funnel_origin,
+        },
+        metadata: payload,
+      },
+    }).catch(() => {});
     // Prefer sendBeacon so navigations don't drop the event.
     if (navigator.sendBeacon) {
       const blob = new Blob([body], { type: "application/json" });
