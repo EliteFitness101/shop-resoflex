@@ -128,6 +128,31 @@ function ProductPage() {
             </TacticalPanel>
           </div>
 
+          {product.sizes && product.sizes.length > 0 && (
+            <div className="mt-6 rounded-lg p-4 border border-gold/15 bg-background/40">
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-telemetry">// SIZE</div>
+                <div className="text-xs font-mono text-gold">{size ?? "—"}</div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {product.sizes.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setSize(s)}
+                    className={`min-w-[3rem] h-11 px-3 rounded border text-sm font-mono uppercase tracking-wider transition ${
+                      size === s
+                        ? "border-gold bg-gold text-primary-foreground"
+                        : "border-gold/25 hover:border-gold/60 text-foreground"
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Bulk / wholesale tier */}
           <div id="bulk-tier" className={`mt-6 rounded-lg p-4 border transition ${isBulk ? "border-emerald-400/60 bg-emerald-400/5" : "border-gold/15 bg-background/40"}`}>
             <div className="flex items-center justify-between gap-3">
