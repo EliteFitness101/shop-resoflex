@@ -76,7 +76,7 @@ function ProductPage() {
         email,
         amountKobo: total * 100,
         productId: product.id,
-        productName: qty > 1 ? `${product.name} ×${qty}${isBulk ? " (bulk)" : ""}` : product.name,
+        productName: `${product.name}${size ? ` [${size}]` : ""}${qty > 1 ? ` ×${qty}${isBulk ? " (bulk)" : ""}` : ""}`,
         userId: user?.id ?? null,
         sku: product.slug,
         quantity: qty,
