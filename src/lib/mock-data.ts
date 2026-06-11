@@ -5,9 +5,22 @@ import img3 from "@/assets/shop-product-3.jpg.asset.json";
 import img4 from "@/assets/shop-product-4.jpg.asset.json";
 import img5 from "@/assets/shop-product-5.jpg.asset.json";
 import img6 from "@/assets/shop-product-6.jpg.asset.json";
+import curvy1 from "@/assets/curvy-1.jpg.asset.json";
+import curvy2 from "@/assets/curvy-2.jpg.asset.json";
+import curvy3 from "@/assets/curvy-3.jpg.asset.json";
+import curvy4 from "@/assets/curvy-4.jpg.asset.json";
+import curvy5 from "@/assets/curvy-5.jpg.asset.json";
+import curvy6 from "@/assets/curvy-6.jpg.asset.json";
+import curvy7 from "@/assets/curvy-7.jpg.asset.json";
+import curvy8 from "@/assets/curvy-8.jpg.asset.json";
+import curvy9 from "@/assets/curvy-9.jpg.asset.json";
+import curvy10 from "@/assets/curvy-10.jpg.asset.json";
 
 const UNIT_NGN = 12000;
 const COMPARE_NGN = 15000;
+const CURVY_SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+const CURVY_GRADIENT = "linear-gradient(135deg, oklch(0.22 0.04 350), oklch(0.78 0.09 65))";
+
 
 export const products: Product[] = [
   {
