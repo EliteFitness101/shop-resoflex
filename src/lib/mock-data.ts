@@ -1,10 +1,13 @@
 import type { Product, MealPlan, Referral, Order, Transaction, TelemetryEvent } from "./types";
-import hzhTee from "@/assets/hzh-compression-tee.asset.json";
-import hzhLong from "@/assets/hzh-longsleeve-run.asset.json";
-import forzaCharcoal from "@/assets/forzafit-charcoal-tank.asset.json";
-import forzaBlue from "@/assets/forzafit-blue-runner.asset.json";
-import forzaGreen from "@/assets/forzafit-green-tank.asset.json";
-import hzhWhite from "@/assets/hzh-white-singlet.asset.json";
+import img1 from "@/assets/shop-product-1.jpg.asset.json";
+import img2 from "@/assets/shop-product-2.jpg.asset.json";
+import img3 from "@/assets/shop-product-3.jpg.asset.json";
+import img4 from "@/assets/shop-product-4.jpg.asset.json";
+import img5 from "@/assets/shop-product-5.jpg.asset.json";
+import img6 from "@/assets/shop-product-6.jpg.asset.json";
+
+const UNIT_NGN = 12000;
+const COMPARE_NGN = 15000;
 
 export const products: Product[] = [
   {
@@ -12,78 +15,81 @@ export const products: Product[] = [
     slug: "sovereign-whey",
     name: "HZH Compression Tee — Performance",
     tagline: "Engineered fit. Sweat-wicking.",
-    description: "Premium HZH compression performance tee — cold-pressed fabric, muscle-supportive cut, training-grade durability.",
-    priceNGN: 48000,
-    comparePriceNGN: 62000,
+    description: "Premium HZH compression performance tee — cold-pressed fabric, muscle-supportive cut, training-grade durability. ₦8,500/unit on orders of 10+.",
+    priceNGN: UNIT_NGN,
+    comparePriceNGN: COMPARE_NGN,
     commissionPct: 18,
     category: "gear",
     badge: "FLAGSHIP",
     imageGradient: "linear-gradient(135deg, oklch(0.3 0.04 60), oklch(0.78 0.09 65))",
-    imageUrl: hzhTee.url,
+    imageUrl: img1.url,
   },
   {
     id: "p2",
     slug: "tactical-resistance-kit",
     name: "ForzaFit Charcoal Performance Tank",
     tagline: "Built for big lifts.",
-    description: "ForzaFit signature charcoal tank — broad-frame cut, breathable knit, gym-to-street finish.",
-    priceNGN: 72000,
-    comparePriceNGN: 95000,
+    description: "ForzaFit signature charcoal tank — broad-frame cut, breathable knit, gym-to-street finish. ₦8,500/unit on orders of 10+.",
+    priceNGN: UNIT_NGN,
+    comparePriceNGN: COMPARE_NGN,
     commissionPct: 22,
     category: "gear",
     imageGradient: "linear-gradient(135deg, oklch(0.2 0.01 60), oklch(0.71 0.1 75))",
-    imageUrl: forzaCharcoal.url,
+    imageUrl: img2.url,
   },
   {
     id: "p3",
     slug: "ignition-protocol",
     name: "ForzaFit Cobalt Runner Tank",
     tagline: "Track-tested. Race-ready.",
-    description: "Aerodynamic runner cut in cobalt blue — minimal seams, fast-dry mesh, contoured shoulder mobility.",
-    priceNGN: 35000,
+    description: "Aerodynamic runner cut in cobalt blue — minimal seams, fast-dry mesh, contoured shoulder mobility. ₦8,500/unit on orders of 10+.",
+    priceNGN: UNIT_NGN,
+    comparePriceNGN: COMPARE_NGN,
     commissionPct: 30,
     category: "gear",
     badge: "BESTSELLER",
     imageGradient: "linear-gradient(135deg, oklch(0.18 0.007 60), oklch(0.78 0.09 65))",
-    imageUrl: forzaBlue.url,
+    imageUrl: img3.url,
   },
   {
     id: "p4",
     slug: "midnight-elite-stack",
     name: "ForzaFit Sage Training Tank",
     tagline: "Recovery-soft cotton blend.",
-    description: "Sage green training tank — light compression, gentle on skin, perfect for steady-state cardio days.",
-    priceNGN: 54000,
-    comparePriceNGN: 68000,
+    description: "Sage green training tank — light compression, gentle on skin, perfect for steady-state cardio days. ₦8,500/unit on orders of 10+.",
+    priceNGN: UNIT_NGN,
+    comparePriceNGN: COMPARE_NGN,
     commissionPct: 20,
     category: "gear",
     imageGradient: "linear-gradient(135deg, oklch(0.15 0.02 280), oklch(0.71 0.1 75))",
-    imageUrl: forzaGreen.url,
+    imageUrl: img4.url,
   },
   {
     id: "p5",
     slug: "sovereign-playbook",
     name: "HZH White Performance Singlet",
     tagline: "Lightweight elite.",
-    description: "Ultra-light HZH singlet — competition-grade ventilation, signature back yoke, premium stitching.",
-    priceNGN: 18000,
+    description: "Ultra-light HZH singlet — competition-grade ventilation, signature back yoke, premium stitching. ₦8,500/unit on orders of 10+.",
+    priceNGN: UNIT_NGN,
+    comparePriceNGN: COMPARE_NGN,
     commissionPct: 40,
     category: "gear",
     badge: "NEW DROP",
     imageGradient: "linear-gradient(135deg, oklch(0.2 0.01 60), oklch(0.78 0.09 65))",
-    imageUrl: hzhWhite.url,
+    imageUrl: img5.url,
   },
   {
     id: "p6",
     slug: "command-shaker",
     name: "HZH Long-Sleeve Compression Top",
     tagline: "All-weather, all-terrain.",
-    description: "Full-sleeve compression top — UV-resistant, thermal-regulating, engineered for road and trail.",
-    priceNGN: 22000,
+    description: "Full-sleeve compression top — UV-resistant, thermal-regulating, engineered for road and trail. ₦8,500/unit on orders of 10+.",
+    priceNGN: UNIT_NGN,
+    comparePriceNGN: COMPARE_NGN,
     commissionPct: 15,
     category: "gear",
     imageGradient: "linear-gradient(135deg, oklch(0.18 0.01 60), oklch(0.71 0.1 75))",
-    imageUrl: hzhLong.url,
+    imageUrl: img6.url,
   },
 ];
 
@@ -135,16 +141,16 @@ export const referrals: Referral[] = [
 ];
 
 export const orders: Order[] = [
-  { id: "o1", reference: "RSFX-9081", product: "Sovereign Whey Isolate", amountNGN: 48000, status: "paid", createdAt: "2025-05-12" },
-  { id: "o2", reference: "RSFX-9082", product: "Ignition Protocol", amountNGN: 35000, status: "paid", createdAt: "2025-05-14" },
-  { id: "o3", reference: "RSFX-9083", product: "Command Shaker", amountNGN: 22000, status: "pending", createdAt: "2025-05-16" },
+  { id: "o1", reference: "RSFX-9081", product: "HZH Compression Tee", amountNGN: 12000, status: "paid", createdAt: "2025-05-12" },
+  { id: "o2", reference: "RSFX-9082", product: "ForzaFit Cobalt Runner (10x bulk)", amountNGN: 85000, status: "paid", createdAt: "2025-05-14" },
+  { id: "o3", reference: "RSFX-9083", product: "HZH Long-Sleeve Top", amountNGN: 12000, status: "pending", createdAt: "2025-05-16" },
 ];
 
 export const transactions: Transaction[] = [
-  { id: "t1", type: "commission", amountNGN: 8640, createdAt: "2025-05-12", note: "Sovereign Whey ref. RSFX-9081" },
-  { id: "t2", type: "commission", amountNGN: 10500, createdAt: "2025-05-14", note: "Ignition Protocol ref. RSFX-9082" },
+  { id: "t1", type: "commission", amountNGN: 2160, createdAt: "2025-05-12", note: "HZH Compression Tee ref. RSFX-9081" },
+  { id: "t2", type: "commission", amountNGN: 25500, createdAt: "2025-05-14", note: "Cobalt Runner bulk ref. RSFX-9082" },
   { id: "t3", type: "withdrawal", amountNGN: -15000, createdAt: "2025-05-15", note: "Wallet → GTBank ****2231" },
-  { id: "t4", type: "commission", amountNGN: 4320, createdAt: "2025-05-16", note: "Midnight Elite ref. RSFX-9089" },
+  { id: "t4", type: "commission", amountNGN: 1800, createdAt: "2025-05-16", note: "HZH Long-Sleeve ref. RSFX-9089" },
 ];
 
 export const telemetry: TelemetryEvent[] = [
