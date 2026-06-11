@@ -135,7 +135,7 @@ function ProductPage() {
                 <div className="text-xs font-mono text-gold">{size ?? "—"}</div>
               </div>
               <div className="flex flex-wrap gap-2">
-                {product.sizes.map((s) => (
+                {product.sizes.map((s: string) => (
                   <button
                     key={s}
                     type="button"
