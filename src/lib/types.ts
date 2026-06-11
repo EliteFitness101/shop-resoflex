@@ -26,6 +26,7 @@ export interface Product {
   badge?: string;
   imageGradient: string; // CSS gradient used as fallback
   imageUrl?: string | null; // admin-uploaded image (overrides gradient)
+  sizes?: string[]; // optional size variants
 }
 
 export interface MealPlan {
