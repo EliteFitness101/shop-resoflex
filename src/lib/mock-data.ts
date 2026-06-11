@@ -104,7 +104,79 @@ export const products: Product[] = [
     imageGradient: "linear-gradient(135deg, oklch(0.18 0.01 60), oklch(0.71 0.1 75))",
     imageUrl: img6.url,
   },
+  // ── ResoFlex™ Women Curvy Collection — ₦25,000 / variant · XS–XXXL ──
+  {
+    id: "c1", slug: "curvy-graphite-set", name: "ResoFlex Curvy Set — Graphite",
+    tagline: "Curve-design tight wrap. Studio-to-street.",
+    description: "Two-piece tight-wrap set in graphite grey. Curve-engineered seams sculpt and support XS–XXXL frames. Buttery soft-touch knit, squat-proof leggings, breathable cap-sleeve top.",
+    priceNGN: 25000, commissionPct: 18, category: "gear", badge: "CURVY",
+    imageGradient: CURVY_GRADIENT, imageUrl: curvy1.url, sizes: CURVY_SIZES,
+  },
+  {
+    id: "c2", slug: "curvy-wine-set", name: "ResoFlex Curvy Set — Wine",
+    tagline: "Bold burgundy. Body-sculpting fit.",
+    description: "Signature wine-burgundy two-piece. Princess-seam contouring, high-rise compression leggings, cap-sleeve curve top. Sizes XS through XXXL.",
+    priceNGN: 25000, commissionPct: 18, category: "gear",
+    imageGradient: CURVY_GRADIENT, imageUrl: curvy2.url, sizes: CURVY_SIZES,
+  },
+  {
+    id: "c3", slug: "curvy-cobalt-set", name: "ResoFlex Curvy Set — Cobalt",
+    tagline: "Studio cobalt. Streamlined silhouette.",
+    description: "Cobalt blue tight-wrap set. Four-way stretch, curve-design panels, full-length compression leggings. XS–XXXL.",
+    priceNGN: 25000, commissionPct: 18, category: "gear",
+    imageGradient: CURVY_GRADIENT, imageUrl: curvy3.url, sizes: CURVY_SIZES,
+  },
+  {
+    id: "c4", slug: "curvy-onyx-set", name: "ResoFlex Curvy Set — Onyx",
+    tagline: "All-black essential. Wears every day.",
+    description: "Wardrobe-anchor black two-piece. Curve-sculpting seams, no-camel-toe gusset, opaque squat-proof knit. XS–XXXL.",
+    priceNGN: 25000, commissionPct: 18, category: "gear", badge: "BESTSELLER",
+    imageGradient: CURVY_GRADIENT, imageUrl: curvy4.url, sizes: CURVY_SIZES,
+  },
+  {
+    id: "c5", slug: "curvy-wine-zip", name: "ResoFlex Curvy Zip Jacket Set — Wine",
+    tagline: "Long-sleeve curve jacket + matching leggings.",
+    description: "Full-zip mock-neck jacket with thumbholes paired with matching leggings. Curve-design side panels, wine-burgundy colourway. XS–XXXL.",
+    priceNGN: 25000, commissionPct: 20, category: "gear",
+    imageGradient: CURVY_GRADIENT, imageUrl: curvy5.url, sizes: CURVY_SIZES,
+  },
+  {
+    id: "c6", slug: "curvy-cocoa-zip", name: "ResoFlex Curvy Zip Jacket Set — Cocoa",
+    tagline: "Warm cocoa brown. Sculpted jacket.",
+    description: "Cocoa-brown full-zip jacket + leggings. Thumbholes, mock collar, princess-seam shaping. XS–XXXL.",
+    priceNGN: 25000, commissionPct: 20, category: "gear",
+    imageGradient: CURVY_GRADIENT, imageUrl: curvy6.url, sizes: CURVY_SIZES,
+  },
+  {
+    id: "c7", slug: "curvy-onyx-zip", name: "ResoFlex Curvy Zip Jacket Set — Onyx",
+    tagline: "Stealth black zip set. Curve-shaped.",
+    description: "All-black zip jacket + leggings, mock collar, thumbholes, curve panels. XS–XXXL.",
+    priceNGN: 25000, commissionPct: 20, category: "gear",
+    imageGradient: CURVY_GRADIENT, imageUrl: curvy7.url, sizes: CURVY_SIZES,
+  },
+  {
+    id: "c8", slug: "curvy-camel-zip", name: "ResoFlex Curvy Zip Jacket Set — Camel",
+    tagline: "Soft camel. Refined performance.",
+    description: "Camel-tan full-zip jacket + matching leggings. Curve seams, thumbholes, mock neck. XS–XXXL.",
+    priceNGN: 25000, commissionPct: 20, category: "gear",
+    imageGradient: CURVY_GRADIENT, imageUrl: curvy8.url, sizes: CURVY_SIZES,
+  },
+  {
+    id: "c9", slug: "curvy-rose-zip", name: "ResoFlex Curvy Zip Jacket Set — Rose",
+    tagline: "Statement rose. Confident silhouette.",
+    description: "Vibrant rose-pink zip jacket + leggings. Curve-design panels, thumbholes, mock collar. XS–XXXL.",
+    priceNGN: 25000, commissionPct: 20, category: "gear", badge: "NEW DROP",
+    imageGradient: CURVY_GRADIENT, imageUrl: curvy9.url, sizes: CURVY_SIZES,
+  },
+  {
+    id: "c10", slug: "curvy-rose-tee", name: "ResoFlex Curve-Design Tight Wrap Tee — Rose",
+    tagline: "Signature curve seams. Tight wrap.",
+    description: "Curve-design short-sleeve tight-wrap tee in dusty rose. Princess seams sculpt waist + bust, lightweight breathable knit. XS–XXXL.",
+    priceNGN: 25000, commissionPct: 18, category: "gear",
+    imageGradient: CURVY_GRADIENT, imageUrl: curvy10.url, sizes: CURVY_SIZES,
+  },
 ];
+
 
 export const mealPlans: MealPlan[] = [
   {
