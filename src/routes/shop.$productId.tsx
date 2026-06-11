@@ -44,6 +44,7 @@ function ProductPage() {
   const { user } = useAuth();
   const [email, setEmail] = useState("");
   const [qty, setQty] = useState(1);
+  const [size, setSize] = useState<string | null>(product.sizes?.[0] ?? null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
