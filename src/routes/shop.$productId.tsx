@@ -44,6 +44,7 @@ function ProductPage() {
   const { user } = useAuth();
   const [email, setEmail] = useState("");
   const [qty, setQty] = useState(1);
+  const [size, setSize] = useState<string | null>(product.sizes?.[0] ?? null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -64,6 +65,10 @@ function ProductPage() {
       toast.error("Operator email required");
       return;
     }
+    if (product.sizes && !size) {
+      toast.error("Select a size");
+      return;
+    }
     setBusy(true);
     track("checkout_started", { productId: product.id, sku: product.slug, qty, total });
     try {
@@ -71,7 +76,7 @@ function ProductPage() {
         email,
         amountKobo: total * 100,
         productId: product.id,
-        productName: qty > 1 ? `${product.name} ×${qty}${isBulk ? " (bulk)" : ""}` : product.name,
+        productName: `${product.name}${size ? ` [${size}]` : ""}${qty > 1 ? ` ×${qty}${isBulk ? " (bulk)" : ""}` : ""}`,
         userId: user?.id ?? null,
         sku: product.slug,
         quantity: qty,
@@ -122,6 +127,31 @@ function ProductPage() {
               <div className="font-display font-bold text-sm text-gold flex items-center gap-1.5"><BadgeCheck className="size-4"/>LAB</div>
             </TacticalPanel>
           </div>
+
+          {product.sizes && product.sizes.length > 0 && (
+            <div className="mt-6 rounded-lg p-4 border border-gold/15 bg-background/40">
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-telemetry">// SIZE</div>
+                <div className="text-xs font-mono text-gold">{size ?? "—"}</div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {product.sizes.map((s: string) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setSize(s)}
+                    className={`min-w-[3rem] h-11 px-3 rounded border text-sm font-mono uppercase tracking-wider transition ${
+                      size === s
+                        ? "border-gold bg-gold text-primary-foreground"
+                        : "border-gold/25 hover:border-gold/60 text-foreground"
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Bulk / wholesale tier */}
           <div id="bulk-tier" className={`mt-6 rounded-lg p-4 border transition ${isBulk ? "border-emerald-400/60 bg-emerald-400/5" : "border-gold/15 bg-background/40"}`}>
