@@ -65,6 +65,10 @@ function ProductPage() {
       toast.error("Operator email required");
       return;
     }
+    if (product.sizes && !size) {
+      toast.error("Select a size");
+      return;
+    }
     setBusy(true);
     track("checkout_started", { productId: product.id, sku: product.slug, qty, total });
     try {
