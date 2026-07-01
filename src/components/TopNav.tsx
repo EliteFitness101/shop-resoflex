@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { CurrencySwitcher } from "./PriceTag";
 
 const links = [
+  { to: "/tiers", label: "Tiers" },
   { to: "/shop", label: "Shop" },
   { to: "/meals", label: "Meal Plans" },
   { to: "/elite", label: "Elite" },
