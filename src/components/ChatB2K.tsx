@@ -1,14 +1,29 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { MessageCircle, X, Sparkles, PackageSearch, Briefcase, ArrowRight } from "lucide-react";
+import { MessageCircle, X, Sparkles, PackageSearch, Briefcase, ArrowRight, Target } from "lucide-react";
+import { recommendSKU } from "@/lib/chatb2k-intent";
+import type { Intent } from "@/lib/sovereign-catalog";
 
-// Floating ChatB2K bubble — 3 cold-traffic conversion paths.
-// Pure frontend; no tracking, no backend hits beyond standard <Link> nav.
-type Path = "menu" | "drops" | "track" | "bulk";
+// Floating ChatB2K bubble — 4 cold-traffic conversion paths.
+type Path = "menu" | "drops" | "track" | "bulk" | "intent";
+
+const INTENT_OPTIONS: { intent: Intent; label: string }[] = [
+  { intent: "fat-loss", label: "Cut fat" },
+  { intent: "glute", label: "Grow glutes" },
+  { intent: "muscle", label: "Build muscle" },
+  { intent: "wellness", label: "Restore wellness" },
+  { intent: "meal", label: "Fix my meals" },
+  { intent: "elite", label: "Elite concierge" },
+];
 
 export function ChatB2K() {
   const [open, setOpen] = useState(false);
   const [path, setPath] = useState<Path>("menu");
+  const [pick, setPick] = useState<{ intent: Intent; commitment: "test" | "serious" | "elite" } | null>(null);
+
+  const recommendation = pick
+    ? recommendSKU({ intent: pick.intent, commitment: pick.commitment, budgetNGN: pick.commitment === "elite" ? 200_000 : pick.commitment === "serious" ? 40_000 : 15_000 })
+    : null;
 
   return (
     <>
@@ -58,6 +73,7 @@ export function ChatB2K() {
                   Welcome, operator. Pick a path — I'll route you instantly.
                 </p>
                 <div className="space-y-2">
+                  <PathButton onClick={() => setPath("intent")} icon={<Target className="size-4" />} label="🎯 Match me to a protocol" sub="Intent → Paystack in 10 seconds" />
                   <PathButton onClick={() => setPath("drops")} icon={<Sparkles className="size-4" />} label="🔥 New Arrivals Drop Alert" sub="Latest 8XL configurations" />
                   <PathButton onClick={() => setPath("track")} icon={<PackageSearch className="size-4" />} label="📦 Track My Order" sub="Delivery status validation" />
                   <PathButton onClick={() => setPath("bulk")} icon={<Briefcase className="size-4" />} label="💼 Corporate Bulk Portal" sub="Lock 10+ piece wholesale" />
@@ -97,6 +113,66 @@ export function ChatB2K() {
                 <Link to="/shop" onClick={() => setOpen(false)}>
                   <CTA>Lock my wholesale tier</CTA>
                 </Link>
+              </PanelBody>
+            )}
+            {path === "intent" && (
+              <PanelBody back={() => { setPath("menu"); setPick(null); }} title="🎯 Intent match">
+                {!pick ? (
+                  <>
+                    <p className="text-muted-foreground text-xs mb-3">What are you optimizing for right now?</p>
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      {INTENT_OPTIONS.map((o) => (
+                        <button
+                          key={o.intent}
+                          type="button"
+                          onClick={() => setPick({ intent: o.intent, commitment: "serious" })}
+                          className="text-left rounded border border-gold/20 hover:border-gold/50 bg-background/40 px-2.5 py-2 text-xs transition"
+                        >
+                          {o.label}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">// 8 SKUs · locked catalog</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 mb-2">// MATCH READY</div>
+                    <div className="font-display font-semibold">{recommendation!.name}</div>
+                    <div className="text-xs text-muted-foreground">{recommendation!.tagline}</div>
+                    <div className="text-gold font-display font-bold text-lg mt-1">
+                      ₦{recommendation!.priceNGN.toLocaleString()} · Tier {recommendation!.tier}
+                    </div>
+                    <div className="mt-3 flex items-center gap-2">
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Commitment</span>
+                      {(["test", "serious", "elite"] as const).map((c) => (
+                        <button
+                          key={c}
+                          onClick={() => setPick({ ...pick, commitment: c })}
+                          className={`px-2 py-0.5 text-[10px] font-mono rounded border transition ${
+                            pick.commitment === c ? "bg-gold border-gold text-black font-bold" : "border-gold/20 text-muted-foreground"
+                          }`}
+                        >
+                          {c}
+                        </button>
+                      ))}
+                    </div>
+                    <Link
+                      to="/products/$slug"
+                      params={{ slug: recommendation!.slug }}
+                      onClick={() => setOpen(false)}
+                      className="block mt-4"
+                    >
+                      <CTA>Deploy {recommendation!.name}</CTA>
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setPick(null)}
+                      className="mt-2 w-full text-[10px] font-mono uppercase tracking-widest text-muted-foreground hover:text-gold"
+                    >
+                      ← re-pick intent
+                    </button>
+                  </>
+                )}
               </PanelBody>
             )}
           </div>
