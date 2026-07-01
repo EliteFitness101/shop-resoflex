@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as TiersRouteImport } from './routes/tiers'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RegisterRouteImport } from './routes/register'
@@ -22,6 +23,7 @@ import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
+import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as CheckoutCallbackRouteImport } from './routes/checkout.callback'
 import { Route as AdminRevenueAiRouteImport } from './routes/admin.revenue-ai'
@@ -31,6 +33,11 @@ import { Route as ApiPublicAssetProductIdRouteImport } from './routes/api/public
 const WalletRoute = WalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TiersRoute = TiersRouteImport.update({
+  id: '/tiers',
+  path: '/tiers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -93,6 +100,11 @@ const ShopProductIdRoute = ShopProductIdRouteImport.update({
   path: '/$productId',
   getParentRoute: () => ShopRoute,
 } as any)
+const ProductsSlugRoute = ProductsSlugRouteImport.update({
+  id: '/products/$slug',
+  path: '/products/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutSuccessRoute = CheckoutSuccessRouteImport.update({
   id: '/checkout/success',
   path: '/checkout/success',
@@ -132,10 +144,12 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRouteWithChildren
+  '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
+  '/products/$slug': typeof ProductsSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/api/public/paystack-webhook': typeof ApiPublicPaystackWebhookRoute
   '/api/public/asset/$productId': typeof ApiPublicAssetProductIdRoute
@@ -152,10 +166,12 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRouteWithChildren
+  '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
+  '/products/$slug': typeof ProductsSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/api/public/paystack-webhook': typeof ApiPublicPaystackWebhookRoute
   '/api/public/asset/$productId': typeof ApiPublicAssetProductIdRoute
@@ -173,10 +189,12 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRouteWithChildren
+  '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
+  '/products/$slug': typeof ProductsSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/api/public/paystack-webhook': typeof ApiPublicPaystackWebhookRoute
   '/api/public/asset/$productId': typeof ApiPublicAssetProductIdRoute
@@ -195,10 +213,12 @@ export interface FileRouteTypes {
     | '/register'
     | '/settings'
     | '/shop'
+    | '/tiers'
     | '/wallet'
     | '/admin/revenue-ai'
     | '/checkout/callback'
     | '/checkout/success'
+    | '/products/$slug'
     | '/shop/$productId'
     | '/api/public/paystack-webhook'
     | '/api/public/asset/$productId'
@@ -215,10 +235,12 @@ export interface FileRouteTypes {
     | '/register'
     | '/settings'
     | '/shop'
+    | '/tiers'
     | '/wallet'
     | '/admin/revenue-ai'
     | '/checkout/callback'
     | '/checkout/success'
+    | '/products/$slug'
     | '/shop/$productId'
     | '/api/public/paystack-webhook'
     | '/api/public/asset/$productId'
@@ -235,10 +257,12 @@ export interface FileRouteTypes {
     | '/register'
     | '/settings'
     | '/shop'
+    | '/tiers'
     | '/wallet'
     | '/admin/revenue-ai'
     | '/checkout/callback'
     | '/checkout/success'
+    | '/products/$slug'
     | '/shop/$productId'
     | '/api/public/paystack-webhook'
     | '/api/public/asset/$productId'
@@ -256,9 +280,11 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRouteWithChildren
+  TiersRoute: typeof TiersRoute
   WalletRoute: typeof WalletRoute
   CheckoutCallbackRoute: typeof CheckoutCallbackRoute
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
+  ProductsSlugRoute: typeof ProductsSlugRoute
   ApiPublicPaystackWebhookRoute: typeof ApiPublicPaystackWebhookRoute
   ApiPublicAssetProductIdRoute: typeof ApiPublicAssetProductIdRoute
 }
@@ -270,6 +296,13 @@ declare module '@tanstack/react-router' {
       path: '/wallet'
       fullPath: '/wallet'
       preLoaderRoute: typeof WalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tiers': {
+      id: '/tiers'
+      path: '/tiers'
+      fullPath: '/tiers'
+      preLoaderRoute: typeof TiersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -356,6 +389,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopProductIdRouteImport
       parentRoute: typeof ShopRoute
     }
+    '/products/$slug': {
+      id: '/products/$slug'
+      path: '/products/$slug'
+      fullPath: '/products/$slug'
+      preLoaderRoute: typeof ProductsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout/success': {
       id: '/checkout/success'
       path: '/checkout/success'
@@ -426,22 +466,14 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRouteWithChildren,
+  TiersRoute: TiersRoute,
   WalletRoute: WalletRoute,
   CheckoutCallbackRoute: CheckoutCallbackRoute,
   CheckoutSuccessRoute: CheckoutSuccessRoute,
+  ProductsSlugRoute: ProductsSlugRoute,
   ApiPublicPaystackWebhookRoute: ApiPublicPaystackWebhookRoute,
   ApiPublicAssetProductIdRoute: ApiPublicAssetProductIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
