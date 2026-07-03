@@ -1,95 +1,52 @@
+# ResoFit AI Coach — Build Plan
 
-# ResoFlex OS™ — Lean MVP Plan
+The full spec (auth, dashboard, onboarding, meal engine, workout engine, habit tracker, CEO OS, AI chat, analytics, notifications, gamification, admin, payments, PWA, SEO) is **~6–8 weeks of engineering**. Building it in one turn would produce a shallow shell of every feature and burn credits. I'll ship it in focused, working phases.
 
-A single-app, frontend-only build of all 10 pages with mock JSON data. No backend wired up — Paystack, Supabase, and Shopify are scaffolded as typed interfaces and stub functions so they can be activated later without restructuring.
+The app already has: Lovable Cloud (Supabase), Paystack live, auth pages, admin panel, AI personalization function, referral wallet, attribution/analytics, TanStack Start routing, "Industrial Luxe" (obsidian + gold) theme.
 
-## Scope (this pass)
+I'll build ResoFit AI Coach as a namespaced module under `/chatb2k/*` reusing this foundation.
 
-In:
-- 10 pages, mobile-first noir-and-gold design system
-- Shared layout, bottom nav (mobile), top nav (desktop)
-- Mock data layer for products, meal plans, referrals, orders, transactions, telemetry
-- Paystack checkout flow scaffolded as a typed client stub (`initiatePayment` → fake redirect → `/checkout/callback` → success screen → asset download + upsell UI)
-- Auth UI only (login/register forms post to a mock auth store; no real session)
-- SEO `head()` per route, OpenGraph defaults, error & not-found boundaries
+---
 
-Out (deferred, noted in code with TODO markers):
-- Lovable Cloud / Supabase enablement
-- Real Paystack secret keys, webhook endpoint, signature verification
-- Shopify storefront API calls
-- Real admin auth gating
-- PWA manifest + service worker (architecture-ready but not enabled)
+## Phase 1 — Foundation (this turn)
 
-## Routes (TanStack Start file-based)
+1. **DB migration**: `health_profiles`, `daily_logs` (water/calories/protein/mood/weight), `habits`, `habit_logs`, `meal_plans`, `workout_plans`, `ceo_tasks`, `ai_conversations`, `ai_messages`. All RLS-scoped to `auth.uid()`, with GRANTs.
+2. **Route shell** at `src/routes/chatb2k/` (layout + sub-routes): `index` (Today dashboard), `onboarding`, `meals`, `workouts`, `habits`, `ceo`, `coach` (AI chat), `analytics`.
+3. **Onboarding wizard**: multi-step form → writes `health_profiles`.
+4. **Today Dashboard**: greeting, Health/Habit/CEO scores, water/calories/protein rings, quick-log actions.
+5. **AI Coach chat** (`/chatb2k/coach`): streaming `useChat` → `/api/chatb2k/chat` server route calling Lovable AI (`google/gemini-3-flash-preview`) with conversation persistence. System prompt: Nigerian nutrition + fitness + CEO expert.
 
-```text
-src/routes/
-  __root.tsx              shell, providers, bottom nav slot
-  index.tsx               Dashboard Landing (hero, scarcity banner, programs, metrics, FAQ)
-  shop.tsx                Sovereign Shop (product grid, currency switcher, Paystack CTA)
-  shop.$productId.tsx     Product detail
-  meals.tsx               Nigerian Meal Plan Marketplace
-  elite.tsx               Ecosystem Blueprint
-  agents.tsx              Agent Network Terminal
-  wallet.tsx              Referral Wallet Dashboard
-  admin.tsx               Secure Admin Panel (telemetry, logs, threat cards)
-  settings.tsx            Settings / Profile
-  login.tsx               Login
-  register.tsx            Register
-  checkout.callback.tsx   Paystack return handler (mock)
-  checkout.success.tsx    Success + asset download + upsell
-```
+## Phase 2 — Engines
+6. Nigerian meal generator (server fn → structured output with Nigerian food library, macros, cost NGN, shopping list, regenerate).
+7. Personalized workout generator (server fn → warmup/main/cooldown, sets/reps/rest, weekly progression).
+8. Habit tracker with streaks, XP, badges.
 
-Subdomains (`shop.`, `elite.`, `agents.`, `admin.`) map to these paths today; DNS/rewrites can be added later without code changes.
+## Phase 3 — CEO OS + Analytics
+9. CEO dashboard (priorities, deep work, KPIs, decision journal, weekly review).
+10. Analytics page (Recharts: weight, macros, habit consistency, revenue).
+11. PDF export.
 
-## Design system
+## Phase 4 — Polish
+12. Subscriptions via existing Paystack flow (monthly/quarterly/annual + free trial).
+13. Push notifications (web push) + PWA manifest.
+14. Admin extension for meal/workout template curation.
+15. SEO (sitemap, robots, JSON-LD), Lighthouse pass.
 
-Tokens in `src/styles.css` (oklch):
-- `--background` matte black, `--foreground` warm white
-- `--primary` gold `#E0A96D`, `--accent` deep gold `#C5A059`
-- `--gradient-tactical`, `--shadow-gold`, `--glass-panel` (backdrop-blur + 1px gold border)
-- Mono font for telemetry labels (JetBrains Mono), display font for headings (Sora or Bebas), Inter body
-
-Shared components in `src/components/`:
-- `TacticalPanel`, `GlassCard`, `TelemetryLabel`, `GoldButton`, `ScarcityBanner`
-- `BottomNav` (mobile-only), `TopNav` (desktop), `Footer`
-- `ProductCard`, `MealPlanCard`, `ReferralStatCard`, `FAQAccordion`
-- `PriceTag` (handles NGN/USD via currency context)
-
-## Data & integration scaffolding
-
-- `src/lib/mock/` — products.json, mealPlans.json, referrals.json, telemetry.json, orders.json
-- `src/lib/types.ts` — User, Product, Order, Transaction, Referral, MealPlan, Workout (mirrors planned Supabase schema)
-- `src/lib/paystack.ts` — `initiatePayment({amount, email, reference})` returns a fake redirect URL; documented swap point for real Paystack init + webhook
-- `src/lib/supabase.placeholder.ts` — typed interface matching the future client, all methods return mock data
-- `src/lib/shopify.placeholder.ts` — same pattern for storefront API
-- `src/lib/currency.tsx` — context + switcher (NGN default, USD toggle)
-
-## Payment flow (mock, swap-ready)
-
-1. Shop → product → "Pay with Paystack" → `paystack.initiatePayment()` → mock redirect to `/checkout/callback?reference=...`
-2. Callback verifies (mocked) → routes to `/checkout/success`
-3. Success page: download button for digital asset (placeholder file) + upsell card (related product / meal plan)
-4. Webhook handler placeholder: a `src/routes/api/public/paystack-webhook.ts` file with signature-verification TODO and a no-op handler, so the URL exists for later activation
-
-## Performance & quality
-
-- Lazy-load heavy routes (`admin`, `wallet`, `elite`) via TanStack's built-in code splitting
-- Skeleton loaders on every data-bound section
-- `sonner` toasts, error boundaries already in `__root.tsx`
-- Per-route `head()` with title, description, og:title, og:description
+---
 
 ## Technical notes
 
-- Framework note: the template is **TanStack Start** (React 19 + Vite + TS + Tailwind v4), not plain Vite-React. Same DX, same React code, but routing is file-based via `src/routes/` and Tailwind tokens live in `src/styles.css`. Functionally equivalent to the spec.
-- **Paystack is not a Lovable built-in payment integration.** Built-ins are Paddle, Stripe, and Shopify. Per your "lean MVP, no backend wiring" choice, Paystack will be scaffolded as UI + typed stubs only. When you're ready to go live, we'll add real keys + a webhook route (Lovable Cloud strongly recommended at that point for secure secret storage).
-- Hosting: Lovable. The single-app + path-based routing means you can publish today and add custom domains/subdomains via project settings later.
-- Deferred but ready: Lovable Cloud (auth, DB tables for users/referrals/orders/transactions/subscriptions/meal_plans/workouts), real Paystack webhook + signature verification, Shopify storefront, admin role gating, PWA manifest.
+- **AI**: Lovable AI Gateway via existing `createLovableAiGatewayProvider` (no user key needed). Default `google/gemini-3-flash-preview`. Streaming chat uses AI SDK `streamText` + `useChat`.
+- **Auth**: reuse `src/hooks/use-auth.tsx` + existing `/login`, `/register`; add Google + magic link + password reset via `supabase.auth`.
+- **Routes**: gated under `/chatb2k/*` — since the app has no `_authenticated/` layout yet, I'll add client-side redirect to `/login` in the chatb2k layout (matches current app pattern).
+- **State**: TanStack Query for reads, server functions for writes, RLS enforced.
+- **Design**: reuse `glass-panel`, gold gradient, JetBrains Mono telemetry — already on-brand.
 
-## Suggested next phases (after MVP ships)
+## Confirmations needed
 
-1. Enable Lovable Cloud → real auth + users/referrals/orders tables
-2. Wire real Paystack (keys via Cloud secrets, webhook signature verification, server-fn for charge verification)
-3. Admin role + RLS, replace mock telemetry with real query
-4. Shopify storefront for physical product SKUs
-5. PWA manifest + offline shell
+1. Ship **Phase 1** this turn, or do you want a different starting slice (e.g., just AI Coach chat + onboarding first, skip dashboard)?
+2. **Google login + magic link** — enable now, or Phase 4? (Google requires `supabase--configure_social_auth`.)
+3. **Subscriptions**: monthly/quarterly/annual pricing (NGN)? Or defer until Phase 4 with placeholders?
+4. Domain `resofit.fit/chatb2k` — is that a separate domain you'll point at this project, or should `/chatb2k` live inside the current `shop-resoflex.lovable.app`?
+
+Once you confirm (or say "just go"), I'll execute Phase 1.
