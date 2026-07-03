@@ -28,6 +28,7 @@ import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as CheckoutCallbackRouteImport } from './routes/checkout.callback'
+import { Route as Chatb2kOnboardingRouteImport } from './routes/chatb2k.onboarding'
 import { Route as AdminRevenueAiRouteImport } from './routes/admin.revenue-ai'
 import { Route as ApiPublicPaystackWebhookRouteImport } from './routes/api/public/paystack-webhook'
 import { Route as ApiPublicAssetProductIdRouteImport } from './routes/api/public/asset.$productId'
@@ -127,6 +128,11 @@ const CheckoutCallbackRoute = CheckoutCallbackRouteImport.update({
   path: '/checkout/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Chatb2kOnboardingRoute = Chatb2kOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => Chatb2kRoute,
+} as any)
 const AdminRevenueAiRoute = AdminRevenueAiRouteImport.update({
   id: '/revenue-ai',
   path: '/revenue-ai',
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
+  '/chatb2k/onboarding': typeof Chatb2kOnboardingRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/products/$slug': typeof ProductsSlugRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
+  '/chatb2k/onboarding': typeof Chatb2kOnboardingRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/products/$slug': typeof ProductsSlugRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
+  '/chatb2k/onboarding': typeof Chatb2kOnboardingRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/products/$slug': typeof ProductsSlugRoute
@@ -234,6 +243,7 @@ export interface FileRouteTypes {
     | '/tiers'
     | '/wallet'
     | '/admin/revenue-ai'
+    | '/chatb2k/onboarding'
     | '/checkout/callback'
     | '/checkout/success'
     | '/products/$slug'
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
     | '/tiers'
     | '/wallet'
     | '/admin/revenue-ai'
+    | '/chatb2k/onboarding'
     | '/checkout/callback'
     | '/checkout/success'
     | '/products/$slug'
@@ -281,6 +292,7 @@ export interface FileRouteTypes {
     | '/tiers'
     | '/wallet'
     | '/admin/revenue-ai'
+    | '/chatb2k/onboarding'
     | '/checkout/callback'
     | '/checkout/success'
     | '/products/$slug'
@@ -447,6 +459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chatb2k/onboarding': {
+      id: '/chatb2k/onboarding'
+      path: '/onboarding'
+      fullPath: '/chatb2k/onboarding'
+      preLoaderRoute: typeof Chatb2kOnboardingRouteImport
+      parentRoute: typeof Chatb2kRoute
+    }
     '/admin/revenue-ai': {
       id: '/admin/revenue-ai'
       path: '/revenue-ai'
@@ -482,10 +501,12 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface Chatb2kRouteChildren {
+  Chatb2kOnboardingRoute: typeof Chatb2kOnboardingRoute
   Chatb2kIndexRoute: typeof Chatb2kIndexRoute
 }
 
 const Chatb2kRouteChildren: Chatb2kRouteChildren = {
+  Chatb2kOnboardingRoute: Chatb2kOnboardingRoute,
   Chatb2kIndexRoute: Chatb2kIndexRoute,
 }
 
