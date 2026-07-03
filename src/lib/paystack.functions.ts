@@ -37,6 +37,7 @@ export const initiatePaystackPayment = createServerFn({ method: "POST" })
           .optional()
           .nullable(),
         sku: z.string().max(64).optional().nullable(),
+        variant: z.string().max(64).optional().nullable(),
         quantity: z.number().int().positive().max(9999).optional(),
       })
       .parse(d),
