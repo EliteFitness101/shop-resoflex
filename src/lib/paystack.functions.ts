@@ -82,7 +82,7 @@ export const initiatePaystackPayment = createServerFn({ method: "POST" })
           utm_campaign: data.attribution?.utm_campaign ?? null,
           utm_content: data.attribution?.utm_content ?? null,
           utm_term: data.attribution?.utm_term ?? null,
-          funnel_origin: data.attribution?.funnel_origin ?? null,
+          funnel_origin: data.attribution?.funnel_origin ?? "resofit",
         },
       }),
     });
