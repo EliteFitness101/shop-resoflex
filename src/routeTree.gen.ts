@@ -23,6 +23,7 @@ import { Route as AutopilotRouteImport } from './routes/autopilot'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as Chatb2kIndexRouteImport } from './routes/chatb2k.index'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
@@ -101,6 +102,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Chatb2kIndexRoute = Chatb2kIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => Chatb2kRoute,
+} as any)
 const ShopProductIdRoute = ShopProductIdRouteImport.update({
   id: '/$productId',
   path: '/$productId',
@@ -143,7 +149,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/agents': typeof AgentsRoute
   '/autopilot': typeof AutopilotRoute
-  '/chatb2k': typeof Chatb2kRoute
+  '/chatb2k': typeof Chatb2kRouteWithChildren
   '/ecosystem': typeof EcosystemRoute
   '/elite': typeof EliteRoute
   '/login': typeof LoginRoute
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/checkout/success': typeof CheckoutSuccessRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/chatb2k/': typeof Chatb2kIndexRoute
   '/api/public/paystack-webhook': typeof ApiPublicPaystackWebhookRoute
   '/api/public/asset/$productId': typeof ApiPublicAssetProductIdRoute
 }
@@ -166,7 +173,6 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRouteWithChildren
   '/agents': typeof AgentsRoute
   '/autopilot': typeof AutopilotRoute
-  '/chatb2k': typeof Chatb2kRoute
   '/ecosystem': typeof EcosystemRoute
   '/elite': typeof EliteRoute
   '/login': typeof LoginRoute
@@ -181,6 +187,7 @@ export interface FileRoutesByTo {
   '/checkout/success': typeof CheckoutSuccessRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/chatb2k': typeof Chatb2kIndexRoute
   '/api/public/paystack-webhook': typeof ApiPublicPaystackWebhookRoute
   '/api/public/asset/$productId': typeof ApiPublicAssetProductIdRoute
 }
@@ -190,7 +197,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/agents': typeof AgentsRoute
   '/autopilot': typeof AutopilotRoute
-  '/chatb2k': typeof Chatb2kRoute
+  '/chatb2k': typeof Chatb2kRouteWithChildren
   '/ecosystem': typeof EcosystemRoute
   '/elite': typeof EliteRoute
   '/login': typeof LoginRoute
@@ -205,6 +212,7 @@ export interface FileRoutesById {
   '/checkout/success': typeof CheckoutSuccessRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/chatb2k/': typeof Chatb2kIndexRoute
   '/api/public/paystack-webhook': typeof ApiPublicPaystackWebhookRoute
   '/api/public/asset/$productId': typeof ApiPublicAssetProductIdRoute
 }
@@ -230,6 +238,7 @@ export interface FileRouteTypes {
     | '/checkout/success'
     | '/products/$slug'
     | '/shop/$productId'
+    | '/chatb2k/'
     | '/api/public/paystack-webhook'
     | '/api/public/asset/$productId'
   fileRoutesByTo: FileRoutesByTo
@@ -238,7 +247,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/agents'
     | '/autopilot'
-    | '/chatb2k'
     | '/ecosystem'
     | '/elite'
     | '/login'
@@ -253,6 +261,7 @@ export interface FileRouteTypes {
     | '/checkout/success'
     | '/products/$slug'
     | '/shop/$productId'
+    | '/chatb2k'
     | '/api/public/paystack-webhook'
     | '/api/public/asset/$productId'
   id:
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/checkout/success'
     | '/products/$slug'
     | '/shop/$productId'
+    | '/chatb2k/'
     | '/api/public/paystack-webhook'
     | '/api/public/asset/$productId'
   fileRoutesById: FileRoutesById
@@ -285,7 +295,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AgentsRoute: typeof AgentsRoute
   AutopilotRoute: typeof AutopilotRoute
-  Chatb2kRoute: typeof Chatb2kRoute
+  Chatb2kRoute: typeof Chatb2kRouteWithChildren
   EcosystemRoute: typeof EcosystemRoute
   EliteRoute: typeof EliteRoute
   LoginRoute: typeof LoginRoute
@@ -402,6 +412,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chatb2k/': {
+      id: '/chatb2k/'
+      path: '/'
+      fullPath: '/chatb2k/'
+      preLoaderRoute: typeof Chatb2kIndexRouteImport
+      parentRoute: typeof Chatb2kRoute
+    }
     '/shop/$productId': {
       id: '/shop/$productId'
       path: '/$productId'
@@ -464,6 +481,17 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface Chatb2kRouteChildren {
+  Chatb2kIndexRoute: typeof Chatb2kIndexRoute
+}
+
+const Chatb2kRouteChildren: Chatb2kRouteChildren = {
+  Chatb2kIndexRoute: Chatb2kIndexRoute,
+}
+
+const Chatb2kRouteWithChildren =
+  Chatb2kRoute._addFileChildren(Chatb2kRouteChildren)
+
 interface ShopRouteChildren {
   ShopProductIdRoute: typeof ShopProductIdRoute
 }
@@ -479,7 +507,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AgentsRoute: AgentsRoute,
   AutopilotRoute: AutopilotRoute,
-  Chatb2kRoute: Chatb2kRoute,
+  Chatb2kRoute: Chatb2kRouteWithChildren,
   EcosystemRoute: EcosystemRoute,
   EliteRoute: EliteRoute,
   LoginRoute: LoginRoute,
