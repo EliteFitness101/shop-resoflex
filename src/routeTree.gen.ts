@@ -28,8 +28,12 @@ import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as CheckoutCallbackRouteImport } from './routes/checkout.callback'
+import { Route as Chatb2kWorkoutsRouteImport } from './routes/chatb2k.workouts'
 import { Route as Chatb2kOnboardingRouteImport } from './routes/chatb2k.onboarding'
+import { Route as Chatb2kMealsRouteImport } from './routes/chatb2k.meals'
+import { Route as Chatb2kHabitsRouteImport } from './routes/chatb2k.habits'
 import { Route as Chatb2kCoachRouteImport } from './routes/chatb2k.coach'
+import { Route as Chatb2kCeoRouteImport } from './routes/chatb2k.ceo'
 import { Route as AdminRevenueAiRouteImport } from './routes/admin.revenue-ai'
 import { Route as ApiPublicPaystackWebhookRouteImport } from './routes/api/public/paystack-webhook'
 import { Route as ApiPublicAssetProductIdRouteImport } from './routes/api/public/asset.$productId'
@@ -129,14 +133,34 @@ const CheckoutCallbackRoute = CheckoutCallbackRouteImport.update({
   path: '/checkout/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Chatb2kWorkoutsRoute = Chatb2kWorkoutsRouteImport.update({
+  id: '/workouts',
+  path: '/workouts',
+  getParentRoute: () => Chatb2kRoute,
+} as any)
 const Chatb2kOnboardingRoute = Chatb2kOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
   getParentRoute: () => Chatb2kRoute,
 } as any)
+const Chatb2kMealsRoute = Chatb2kMealsRouteImport.update({
+  id: '/meals',
+  path: '/meals',
+  getParentRoute: () => Chatb2kRoute,
+} as any)
+const Chatb2kHabitsRoute = Chatb2kHabitsRouteImport.update({
+  id: '/habits',
+  path: '/habits',
+  getParentRoute: () => Chatb2kRoute,
+} as any)
 const Chatb2kCoachRoute = Chatb2kCoachRouteImport.update({
   id: '/coach',
   path: '/coach',
+  getParentRoute: () => Chatb2kRoute,
+} as any)
+const Chatb2kCeoRoute = Chatb2kCeoRouteImport.update({
+  id: '/ceo',
+  path: '/ceo',
   getParentRoute: () => Chatb2kRoute,
 } as any)
 const AdminRevenueAiRoute = AdminRevenueAiRouteImport.update({
@@ -172,8 +196,12 @@ export interface FileRoutesByFullPath {
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
+  '/chatb2k/ceo': typeof Chatb2kCeoRoute
   '/chatb2k/coach': typeof Chatb2kCoachRoute
+  '/chatb2k/habits': typeof Chatb2kHabitsRoute
+  '/chatb2k/meals': typeof Chatb2kMealsRoute
   '/chatb2k/onboarding': typeof Chatb2kOnboardingRoute
+  '/chatb2k/workouts': typeof Chatb2kWorkoutsRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/products/$slug': typeof ProductsSlugRoute
@@ -197,8 +225,12 @@ export interface FileRoutesByTo {
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
+  '/chatb2k/ceo': typeof Chatb2kCeoRoute
   '/chatb2k/coach': typeof Chatb2kCoachRoute
+  '/chatb2k/habits': typeof Chatb2kHabitsRoute
+  '/chatb2k/meals': typeof Chatb2kMealsRoute
   '/chatb2k/onboarding': typeof Chatb2kOnboardingRoute
+  '/chatb2k/workouts': typeof Chatb2kWorkoutsRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/products/$slug': typeof ProductsSlugRoute
@@ -224,8 +256,12 @@ export interface FileRoutesById {
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
+  '/chatb2k/ceo': typeof Chatb2kCeoRoute
   '/chatb2k/coach': typeof Chatb2kCoachRoute
+  '/chatb2k/habits': typeof Chatb2kHabitsRoute
+  '/chatb2k/meals': typeof Chatb2kMealsRoute
   '/chatb2k/onboarding': typeof Chatb2kOnboardingRoute
+  '/chatb2k/workouts': typeof Chatb2kWorkoutsRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/products/$slug': typeof ProductsSlugRoute
@@ -252,8 +288,12 @@ export interface FileRouteTypes {
     | '/tiers'
     | '/wallet'
     | '/admin/revenue-ai'
+    | '/chatb2k/ceo'
     | '/chatb2k/coach'
+    | '/chatb2k/habits'
+    | '/chatb2k/meals'
     | '/chatb2k/onboarding'
+    | '/chatb2k/workouts'
     | '/checkout/callback'
     | '/checkout/success'
     | '/products/$slug'
@@ -277,8 +317,12 @@ export interface FileRouteTypes {
     | '/tiers'
     | '/wallet'
     | '/admin/revenue-ai'
+    | '/chatb2k/ceo'
     | '/chatb2k/coach'
+    | '/chatb2k/habits'
+    | '/chatb2k/meals'
     | '/chatb2k/onboarding'
+    | '/chatb2k/workouts'
     | '/checkout/callback'
     | '/checkout/success'
     | '/products/$slug'
@@ -303,8 +347,12 @@ export interface FileRouteTypes {
     | '/tiers'
     | '/wallet'
     | '/admin/revenue-ai'
+    | '/chatb2k/ceo'
     | '/chatb2k/coach'
+    | '/chatb2k/habits'
+    | '/chatb2k/meals'
     | '/chatb2k/onboarding'
+    | '/chatb2k/workouts'
     | '/checkout/callback'
     | '/checkout/success'
     | '/products/$slug'
@@ -471,6 +519,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chatb2k/workouts': {
+      id: '/chatb2k/workouts'
+      path: '/workouts'
+      fullPath: '/chatb2k/workouts'
+      preLoaderRoute: typeof Chatb2kWorkoutsRouteImport
+      parentRoute: typeof Chatb2kRoute
+    }
     '/chatb2k/onboarding': {
       id: '/chatb2k/onboarding'
       path: '/onboarding'
@@ -478,11 +533,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Chatb2kOnboardingRouteImport
       parentRoute: typeof Chatb2kRoute
     }
+    '/chatb2k/meals': {
+      id: '/chatb2k/meals'
+      path: '/meals'
+      fullPath: '/chatb2k/meals'
+      preLoaderRoute: typeof Chatb2kMealsRouteImport
+      parentRoute: typeof Chatb2kRoute
+    }
+    '/chatb2k/habits': {
+      id: '/chatb2k/habits'
+      path: '/habits'
+      fullPath: '/chatb2k/habits'
+      preLoaderRoute: typeof Chatb2kHabitsRouteImport
+      parentRoute: typeof Chatb2kRoute
+    }
     '/chatb2k/coach': {
       id: '/chatb2k/coach'
       path: '/coach'
       fullPath: '/chatb2k/coach'
       preLoaderRoute: typeof Chatb2kCoachRouteImport
+      parentRoute: typeof Chatb2kRoute
+    }
+    '/chatb2k/ceo': {
+      id: '/chatb2k/ceo'
+      path: '/ceo'
+      fullPath: '/chatb2k/ceo'
+      preLoaderRoute: typeof Chatb2kCeoRouteImport
       parentRoute: typeof Chatb2kRoute
     }
     '/admin/revenue-ai': {
@@ -520,14 +596,22 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface Chatb2kRouteChildren {
+  Chatb2kCeoRoute: typeof Chatb2kCeoRoute
   Chatb2kCoachRoute: typeof Chatb2kCoachRoute
+  Chatb2kHabitsRoute: typeof Chatb2kHabitsRoute
+  Chatb2kMealsRoute: typeof Chatb2kMealsRoute
   Chatb2kOnboardingRoute: typeof Chatb2kOnboardingRoute
+  Chatb2kWorkoutsRoute: typeof Chatb2kWorkoutsRoute
   Chatb2kIndexRoute: typeof Chatb2kIndexRoute
 }
 
 const Chatb2kRouteChildren: Chatb2kRouteChildren = {
+  Chatb2kCeoRoute: Chatb2kCeoRoute,
   Chatb2kCoachRoute: Chatb2kCoachRoute,
+  Chatb2kHabitsRoute: Chatb2kHabitsRoute,
+  Chatb2kMealsRoute: Chatb2kMealsRoute,
   Chatb2kOnboardingRoute: Chatb2kOnboardingRoute,
+  Chatb2kWorkoutsRoute: Chatb2kWorkoutsRoute,
   Chatb2kIndexRoute: Chatb2kIndexRoute,
 }
 
