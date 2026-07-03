@@ -195,6 +195,3 @@ function qcOpenInput(
   }
   m.mutate({ [key]: current + n });
 }
-
-// Keep `useState` used somewhere to avoid unused import warnings if refactored later.
-export const _debug = useState;
