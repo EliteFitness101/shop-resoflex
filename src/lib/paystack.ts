@@ -10,6 +10,7 @@ export interface PaystackInitInput {
   productName: string;
   userId?: string | null;
   sku?: string | null;
+  variant?: string | null;
   quantity?: number;
 }
 
@@ -37,6 +38,7 @@ export async function initiatePayment(input: PaystackInitInput): Promise<{
           }
         : null,
       sku: input.sku ?? input.productId,
+      variant: input.variant ?? null,
       quantity: input.quantity ?? 1,
     },
   });

@@ -50,7 +50,7 @@ function Elite() {
       <div className="mt-12 glass-panel rounded-xl p-8 md:p-12 text-center">
         <h2 className="font-display text-3xl font-bold">Elite tier unlocks Q3.</h2>
         <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Limited to 250 operators. Includes 1:1 protocol calibration, priority sourcing, private agent terminal access.</p>
-        <Link to="/register"><GoldButton size="lg" className="mt-6">Reserve Sovereign Tier</GoldButton></Link>
+        <Link to="/register" search={{ ref: "" }}><GoldButton size="lg" className="mt-6">Reserve Sovereign Tier</GoldButton></Link>
       </div>
     </div>
   );

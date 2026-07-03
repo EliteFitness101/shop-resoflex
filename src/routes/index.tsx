@@ -173,7 +173,7 @@ function Landing() {
           <Flame className="size-8 mx-auto text-gold mb-3" />
           <h2 className="font-display text-3xl sm:text-4xl font-bold">Operators don't wait.</h2>
           <p className="mt-3 text-muted-foreground">Provision your access. Run the protocol. Dominate the quarter.</p>
-          <Link to="/register"><GoldButton size="lg" className="mt-6">Provision Access</GoldButton></Link>
+          <Link to="/register" search={{ ref: "" }}><GoldButton size="lg" className="mt-6">Provision Access</GoldButton></Link>
         </div>
       </section>
 

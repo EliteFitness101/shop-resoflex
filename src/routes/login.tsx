@@ -50,7 +50,7 @@ function Login() {
           <GoldButton size="lg" className="w-full" disabled={busy} type="submit">{busy ? "Authenticating…" : "Initiate session"}</GoldButton>
         </form>
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          New to the network? <Link to="/register" className="text-gold hover:underline">Provision access →</Link>
+          New to the network? <Link to="/register" search={{ ref: "" }} className="text-gold hover:underline">Provision access →</Link>
         </div>
       </div>
     </div>

@@ -37,6 +37,7 @@ export const initiatePaystackPayment = createServerFn({ method: "POST" })
           .optional()
           .nullable(),
         sku: z.string().max(64).optional().nullable(),
+        variant: z.string().max(64).optional().nullable(),
         quantity: z.number().int().positive().max(9999).optional(),
       })
       .parse(d),
@@ -73,6 +74,7 @@ export const initiatePaystackPayment = createServerFn({ method: "POST" })
           productName: data.productName,
           userId: data.userId ?? null,
           sku: data.sku ?? data.productId,
+          variant: data.variant ?? null,
           quantity: data.quantity ?? 1,
           rsid: data.attribution?.rsid ?? null,
           utm_source: data.attribution?.utm_source ?? null,
@@ -80,7 +82,7 @@ export const initiatePaystackPayment = createServerFn({ method: "POST" })
           utm_campaign: data.attribution?.utm_campaign ?? null,
           utm_content: data.attribution?.utm_content ?? null,
           utm_term: data.attribution?.utm_term ?? null,
-          funnel_origin: data.attribution?.funnel_origin ?? null,
+          funnel_origin: data.attribution?.funnel_origin ?? "resofit",
         },
       }),
     });
