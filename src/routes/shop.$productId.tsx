@@ -79,6 +79,7 @@ function ProductPage() {
         productName: `${product.name}${size ? ` [${size}]` : ""}${qty > 1 ? ` ×${qty}${isBulk ? " (bulk)" : ""}` : ""}`,
         userId: user?.id ?? null,
         sku: product.slug,
+        variant: size ?? null,
         quantity: qty,
       });
       if (!authorizationUrl) throw new Error("Paystack did not return a checkout URL.");
