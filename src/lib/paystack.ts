@@ -38,6 +38,7 @@ export async function initiatePayment(input: PaystackInitInput): Promise<{
           }
         : null,
       sku: input.sku ?? input.productId,
+      variant: input.variant ?? null,
       quantity: input.quantity ?? 1,
     },
   });
