@@ -18,6 +18,7 @@ import { Route as MealsRouteImport } from './routes/meals'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EliteRouteImport } from './routes/elite'
 import { Route as EcosystemRouteImport } from './routes/ecosystem'
+import { Route as Chatb2kRouteImport } from './routes/chatb2k'
 import { Route as AutopilotRouteImport } from './routes/autopilot'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -73,6 +74,11 @@ const EliteRoute = EliteRouteImport.update({
 const EcosystemRoute = EcosystemRouteImport.update({
   id: '/ecosystem',
   path: '/ecosystem',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Chatb2kRoute = Chatb2kRouteImport.update({
+  id: '/chatb2k',
+  path: '/chatb2k',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AutopilotRoute = AutopilotRouteImport.update({
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/agents': typeof AgentsRoute
   '/autopilot': typeof AutopilotRoute
+  '/chatb2k': typeof Chatb2kRoute
   '/ecosystem': typeof EcosystemRoute
   '/elite': typeof EliteRoute
   '/login': typeof LoginRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRouteWithChildren
   '/agents': typeof AgentsRoute
   '/autopilot': typeof AutopilotRoute
+  '/chatb2k': typeof Chatb2kRoute
   '/ecosystem': typeof EcosystemRoute
   '/elite': typeof EliteRoute
   '/login': typeof LoginRoute
@@ -182,6 +190,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/agents': typeof AgentsRoute
   '/autopilot': typeof AutopilotRoute
+  '/chatb2k': typeof Chatb2kRoute
   '/ecosystem': typeof EcosystemRoute
   '/elite': typeof EliteRoute
   '/login': typeof LoginRoute
@@ -206,6 +215,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/agents'
     | '/autopilot'
+    | '/chatb2k'
     | '/ecosystem'
     | '/elite'
     | '/login'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/agents'
     | '/autopilot'
+    | '/chatb2k'
     | '/ecosystem'
     | '/elite'
     | '/login'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/agents'
     | '/autopilot'
+    | '/chatb2k'
     | '/ecosystem'
     | '/elite'
     | '/login'
@@ -273,6 +285,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AgentsRoute: typeof AgentsRoute
   AutopilotRoute: typeof AutopilotRoute
+  Chatb2kRoute: typeof Chatb2kRoute
   EcosystemRoute: typeof EcosystemRoute
   EliteRoute: typeof EliteRoute
   LoginRoute: typeof LoginRoute
@@ -352,6 +365,13 @@ declare module '@tanstack/react-router' {
       path: '/ecosystem'
       fullPath: '/ecosystem'
       preLoaderRoute: typeof EcosystemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chatb2k': {
+      id: '/chatb2k'
+      path: '/chatb2k'
+      fullPath: '/chatb2k'
+      preLoaderRoute: typeof Chatb2kRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/autopilot': {
@@ -459,6 +479,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AgentsRoute: AgentsRoute,
   AutopilotRoute: AutopilotRoute,
+  Chatb2kRoute: Chatb2kRoute,
   EcosystemRoute: EcosystemRoute,
   EliteRoute: EliteRoute,
   LoginRoute: LoginRoute,

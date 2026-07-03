@@ -51,7 +51,7 @@ function ChatB2KLayout() {
       <div className="border-b border-gold/10 sticky top-14 z-30 bg-background/80 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-3 sm:px-6 flex gap-1 overflow-x-auto scrollbar-hide">
           {NAV.map((item) => {
-            const active = item.exact ? pathname === item.to : pathname.startsWith(item.to) && item.to !== "/chatb2k";
+            const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
             const Icon = item.icon;
             return (
               <Link
