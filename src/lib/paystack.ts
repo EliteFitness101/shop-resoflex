@@ -10,6 +10,7 @@ export interface PaystackInitInput {
   productName: string;
   userId?: string | null;
   sku?: string | null;
+  variant?: string | null;
   quantity?: number;
 }
 
