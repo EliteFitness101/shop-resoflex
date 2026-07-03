@@ -74,6 +74,7 @@ export const initiatePaystackPayment = createServerFn({ method: "POST" })
           productName: data.productName,
           userId: data.userId ?? null,
           sku: data.sku ?? data.productId,
+          variant: data.variant ?? null,
           quantity: data.quantity ?? 1,
           rsid: data.attribution?.rsid ?? null,
           utm_source: data.attribution?.utm_source ?? null,
