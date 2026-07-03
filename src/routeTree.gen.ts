@@ -29,6 +29,7 @@ import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as CheckoutCallbackRouteImport } from './routes/checkout.callback'
 import { Route as Chatb2kOnboardingRouteImport } from './routes/chatb2k.onboarding'
+import { Route as Chatb2kCoachRouteImport } from './routes/chatb2k.coach'
 import { Route as AdminRevenueAiRouteImport } from './routes/admin.revenue-ai'
 import { Route as ApiPublicPaystackWebhookRouteImport } from './routes/api/public/paystack-webhook'
 import { Route as ApiPublicAssetProductIdRouteImport } from './routes/api/public/asset.$productId'
@@ -133,6 +134,11 @@ const Chatb2kOnboardingRoute = Chatb2kOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => Chatb2kRoute,
 } as any)
+const Chatb2kCoachRoute = Chatb2kCoachRouteImport.update({
+  id: '/coach',
+  path: '/coach',
+  getParentRoute: () => Chatb2kRoute,
+} as any)
 const AdminRevenueAiRoute = AdminRevenueAiRouteImport.update({
   id: '/revenue-ai',
   path: '/revenue-ai',
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
+  '/chatb2k/coach': typeof Chatb2kCoachRoute
   '/chatb2k/onboarding': typeof Chatb2kOnboardingRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
+  '/chatb2k/coach': typeof Chatb2kCoachRoute
   '/chatb2k/onboarding': typeof Chatb2kOnboardingRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
@@ -216,6 +224,7 @@ export interface FileRoutesById {
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
+  '/chatb2k/coach': typeof Chatb2kCoachRoute
   '/chatb2k/onboarding': typeof Chatb2kOnboardingRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
@@ -243,6 +252,7 @@ export interface FileRouteTypes {
     | '/tiers'
     | '/wallet'
     | '/admin/revenue-ai'
+    | '/chatb2k/coach'
     | '/chatb2k/onboarding'
     | '/checkout/callback'
     | '/checkout/success'
@@ -267,6 +277,7 @@ export interface FileRouteTypes {
     | '/tiers'
     | '/wallet'
     | '/admin/revenue-ai'
+    | '/chatb2k/coach'
     | '/chatb2k/onboarding'
     | '/checkout/callback'
     | '/checkout/success'
@@ -292,6 +303,7 @@ export interface FileRouteTypes {
     | '/tiers'
     | '/wallet'
     | '/admin/revenue-ai'
+    | '/chatb2k/coach'
     | '/chatb2k/onboarding'
     | '/checkout/callback'
     | '/checkout/success'
@@ -466,6 +478,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Chatb2kOnboardingRouteImport
       parentRoute: typeof Chatb2kRoute
     }
+    '/chatb2k/coach': {
+      id: '/chatb2k/coach'
+      path: '/coach'
+      fullPath: '/chatb2k/coach'
+      preLoaderRoute: typeof Chatb2kCoachRouteImport
+      parentRoute: typeof Chatb2kRoute
+    }
     '/admin/revenue-ai': {
       id: '/admin/revenue-ai'
       path: '/revenue-ai'
@@ -501,11 +520,13 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface Chatb2kRouteChildren {
+  Chatb2kCoachRoute: typeof Chatb2kCoachRoute
   Chatb2kOnboardingRoute: typeof Chatb2kOnboardingRoute
   Chatb2kIndexRoute: typeof Chatb2kIndexRoute
 }
 
 const Chatb2kRouteChildren: Chatb2kRouteChildren = {
+  Chatb2kCoachRoute: Chatb2kCoachRoute,
   Chatb2kOnboardingRoute: Chatb2kOnboardingRoute,
   Chatb2kIndexRoute: Chatb2kIndexRoute,
 }
