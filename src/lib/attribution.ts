@@ -66,7 +66,7 @@ export function ensureAttribution(): Attribution {
       utm_campaign: utm.utm_campaign ?? existing.utm_campaign,
       utm_content: utm.utm_content ?? existing.utm_content,
       utm_term: utm.utm_term ?? existing.utm_term,
-      funnel_origin: utm.funnel_origin ?? existing.funnel_origin,
+      funnel_origin: utm.funnel_origin ?? existing.funnel_origin ?? "resofit",
     };
     try { localStorage.setItem(KEY, JSON.stringify(merged)); } catch {}
     return merged;
