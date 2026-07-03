@@ -78,6 +78,7 @@ export function ensureAttribution(): Attribution {
   const fresh: Attribution = {
     rsid,
     ...utm,
+    funnel_origin: utm.funnel_origin ?? "resofit",
     first_touch_at: now,
     last_touch_at: now,
     referrer: document.referrer || null,
