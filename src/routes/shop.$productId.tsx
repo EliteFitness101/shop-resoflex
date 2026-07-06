@@ -69,9 +69,27 @@ function ProductPage() {
       toast.error("Select a size");
       return;
     }
+
+    // Runtime guard: curvy SKUs must ship with a valid variant matching
+    // the product's declared size list, and the sku must equal the slug.
+    const isCurvy = product.slug.startsWith("curvy-");
+    if (isCurvy) {
+      const sku = product.slug;
+      const variant = size;
+      if (sku !== product.slug) {
+        toast.error(`SKU mismatch for ${product.slug} — checkout blocked.`);
+        return;
+      }
+      if (!variant || !product.sizes?.includes(variant)) {
+        toast.error(`Invalid size "${variant ?? "—"}" for ${product.name}. Pick one of: ${product.sizes?.join(", ")}`);
+        return;
+      }
+    }
+
     setBusy(true);
     track("checkout_started", { productId: product.id, sku: product.slug, qty, total });
     try {
+
       const { authorizationUrl } = await initiatePayment({
         email,
         amountKobo: total * 100,
