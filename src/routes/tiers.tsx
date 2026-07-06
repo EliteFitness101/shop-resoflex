@@ -19,12 +19,13 @@ export const Route = createFileRoute("/tiers")({
   }),
 });
 
-const TIER_ORDER: SovereignSKU["tier"][] = [1, 2, 3, 4, 5, 6];
+const TIER_ORDER: SovereignSKU["tier"][] = [0, 1, 2, 3, 4, 5, 6];
 
 const TIER_LABEL: Record<SovereignSKU["tier"], string> = {
-  1: "ENTRY · IGNITION",
-  2: "CONDITIONING",
-  3: "DAILY PROTOCOL",
+  0: "FREE · FUNNEL ENTRY",
+  1: "IGNITION",
+  2: "DAILY PROTOCOL",
+  3: "PREMIUM WELLNESS",
   4: "SPECIALIST",
   5: "FULL STACK",
   6: "SOVEREIGN ELITE",
@@ -48,7 +49,7 @@ function TierCard({ sku }: { sku: SovereignSKU }) {
       <p className="text-sm text-muted-foreground/90 leading-relaxed">{sku.description}</p>
       <div className="flex items-center justify-between mt-2">
         <div className="font-display text-xl font-bold text-gold">
-          ₦{sku.priceNGN.toLocaleString()}
+          {sku.priceNGN === 0 ? "FREE" : `₦${sku.priceNGN.toLocaleString()}`}
         </div>
         <Link
           to="/products/$slug"
@@ -78,7 +79,7 @@ function TiersPage() {
         </p>
       </div>
 
-      <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+      <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
         {TIER_ORDER.map((t) => (
           <TacticalPanel key={t} label={`TIER ${t}`}>
             <div className="text-[10px] font-mono uppercase tracking-widest text-gold">
