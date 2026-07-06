@@ -125,27 +125,31 @@ function ProductRoute() {
           <div className="glass-panel rounded-lg p-5">
             <div className="flex items-baseline justify-between">
               <div className="font-display text-3xl font-bold text-gold">
-                ₦{total.toLocaleString()}
+                {sku.priceNGN === 0 ? "FREE" : `₦${total.toLocaleString()}`}
               </div>
-              <div className="text-xs text-muted-foreground">
-                ₦{sku.priceNGN.toLocaleString()} × {qty}
-              </div>
+              {sku.priceNGN > 0 && (
+                <div className="text-xs text-muted-foreground">
+                  ₦{sku.priceNGN.toLocaleString()} × {qty}
+                </div>
+              )}
             </div>
 
-            <div className="mt-4 flex items-center gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Qty</span>
-              {[1, 2, 3, 5, 10].map((n) => (
-                <button
-                  key={n}
-                  onClick={() => setQty(n)}
-                  className={`px-2.5 py-1 text-xs font-mono rounded border transition ${
-                    qty === n ? "bg-gold border-gold text-black font-bold" : "border-gold/20 text-muted-foreground hover:border-gold/50"
-                  }`}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
+            {sku.priceNGN > 0 && (
+              <div className="mt-4 flex items-center gap-2">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Qty</span>
+                {[1, 2, 3, 5, 10].map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => setQty(n)}
+                    className={`px-2.5 py-1 text-xs font-mono rounded border transition ${
+                      qty === n ? "bg-gold border-gold text-black font-bold" : "border-gold/20 text-muted-foreground hover:border-gold/50"
+                    }`}
+                  >
+                    {n}
+                  </button>
+                ))}
+              </div>
+            )}
 
             <a
               href={checkoutHref}
@@ -155,12 +159,12 @@ function ProductRoute() {
               className="mt-5 block"
             >
               <GoldButton size="lg" className="w-full">
-                Deploy via Paystack <ExternalLink className="size-4" />
+                {sku.priceNGN === 0 ? "Enter Funnel — Free" : "Deploy via Paystack"} <ExternalLink className="size-4" />
               </GoldButton>
             </a>
 
             <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-              <ShieldCheck className="size-3 text-gold" /> Paystack · verified · encrypted
+              <ShieldCheck className="size-3 text-gold" /> {sku.priceNGN === 0 ? "Funnel · attribution-tracked" : "Paystack · verified · encrypted"}
             </div>
           </div>
 
