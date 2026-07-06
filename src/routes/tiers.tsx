@@ -19,12 +19,13 @@ export const Route = createFileRoute("/tiers")({
   }),
 });
 
-const TIER_ORDER: SovereignSKU["tier"][] = [1, 2, 3, 4, 5, 6];
+const TIER_ORDER: SovereignSKU["tier"][] = [0, 1, 2, 3, 4, 5, 6];
 
 const TIER_LABEL: Record<SovereignSKU["tier"], string> = {
-  1: "ENTRY · IGNITION",
-  2: "CONDITIONING",
-  3: "DAILY PROTOCOL",
+  0: "FREE · FUNNEL ENTRY",
+  1: "IGNITION",
+  2: "DAILY PROTOCOL",
+  3: "PREMIUM WELLNESS",
   4: "SPECIALIST",
   5: "FULL STACK",
   6: "SOVEREIGN ELITE",
