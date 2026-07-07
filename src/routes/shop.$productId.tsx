@@ -8,7 +8,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { track } from "@/lib/analytics";
-import { ArrowLeft, Shield, Truck, BadgeCheck } from "lucide-react";
+import { resolveVariantCheckout, type VariantRejection } from "@/lib/checkout-variants";
+import { ArrowLeft, Shield, Truck, BadgeCheck, AlertTriangle } from "lucide-react";
 
 export const Route = createFileRoute("/shop/$productId")({
   loader: ({ params }) => {
@@ -46,6 +47,7 @@ function ProductPage() {
   const [qty, setQty] = useState(1);
   const [size, setSize] = useState<string | null>(product.sizes?.[0] ?? null);
   const [busy, setBusy] = useState(false);
+  const [guardError, setGuardError] = useState<VariantRejection | null>(null);
 
   useEffect(() => {
     if (user?.email) setEmail(user.email);
@@ -65,39 +67,38 @@ function ProductPage() {
       toast.error("Operator email required");
       return;
     }
-    if (product.sizes && !size) {
-      toast.error("Select a size");
+
+    // Centralized variant → SKU → checkout resolution.
+    const resolution = resolveVariantCheckout({ product, size });
+    if (!resolution.ok) {
+      setGuardError(resolution);
+      track("checkout_guard_failure", {
+        event: "checkout_guard_failure",
+        productId: product.id,
+        productSlug: resolution.productSlug,
+        selectedSize: resolution.selectedSize,
+        expectedVariants: resolution.expectedVariants,
+        resolvedSku: resolution.resolvedSku,
+        reason: resolution.reason,
+        timestamp: new Date().toISOString(),
+        sessionId: user?.id ?? null,
+      });
+      toast.error(resolution.message);
       return;
     }
-
-    // Runtime guard: curvy SKUs must ship with a valid variant matching
-    // the product's declared size list, and the sku must equal the slug.
-    const isCurvy = product.slug.startsWith("curvy-");
-    if (isCurvy) {
-      const sku = product.slug;
-      const variant = size;
-      if (sku !== product.slug) {
-        toast.error(`SKU mismatch for ${product.slug} — checkout blocked.`);
-        return;
-      }
-      if (!variant || !product.sizes?.includes(variant)) {
-        toast.error(`Invalid size "${variant ?? "—"}" for ${product.name}. Pick one of: ${product.sizes?.join(", ")}`);
-        return;
-      }
-    }
+    setGuardError(null);
 
     setBusy(true);
-    track("checkout_started", { productId: product.id, sku: product.slug, qty, total });
+    track("checkout_started", { productId: product.id, sku: resolution.sku, variant: resolution.variant, qty, total });
     try {
-
       const { authorizationUrl } = await initiatePayment({
         email,
         amountKobo: total * 100,
         productId: product.id,
-        productName: `${product.name}${size ? ` [${size}]` : ""}${qty > 1 ? ` ×${qty}${isBulk ? " (bulk)" : ""}` : ""}`,
+        productName: `${product.name}${resolution.variant ? ` [${resolution.variant}]` : ""}${qty > 1 ? ` ×${qty}${isBulk ? " (bulk)" : ""}` : ""}`,
         userId: user?.id ?? null,
-        sku: product.slug,
-        variant: size ?? null,
+        sku: resolution.sku,
+        variant: resolution.variant,
         quantity: qty,
       });
       if (!authorizationUrl) throw new Error("Paystack did not return a checkout URL.");
@@ -153,13 +154,15 @@ function ProductPage() {
                 <div className="text-telemetry">// SIZE</div>
                 <div className="text-xs font-mono text-gold">{size ?? "—"}</div>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Select size">
                 {product.sizes.map((s: string) => (
                   <button
                     key={s}
                     type="button"
-                    onClick={() => setSize(s)}
-                    className={`min-w-[3rem] h-11 px-3 rounded border text-sm font-mono uppercase tracking-wider transition ${
+                    role="radio"
+                    aria-checked={size === s}
+                    onClick={() => { setSize(s); setGuardError(null); }}
+                    className={`min-w-[3rem] h-11 px-3 rounded border text-sm font-mono uppercase tracking-wider transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
                       size === s
                         ? "border-gold bg-gold text-primary-foreground"
                         : "border-gold/25 hover:border-gold/60 text-foreground"
@@ -217,6 +220,37 @@ function ProductPage() {
               </span>
               <span className="text-gold font-bold text-base">₦{total.toLocaleString()}</span>
             </div>
+            {guardError && (
+              <div
+                role="alert"
+                aria-live="assertive"
+                className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm"
+              >
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="size-4 mt-0.5 text-destructive shrink-0" aria-hidden />
+                  <div className="flex-1 space-y-2">
+                    <div className="font-mono text-[10px] uppercase tracking-widest text-destructive">
+                      Checkout guard · {guardError.reason.replace(/_/g, " ")}
+                    </div>
+                    <p className="text-foreground/90 leading-snug">{guardError.message}</p>
+                    {guardError.expectedVariants.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 pt-1" aria-label="Available sizes">
+                        {guardError.expectedVariants.map((v) => (
+                          <button
+                            key={v}
+                            type="button"
+                            onClick={() => { setSize(v); setGuardError(null); }}
+                            className="px-2 py-1 rounded border border-gold/30 text-xs font-mono uppercase tracking-wider hover:border-gold hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold min-h-9"
+                          >
+                            {v}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
             <GoldButton size="lg" className="w-full" disabled={busy} onClick={handleCheckout}>
               {busy ? "Routing…" : `Pay ₦${total.toLocaleString()} via Paystack`}
             </GoldButton>
