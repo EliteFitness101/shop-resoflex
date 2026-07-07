@@ -8,7 +8,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { track } from "@/lib/analytics";
-import { ArrowLeft, Shield, Truck, BadgeCheck } from "lucide-react";
+import { resolveVariantCheckout, type VariantRejection } from "@/lib/checkout-variants";
+import { ArrowLeft, Shield, Truck, BadgeCheck, AlertTriangle } from "lucide-react";
 
 export const Route = createFileRoute("/shop/$productId")({
   loader: ({ params }) => {
@@ -46,6 +47,7 @@ function ProductPage() {
   const [qty, setQty] = useState(1);
   const [size, setSize] = useState<string | null>(product.sizes?.[0] ?? null);
   const [busy, setBusy] = useState(false);
+  const [guardError, setGuardError] = useState<VariantRejection | null>(null);
 
   useEffect(() => {
     if (user?.email) setEmail(user.email);
@@ -65,39 +67,38 @@ function ProductPage() {
       toast.error("Operator email required");
       return;
     }
-    if (product.sizes && !size) {
-      toast.error("Select a size");
+
+    // Centralized variant → SKU → checkout resolution.
+    const resolution = resolveVariantCheckout({ product, size });
+    if (!resolution.ok) {
+      setGuardError(resolution);
+      track("checkout_guard_failure", {
+        event: "checkout_guard_failure",
+        productId: product.id,
+        productSlug: resolution.productSlug,
+        selectedSize: resolution.selectedSize,
+        expectedVariants: resolution.expectedVariants,
+        resolvedSku: resolution.resolvedSku,
+        reason: resolution.reason,
+        timestamp: new Date().toISOString(),
+        sessionId: user?.id ?? null,
+      });
+      toast.error(resolution.message);
       return;
     }
-
-    // Runtime guard: curvy SKUs must ship with a valid variant matching
-    // the product's declared size list, and the sku must equal the slug.
-    const isCurvy = product.slug.startsWith("curvy-");
-    if (isCurvy) {
-      const sku = product.slug;
-      const variant = size;
-      if (sku !== product.slug) {
-        toast.error(`SKU mismatch for ${product.slug} — checkout blocked.`);
-        return;
-      }
-      if (!variant || !product.sizes?.includes(variant)) {
-        toast.error(`Invalid size "${variant ?? "—"}" for ${product.name}. Pick one of: ${product.sizes?.join(", ")}`);
-        return;
-      }
-    }
+    setGuardError(null);
 
     setBusy(true);
-    track("checkout_started", { productId: product.id, sku: product.slug, qty, total });
+    track("checkout_started", { productId: product.id, sku: resolution.sku, variant: resolution.variant, qty, total });
     try {
-
       const { authorizationUrl } = await initiatePayment({
         email,
         amountKobo: total * 100,
         productId: product.id,
-        productName: `${product.name}${size ? ` [${size}]` : ""}${qty > 1 ? ` ×${qty}${isBulk ? " (bulk)" : ""}` : ""}`,
+        productName: `${product.name}${resolution.variant ? ` [${resolution.variant}]` : ""}${qty > 1 ? ` ×${qty}${isBulk ? " (bulk)" : ""}` : ""}`,
         userId: user?.id ?? null,
-        sku: product.slug,
-        variant: size ?? null,
+        sku: resolution.sku,
+        variant: resolution.variant,
         quantity: qty,
       });
       if (!authorizationUrl) throw new Error("Paystack did not return a checkout URL.");
