@@ -14,6 +14,7 @@ export type AnalyticsEvent =
   | "scroll_depth_90"
   | "cta_click"
   | "checkout_started"
+  | "checkout_guard_failure"
   | "payment_success"
   | "whatsapp_click"
   | "upgrade_clicked"
