@@ -154,13 +154,15 @@ function ProductPage() {
                 <div className="text-telemetry">// SIZE</div>
                 <div className="text-xs font-mono text-gold">{size ?? "—"}</div>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Select size">
                 {product.sizes.map((s: string) => (
                   <button
                     key={s}
                     type="button"
-                    onClick={() => setSize(s)}
-                    className={`min-w-[3rem] h-11 px-3 rounded border text-sm font-mono uppercase tracking-wider transition ${
+                    role="radio"
+                    aria-checked={size === s}
+                    onClick={() => { setSize(s); setGuardError(null); }}
+                    className={`min-w-[3rem] h-11 px-3 rounded border text-sm font-mono uppercase tracking-wider transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
                       size === s
                         ? "border-gold bg-gold text-primary-foreground"
                         : "border-gold/25 hover:border-gold/60 text-foreground"
@@ -218,6 +220,37 @@ function ProductPage() {
               </span>
               <span className="text-gold font-bold text-base">₦{total.toLocaleString()}</span>
             </div>
+            {guardError && (
+              <div
+                role="alert"
+                aria-live="assertive"
+                className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm"
+              >
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="size-4 mt-0.5 text-destructive shrink-0" aria-hidden />
+                  <div className="flex-1 space-y-2">
+                    <div className="font-mono text-[10px] uppercase tracking-widest text-destructive">
+                      Checkout guard · {guardError.reason.replace(/_/g, " ")}
+                    </div>
+                    <p className="text-foreground/90 leading-snug">{guardError.message}</p>
+                    {guardError.expectedVariants.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 pt-1" aria-label="Available sizes">
+                        {guardError.expectedVariants.map((v) => (
+                          <button
+                            key={v}
+                            type="button"
+                            onClick={() => { setSize(v); setGuardError(null); }}
+                            className="px-2 py-1 rounded border border-gold/30 text-xs font-mono uppercase tracking-wider hover:border-gold hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold min-h-9"
+                          >
+                            {v}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
             <GoldButton size="lg" className="w-full" disabled={busy} onClick={handleCheckout}>
               {busy ? "Routing…" : `Pay ₦${total.toLocaleString()} via Paystack`}
             </GoldButton>
