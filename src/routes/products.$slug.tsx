@@ -6,6 +6,7 @@ import { GoldButton } from "@/components/GoldButton";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { track } from "@/lib/analytics";
 import { decorateUrl, ensureAttribution } from "@/lib/attribution";
+import { verifyCheckoutUrl } from "@/lib/checkout-url";
 import { ArrowRight, ExternalLink, MessageCircle, ShieldCheck } from "lucide-react";
 
 const WHATSAPP_E164 = "2348000000000";
@@ -155,7 +156,19 @@ function ProductRoute() {
               href={checkoutHref}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => track("checkout_started", { sku: sku.slug, tier: sku.tier, qty, amount: total })}
+              onClick={(e) => {
+                const verified = verifyCheckoutUrl(checkoutHref);
+                if (!verified.ok) {
+                  e.preventDefault();
+                  track("checkout_guard_failure", {
+                    sku: sku.slug,
+                    reason: verified.reason,
+                    resolvedUrl: checkoutHref,
+                  });
+                  return;
+                }
+                track("checkout_started", { sku: sku.slug, tier: sku.tier, qty, amount: total });
+              }}
               className="mt-5 block"
             >
               <GoldButton size="lg" className="w-full">
