@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { GoldButton } from "@/components/GoldButton";
+import { OnboardingChecklist } from "@/components/OnboardingChecklist";
 import { useAuth } from "@/hooks/use-auth";
 import { getHealthProfile, getTodayLog, upsertTodayLog, listTodayTasks } from "@/lib/chatb2k.functions";
 import { Droplet, Flame, Beef, Plus, Sparkles, ArrowRight } from "lucide-react";
@@ -62,6 +63,7 @@ function TodayDashboard() {
             </Link>
           </div>
         </TacticalPanel>
+        <OnboardingChecklist profile={null} log={null} tasks={[]} />
       </div>
     );
   }
