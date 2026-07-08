@@ -88,6 +88,8 @@ function TodayDashboard() {
         <ScoreCard label="CEO" value={ceoScore} />
       </div>
 
+      <OnboardingChecklist profile={profile.data} log={log.data} tasks={tasks.data} />
+
       {profile.data?.ai_summary && (
         <TacticalPanel label="AI BRIEFING" status="LIVE">
           <p className="text-sm leading-relaxed whitespace-pre-wrap">{profile.data.ai_summary}</p>
