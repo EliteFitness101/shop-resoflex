@@ -106,7 +106,7 @@ export function resolveVariantCheckout({ product, size }: ResolveInput): Variant
     };
   }
 
-  if (!expected.includes(size)) {
+  if (!variantSet(product.slug, expected).has(size)) {
     return {
       ok: false,
       reason: "invalid_size",
