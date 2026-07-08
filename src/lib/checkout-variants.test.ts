@@ -1,7 +1,6 @@
 // @ts-nocheck — runs via `bun test`; bun:test types are provided at runtime, no new deps.
 import { describe, expect, it } from "bun:test";
 import { resolveVariantCheckout } from "./checkout-variants";
-import { resolveVariantCheckout } from "./checkout-variants";
 
 const curvyShaper = {
   id: "c-test",

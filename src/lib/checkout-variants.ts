@@ -38,6 +38,17 @@ export interface ResolveInput {
   size: string | null;
 }
 
+// Lightweight per-slug Set cache for O(1) variant membership.
+// Reuses the product's own sizes array — no external state.
+const VARIANT_SET_CACHE = new Map<string, Set<string>>();
+function variantSet(slug: string, sizes: readonly string[]): Set<string> {
+  const cached = VARIANT_SET_CACHE.get(slug);
+  if (cached && cached.size === sizes.length) return cached;
+  const set = new Set(sizes);
+  VARIANT_SET_CACHE.set(slug, set);
+  return set;
+}
+
 /**
  * Curvy collection contract: SKU === product.slug, variant must be one of the
  * declared sizes. Non-curvy sized products follow the same rule; size-less
@@ -95,7 +106,7 @@ export function resolveVariantCheckout({ product, size }: ResolveInput): Variant
     };
   }
 
-  if (!expected.includes(size)) {
+  if (!variantSet(product.slug, expected).has(size)) {
     return {
       ok: false,
       reason: "invalid_size",
