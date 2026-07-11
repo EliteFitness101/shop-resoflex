@@ -88,6 +88,8 @@ function ProductRoute() {
   const { sku } = Route.useLoaderData();
   const [qty, setQty] = useState(1);
   const upsell = nextTierUpsell(sku.slug);
+  const persona = usePersonalization();
+  const companion = persona.hasProfile ? companionSKU(sku.slug, persona.profile) : null;
 
   useEffect(() => {
     ensureAttribution();
