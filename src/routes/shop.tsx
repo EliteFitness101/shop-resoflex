@@ -32,6 +32,7 @@ export const Route = createFileRoute("/shop")({
 
 function Shop() {
   const [imageMap, setImageMap] = useState<Record<string, string>>({});
+  const persona = usePersonalization();
   useEffect(() => {
     listProducts()
       .then((r) => {
@@ -42,7 +43,14 @@ function Shop() {
       .catch(() => {});
   }, []);
 
-  const products = mockProducts.map((p) => ({ ...p, imageUrl: imageMap[p.slug] ?? null }));
+  // Reorder mock products so ones matching persona intent surface first.
+  const products = useMemo(() => {
+    const decorated = mockProducts.map((p) => ({ ...p, imageUrl: imageMap[p.slug] ?? null }));
+    if (!persona.hasProfile) return decorated;
+    // Weight: exact-slug match to a recommended SKU beats category match.
+    const boostSlugs = new Set(persona.ranked.map((r) => r.slug));
+    return [...decorated].sort((a, b) => Number(boostSlugs.has(b.slug)) - Number(boostSlugs.has(a.slug)));
+  }, [imageMap, persona.hasProfile, persona.ranked]);
 
   return (
     <>
