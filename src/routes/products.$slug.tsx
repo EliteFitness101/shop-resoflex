@@ -222,6 +222,39 @@ function ProductRoute() {
         </TacticalPanel>
       )}
 
+      {companion && companion.slug !== sku.slug && companion.slug !== upsell?.slug && (
+        <TacticalPanel label={`AI COMPANION · ${persona.bundleTier.toUpperCase()}`} status="MATCHED" className="mt-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex-1 min-w-[240px]">
+              <div className="flex items-center gap-2 text-telemetry text-gold">
+                <Sparkles className="size-3.5" /> CHATB2K RECOMMENDS
+              </div>
+              <div className="font-display font-semibold text-lg mt-1">{companion.name}</div>
+              <div className="text-sm text-muted-foreground">{companion.tagline}</div>
+              <div className="font-display text-lg font-bold text-gold mt-1">
+                {companion.priceNGN === 0 ? "FREE" : `₦${companion.priceNGN.toLocaleString()}`}
+              </div>
+            </div>
+            <Link
+              to="/products/$slug"
+              params={{ slug: companion.slug }}
+              onClick={() =>
+                track("bundle_recommended", {
+                  sku: sku.slug,
+                  companion: companion.slug,
+                  bundleTier: persona.bundleTier,
+                  surface: "product",
+                })
+              }
+            >
+              <GoldButton>
+                Pair it up <ArrowRight className="size-4" />
+              </GoldButton>
+            </Link>
+          </div>
+        </TacticalPanel>
+      )}
+
       <div className="mt-8 text-[10px] font-mono uppercase tracking-widest text-muted-foreground text-center">
         // Catalog-locked · {SOVEREIGN_CATALOG.length} SKUs · slug verified on load
       </div>
