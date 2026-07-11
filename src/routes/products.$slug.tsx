@@ -7,7 +7,9 @@ import { TacticalPanel } from "@/components/TacticalPanel";
 import { track } from "@/lib/analytics";
 import { decorateUrl, ensureAttribution } from "@/lib/attribution";
 import { verifyCheckoutUrl } from "@/lib/checkout-url";
-import { ArrowRight, ExternalLink, MessageCircle, ShieldCheck } from "lucide-react";
+import { usePersonalization } from "@/hooks/use-personalization";
+import { companionSKU } from "@/lib/personalization";
+import { ArrowRight, ExternalLink, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 
 const WHATSAPP_E164 = "2348000000000";
 
