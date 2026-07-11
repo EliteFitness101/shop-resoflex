@@ -100,6 +100,9 @@ function Landing() {
 
       {/* PRODUCT SHOWCASE */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-16">
+        <div className="mb-8">
+          <PersonalizedPanel surface="home" />
+        </div>
         <div className="flex items-end justify-between mb-8 gap-4">
           <div>
             <div className="text-telemetry mb-2">// ARSENAL</div>
