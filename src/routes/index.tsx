@@ -8,6 +8,7 @@ import { FAQAccordion } from "@/components/FAQAccordion";
 import { PlusSizeHero } from "@/components/PlusSizeHero";
 import { HeroCarousel } from "@/components/HeroCarousel";
 import { StickyCTA } from "@/components/StickyCTA";
+import { PersonalizedPanel } from "@/components/PersonalizedPanel";
 import { products, mealPlans, stats } from "@/lib/mock-data";
 import { attachScrollDepthTracking, track } from "@/lib/analytics";
 import { decorateUrl, ensureAttribution } from "@/lib/attribution";
