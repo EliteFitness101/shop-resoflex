@@ -64,6 +64,9 @@ function Shop() {
       />
 
       <div id="arsenal-grid" className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
+        <div className="mb-6">
+          <PersonalizedPanel surface="shop" />
+        </div>
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div className="text-telemetry">// SKU MATRIX</div>
           <div className="flex items-center gap-3">
