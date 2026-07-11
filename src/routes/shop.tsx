@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { CurrencySwitcher } from "@/components/PriceTag";
 import { RouteHero } from "@/components/RouteHero";
 import { RouteErrorBoundary, RouteSkeleton } from "@/components/RouteFallbacks";
+import { PersonalizedPanel } from "@/components/PersonalizedPanel";
+import { usePersonalization } from "@/hooks/use-personalization";
 
 import { products as mockProducts } from "@/lib/mock-data";
 import { listProducts } from "@/lib/products.functions";
