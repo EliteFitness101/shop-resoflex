@@ -14,11 +14,19 @@ export type AnalyticsEvent =
   | "scroll_depth_90"
   | "cta_click"
   | "checkout_started"
+  | "checkout_guard_success"
   | "checkout_guard_failure"
   | "payment_success"
   | "whatsapp_click"
   | "upgrade_clicked"
-  | "referral_share";
+  | "referral_share"
+  | "assessment_to_shop"
+  | "assessment_completed"
+  | "recommendation_shown"
+  | "recommendation_clicked"
+  | "recommendation_purchased"
+  | "bundle_recommended"
+  | "bundle_added";
 
 export function track(event: AnalyticsEvent, payload: Record<string, unknown> = {}): void {
   if (typeof window === "undefined") return;

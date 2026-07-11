@@ -7,7 +7,9 @@ import { TacticalPanel } from "@/components/TacticalPanel";
 import { track } from "@/lib/analytics";
 import { decorateUrl, ensureAttribution } from "@/lib/attribution";
 import { verifyCheckoutUrl } from "@/lib/checkout-url";
-import { ArrowRight, ExternalLink, MessageCircle, ShieldCheck } from "lucide-react";
+import { usePersonalization } from "@/hooks/use-personalization";
+import { companionSKU } from "@/lib/personalization";
+import { ArrowRight, ExternalLink, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 
 const WHATSAPP_E164 = "2348000000000";
 
@@ -86,6 +88,8 @@ function ProductRoute() {
   const { sku } = Route.useLoaderData();
   const [qty, setQty] = useState(1);
   const upsell = nextTierUpsell(sku.slug);
+  const persona = usePersonalization();
+  const companion = persona.hasProfile ? companionSKU(sku.slug, persona.profile) : null;
 
   useEffect(() => {
     ensureAttribution();
@@ -167,7 +171,11 @@ function ProductRoute() {
                   });
                   return;
                 }
+                track("checkout_guard_success", { sku: sku.slug, tier: sku.tier, qty, amount: total });
                 track("checkout_started", { sku: sku.slug, tier: sku.tier, qty, amount: total });
+                if (companion) {
+                  track("recommendation_purchased", { sku: sku.slug, companion: companion.slug, surface: "product" });
+                }
               }}
               className="mt-5 block"
             >
@@ -208,6 +216,39 @@ function ProductRoute() {
             <Link to="/products/$slug" params={{ slug: upsell.slug }}>
               <GoldButton variant="outline">
                 Ascend to Tier {upsell.tier} <ArrowRight className="size-4" />
+              </GoldButton>
+            </Link>
+          </div>
+        </TacticalPanel>
+      )}
+
+      {companion && companion.slug !== sku.slug && companion.slug !== upsell?.slug && (
+        <TacticalPanel label={`AI COMPANION · ${persona.bundleTier.toUpperCase()}`} status="MATCHED" className="mt-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex-1 min-w-[240px]">
+              <div className="flex items-center gap-2 text-telemetry text-gold">
+                <Sparkles className="size-3.5" /> CHATB2K RECOMMENDS
+              </div>
+              <div className="font-display font-semibold text-lg mt-1">{companion.name}</div>
+              <div className="text-sm text-muted-foreground">{companion.tagline}</div>
+              <div className="font-display text-lg font-bold text-gold mt-1">
+                {companion.priceNGN === 0 ? "FREE" : `₦${companion.priceNGN.toLocaleString()}`}
+              </div>
+            </div>
+            <Link
+              to="/products/$slug"
+              params={{ slug: companion.slug }}
+              onClick={() =>
+                track("bundle_recommended", {
+                  sku: sku.slug,
+                  companion: companion.slug,
+                  bundleTier: persona.bundleTier,
+                  surface: "product",
+                })
+              }
+            >
+              <GoldButton>
+                Pair it up <ArrowRight className="size-4" />
               </GoldButton>
             </Link>
           </div>

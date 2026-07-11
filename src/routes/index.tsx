@@ -8,6 +8,7 @@ import { FAQAccordion } from "@/components/FAQAccordion";
 import { PlusSizeHero } from "@/components/PlusSizeHero";
 import { HeroCarousel } from "@/components/HeroCarousel";
 import { StickyCTA } from "@/components/StickyCTA";
+import { PersonalizedPanel } from "@/components/PersonalizedPanel";
 import { products, mealPlans, stats } from "@/lib/mock-data";
 import { attachScrollDepthTracking, track } from "@/lib/analytics";
 import { decorateUrl, ensureAttribution } from "@/lib/attribution";
@@ -99,6 +100,9 @@ function Landing() {
 
       {/* PRODUCT SHOWCASE */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-16">
+        <div className="mb-8">
+          <PersonalizedPanel surface="home" />
+        </div>
         <div className="flex items-end justify-between mb-8 gap-4">
           <div>
             <div className="text-telemetry mb-2">// ARSENAL</div>

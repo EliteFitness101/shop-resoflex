@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { CurrencySwitcher } from "@/components/PriceTag";
 import { RouteHero } from "@/components/RouteHero";
 import { RouteErrorBoundary, RouteSkeleton } from "@/components/RouteFallbacks";
+import { PersonalizedPanel } from "@/components/PersonalizedPanel";
+import { usePersonalization } from "@/hooks/use-personalization";
 
 import { products as mockProducts } from "@/lib/mock-data";
 import { listProducts } from "@/lib/products.functions";
@@ -30,6 +32,7 @@ export const Route = createFileRoute("/shop")({
 
 function Shop() {
   const [imageMap, setImageMap] = useState<Record<string, string>>({});
+  const persona = usePersonalization();
   useEffect(() => {
     listProducts()
       .then((r) => {
@@ -40,7 +43,14 @@ function Shop() {
       .catch(() => {});
   }, []);
 
-  const products = mockProducts.map((p) => ({ ...p, imageUrl: imageMap[p.slug] ?? null }));
+  // Reorder mock products so ones matching persona intent surface first.
+  const products = useMemo(() => {
+    const decorated = mockProducts.map((p) => ({ ...p, imageUrl: imageMap[p.slug] ?? null }));
+    if (!persona.hasProfile) return decorated;
+    // Weight: exact-slug match to a recommended SKU beats category match.
+    const boostSlugs = new Set(persona.ranked.map((r) => r.slug));
+    return [...decorated].sort((a, b) => Number(boostSlugs.has(b.slug)) - Number(boostSlugs.has(a.slug)));
+  }, [imageMap, persona.hasProfile, persona.ranked]);
 
   return (
     <>
@@ -54,6 +64,9 @@ function Shop() {
       />
 
       <div id="arsenal-grid" className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
+        <div className="mb-6">
+          <PersonalizedPanel surface="shop" />
+        </div>
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div className="text-telemetry">// SKU MATRIX</div>
           <div className="flex items-center gap-3">
