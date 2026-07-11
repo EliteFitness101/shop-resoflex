@@ -171,7 +171,11 @@ function ProductRoute() {
                   });
                   return;
                 }
+                track("checkout_guard_success", { sku: sku.slug, tier: sku.tier, qty, amount: total });
                 track("checkout_started", { sku: sku.slug, tier: sku.tier, qty, amount: total });
+                if (companion) {
+                  track("recommendation_purchased", { sku: sku.slug, companion: companion.slug, surface: "product" });
+                }
               }}
               className="mt-5 block"
             >
