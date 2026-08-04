@@ -11,7 +11,7 @@ import { allRecords, lookupSKU, searchCatalog, featuredProducts, visibleCollecti
 import { skusForCollection } from "../src/lib/collections";
 import { recommendProducts } from "../src/lib/chatb2k-recommend";
 import { importFromCSV } from "../src/lib/catalog-import";
-import { isAllowedCheckoutHost } from "../src/lib/checkout-url";
+import { verifyCheckoutUrl } from "../src/lib/checkout-url";
 
 let failures = 0;
 function check(name: string, ok: boolean, detail = "") {
@@ -53,7 +53,7 @@ check("goal matching applied", recs.some((r) => r.goalMatch.includes("fat_loss")
 console.log("\nCheckout metadata");
 check(
   "every paid SKU resolves an allowed checkout host",
-  SOVEREIGN_CATALOG.filter((s) => s.priceNGN > 0).every((s) => isAllowedCheckoutHost(paystackUrl(s.slug))),
+  SOVEREIGN_CATALOG.filter((s) => s.priceNGN > 0).every((s) => verifyCheckoutUrl(paystackUrl(s.slug)).ok),
 );
 
 console.log("\nCSV import engine");
