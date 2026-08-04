@@ -1,0 +1,14 @@
+sku,slug,name,tagline,description,category,price_ngn,bulk_price_ngn,bulk_threshold,commission_pct,hero_image_asset,status,digital_product,requires_shipping,chatb2k_enabled,recommendation_priority
+NAIJAFIT_7DAY_FREE,naijafit-7day-free,NaijaFit™ 7-Day Smart Meal Plan,Free entry · funnel ignition.,Free 7-day smart Nigerian meal plan.,meal,0,,3,0,,published,true,false,true,90
+HERITAGE_MEAL,heritage-meal,Heritage Meal Plan,Naija-native macro system.,Regional meal architecture — jollof ofada egusi banga moi moi.,meal,5000,,3,10,,published,true,false,true,70
+RESOFLEX_MEAL_MOVE,resoflex-meal-move,Enhanced Meal & Move,Meal engine + training loop.,Nigerian meal engineering fused with movement programming.,program,5000,,3,10,,published,true,false,true,72
+FITNESS_EVOLUTION,fitness-evolution,Fitness Evolution Meal & Workout,Structured Naija transformation.,Meal + workout system with progressive strength loop.,program,10000,,3,12,,published,true,false,true,78
+RESOFLEX_KINETIC,resoflex-kinetic,Personalized Meal & Workout,Exit-intent operator offer.,Fully personalized Nigerian meal and workout program.,program,15000,,3,12,,published,true,false,true,80
+RESOFLEX_COMMANDER,resoflex-commander,Premium Meal & Workout + BioSync Scale,Premium stack · free BioSync scale.,Premium command stack shipping with BioSync scale.,program,25000,,3,15,,published,false,true,true,85
+RESOFLEX_MENS_TANK,resoflex-mens-tank,ResoFlex™ Men's Sleeveless Fitness Tank,Sweat-wicking · XS to XXXL.,Signature men's sleeveless fitness tank.,apparel,12000,8500,3,10,,published,false,true,true,50
+RESOFLEX_LADIES_2PIECE,resoflex-ladies-2piece,ResoFlex™ Ladies 2-Piece Sports Set,Curve-sculpting · XS to XXXL.,Two-piece sports set with princess-seam contouring.,apparel,22500,18000,3,10,,published,false,true,true,55
+BUTTGROWTHB2K,buttgrowthb2k,ButtGrowth B2K Premium,Glute hypertrophy program.,12-week progressive-load glute system.,program,35000,,3,15,,published,true,false,true,68
+25_STEEL_BONED_LATEX_SHAPER,25-steel-boned-latex-shaper,25 Steel Boned Latex Shaper,Signature waist compression.,Twenty-five steel-boned latex waist trainer.,shapewear,35000,,3,12,,published,false,true,true,60
+RESOFLEX_STATION_GYM,resoflex-station-gym,ResoFlex Station Gym Equipment,Home gym command deck.,Multi-function home gym equipment.,equipment,420000,,2,8,,published,false,true,true,45
+RESOFLEX_ASCENSION_BUNDLE,resoflex-ascension-bundle,ResoFlex Ascension Bundle,Full-stack transformation.,Commander + Kinetic + Meal & Move + Heritage in one deploy.,bundle,75000,,2,18,,published,false,true,true,88
+RESOFLEX_VIP_PREORDER,resoflex-vip-preorder,ResoFlex VIP Preorder,Sovereign concierge access.,Private-line coaching and direct founder access.,membership,150000,,1,20,,published,true,false,true,66
