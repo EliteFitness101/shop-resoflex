@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as TiersRouteImport } from './routes/tiers'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RegisterRouteImport } from './routes/register'
@@ -23,9 +24,11 @@ import { Route as AutopilotRouteImport } from './routes/autopilot'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
 import { Route as Chatb2kIndexRouteImport } from './routes/chatb2k.index'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
+import { Route as CollectionsCodeRouteImport } from './routes/collections.$code'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as CheckoutCallbackRouteImport } from './routes/checkout.callback'
 import { Route as Chatb2kWorkoutsRouteImport } from './routes/chatb2k.workouts'
@@ -35,6 +38,7 @@ import { Route as Chatb2kHabitsRouteImport } from './routes/chatb2k.habits'
 import { Route as Chatb2kCoachRouteImport } from './routes/chatb2k.coach'
 import { Route as Chatb2kCeoRouteImport } from './routes/chatb2k.ceo'
 import { Route as AdminRevenueAiRouteImport } from './routes/admin.revenue-ai'
+import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as ApiPublicPaystackWebhookRouteImport } from './routes/api/public/paystack-webhook'
 import { Route as ApiPublicAssetProductIdRouteImport } from './routes/api/public/asset.$productId'
 
@@ -46,6 +50,11 @@ const WalletRoute = WalletRouteImport.update({
 const TiersRoute = TiersRouteImport.update({
   id: '/tiers',
   path: '/tiers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -108,6 +117,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CollectionsIndexRoute = CollectionsIndexRouteImport.update({
+  id: '/collections/',
+  path: '/collections/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Chatb2kIndexRoute = Chatb2kIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -121,6 +135,11 @@ const ShopProductIdRoute = ShopProductIdRouteImport.update({
 const ProductsSlugRoute = ProductsSlugRouteImport.update({
   id: '/products/$slug',
   path: '/products/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionsCodeRoute = CollectionsCodeRouteImport.update({
+  id: '/collections/$code',
+  path: '/collections/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutSuccessRoute = CheckoutSuccessRouteImport.update({
@@ -168,6 +187,11 @@ const AdminRevenueAiRoute = AdminRevenueAiRouteImport.update({
   path: '/revenue-ai',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiPublicPaystackWebhookRoute =
   ApiPublicPaystackWebhookRouteImport.update({
     id: '/api/public/paystack-webhook',
@@ -193,8 +217,10 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/chatb2k/ceo': typeof Chatb2kCeoRoute
   '/chatb2k/coach': typeof Chatb2kCoachRoute
@@ -204,9 +230,11 @@ export interface FileRoutesByFullPath {
   '/chatb2k/workouts': typeof Chatb2kWorkoutsRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
+  '/collections/$code': typeof CollectionsCodeRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/chatb2k/': typeof Chatb2kIndexRoute
+  '/collections/': typeof CollectionsIndexRoute
   '/api/public/paystack-webhook': typeof ApiPublicPaystackWebhookRoute
   '/api/public/asset/$productId': typeof ApiPublicAssetProductIdRoute
 }
@@ -222,8 +250,10 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/chatb2k/ceo': typeof Chatb2kCeoRoute
   '/chatb2k/coach': typeof Chatb2kCoachRoute
@@ -233,9 +263,11 @@ export interface FileRoutesByTo {
   '/chatb2k/workouts': typeof Chatb2kWorkoutsRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
+  '/collections/$code': typeof CollectionsCodeRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/chatb2k': typeof Chatb2kIndexRoute
+  '/collections': typeof CollectionsIndexRoute
   '/api/public/paystack-webhook': typeof ApiPublicPaystackWebhookRoute
   '/api/public/asset/$productId': typeof ApiPublicAssetProductIdRoute
 }
@@ -253,8 +285,10 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/chatb2k/ceo': typeof Chatb2kCeoRoute
   '/chatb2k/coach': typeof Chatb2kCoachRoute
@@ -264,9 +298,11 @@ export interface FileRoutesById {
   '/chatb2k/workouts': typeof Chatb2kWorkoutsRoute
   '/checkout/callback': typeof CheckoutCallbackRoute
   '/checkout/success': typeof CheckoutSuccessRoute
+  '/collections/$code': typeof CollectionsCodeRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/chatb2k/': typeof Chatb2kIndexRoute
+  '/collections/': typeof CollectionsIndexRoute
   '/api/public/paystack-webhook': typeof ApiPublicPaystackWebhookRoute
   '/api/public/asset/$productId': typeof ApiPublicAssetProductIdRoute
 }
@@ -285,8 +321,10 @@ export interface FileRouteTypes {
     | '/register'
     | '/settings'
     | '/shop'
+    | '/sitemap.xml'
     | '/tiers'
     | '/wallet'
+    | '/admin/media'
     | '/admin/revenue-ai'
     | '/chatb2k/ceo'
     | '/chatb2k/coach'
@@ -296,9 +334,11 @@ export interface FileRouteTypes {
     | '/chatb2k/workouts'
     | '/checkout/callback'
     | '/checkout/success'
+    | '/collections/$code'
     | '/products/$slug'
     | '/shop/$productId'
     | '/chatb2k/'
+    | '/collections/'
     | '/api/public/paystack-webhook'
     | '/api/public/asset/$productId'
   fileRoutesByTo: FileRoutesByTo
@@ -314,8 +354,10 @@ export interface FileRouteTypes {
     | '/register'
     | '/settings'
     | '/shop'
+    | '/sitemap.xml'
     | '/tiers'
     | '/wallet'
+    | '/admin/media'
     | '/admin/revenue-ai'
     | '/chatb2k/ceo'
     | '/chatb2k/coach'
@@ -325,9 +367,11 @@ export interface FileRouteTypes {
     | '/chatb2k/workouts'
     | '/checkout/callback'
     | '/checkout/success'
+    | '/collections/$code'
     | '/products/$slug'
     | '/shop/$productId'
     | '/chatb2k'
+    | '/collections'
     | '/api/public/paystack-webhook'
     | '/api/public/asset/$productId'
   id:
@@ -344,8 +388,10 @@ export interface FileRouteTypes {
     | '/register'
     | '/settings'
     | '/shop'
+    | '/sitemap.xml'
     | '/tiers'
     | '/wallet'
+    | '/admin/media'
     | '/admin/revenue-ai'
     | '/chatb2k/ceo'
     | '/chatb2k/coach'
@@ -355,9 +401,11 @@ export interface FileRouteTypes {
     | '/chatb2k/workouts'
     | '/checkout/callback'
     | '/checkout/success'
+    | '/collections/$code'
     | '/products/$slug'
     | '/shop/$productId'
     | '/chatb2k/'
+    | '/collections/'
     | '/api/public/paystack-webhook'
     | '/api/public/asset/$productId'
   fileRoutesById: FileRoutesById
@@ -375,11 +423,14 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TiersRoute: typeof TiersRoute
   WalletRoute: typeof WalletRoute
   CheckoutCallbackRoute: typeof CheckoutCallbackRoute
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
+  CollectionsCodeRoute: typeof CollectionsCodeRoute
   ProductsSlugRoute: typeof ProductsSlugRoute
+  CollectionsIndexRoute: typeof CollectionsIndexRoute
   ApiPublicPaystackWebhookRoute: typeof ApiPublicPaystackWebhookRoute
   ApiPublicAssetProductIdRoute: typeof ApiPublicAssetProductIdRoute
 }
@@ -398,6 +449,13 @@ declare module '@tanstack/react-router' {
       path: '/tiers'
       fullPath: '/tiers'
       preLoaderRoute: typeof TiersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -484,6 +542,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/collections/': {
+      id: '/collections/'
+      path: '/collections'
+      fullPath: '/collections/'
+      preLoaderRoute: typeof CollectionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/chatb2k/': {
       id: '/chatb2k/'
       path: '/'
@@ -503,6 +568,13 @@ declare module '@tanstack/react-router' {
       path: '/products/$slug'
       fullPath: '/products/$slug'
       preLoaderRoute: typeof ProductsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collections/$code': {
+      id: '/collections/$code'
+      path: '/collections/$code'
+      fullPath: '/collections/$code'
+      preLoaderRoute: typeof CollectionsCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout/success': {
@@ -568,6 +640,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRevenueAiRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/public/paystack-webhook': {
       id: '/api/public/paystack-webhook'
       path: '/api/public/paystack-webhook'
@@ -586,10 +665,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminMediaRoute: typeof AdminMediaRoute
   AdminRevenueAiRoute: typeof AdminRevenueAiRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminMediaRoute: AdminMediaRoute,
   AdminRevenueAiRoute: AdminRevenueAiRoute,
 }
 
@@ -641,11 +722,14 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TiersRoute: TiersRoute,
   WalletRoute: WalletRoute,
   CheckoutCallbackRoute: CheckoutCallbackRoute,
   CheckoutSuccessRoute: CheckoutSuccessRoute,
+  CollectionsCodeRoute: CollectionsCodeRoute,
   ProductsSlugRoute: ProductsSlugRoute,
+  CollectionsIndexRoute: CollectionsIndexRoute,
   ApiPublicPaystackWebhookRoute: ApiPublicPaystackWebhookRoute,
   ApiPublicAssetProductIdRoute: ApiPublicAssetProductIdRoute,
 }

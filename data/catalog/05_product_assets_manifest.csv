@@ -1,0 +1,6 @@
+sku,variant_sku,asset_type,file_name,relative_path,cdn_url,alt_text,width,height,format,file_size_kb,is_hero,seo_title,open_graph_asset
+RESOFLEX_MENS_TANK,,image,mens-tank-hero.webp,products/mens-tank/mens-tank-hero.webp,,ResoFlex men's sleeveless fitness tank in charcoal,1600,2000,webp,180,true,ResoFlex Men's Sleeveless Fitness Tank,true
+RESOFLEX_LADIES_2PIECE,,image,ladies-2piece-hero.webp,products/ladies-2piece/ladies-2piece-hero.webp,,ResoFlex ladies two-piece sports set in obsidian,1600,2000,webp,190,true,ResoFlex Ladies 2-Piece Sports Set,true
+25_STEEL_BONED_LATEX_SHAPER,,image,latex-shaper-hero.webp,products/latex-shaper/latex-shaper-hero.webp,,25 steel boned latex waist shaper,1600,2000,webp,175,true,25 Steel Boned Latex Shaper,true
+RESOFLEX_STATION_GYM,,image,station-gym-hero.webp,products/station-gym/station-gym-hero.webp,,ResoFlex Station multi-function home gym,1800,1200,webp,240,true,ResoFlex Station Gym Equipment,true
+HERITAGE_MEAL,,image,heritage-jollof.webp,products/heritage-meal/heritage-jollof.webp,,Nigerian jollof rice with grilled fish plated for macros,1600,1200,webp,160,true,Heritage Meal Plan,true

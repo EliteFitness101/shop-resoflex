@@ -144,6 +144,48 @@ export type Database = {
           },
         ]
       }
+      catalog_sync_audit: {
+        Row: {
+          action: string
+          created_at: string
+          entity: string
+          error_message: string | null
+          id: string
+          performed_by: string | null
+          rows_failed: number
+          rows_processed: number
+          rows_succeeded: number
+          source: string
+          status: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          entity: string
+          error_message?: string | null
+          id?: string
+          performed_by?: string | null
+          rows_failed?: number
+          rows_processed?: number
+          rows_succeeded?: number
+          source: string
+          status?: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          entity?: string
+          error_message?: string | null
+          id?: string
+          performed_by?: string | null
+          rows_failed?: number
+          rows_processed?: number
+          rows_succeeded?: number
+          source?: string
+          status?: string
+        }
+        Relationships: []
+      }
       ceo_tasks: {
         Row: {
           category: string | null
@@ -190,34 +232,64 @@ export type Database = {
         Row: {
           active: boolean
           banner_url: string | null
+          chatb2k_priority: number
           collection_code: string
           created_at: string
           description: string | null
+          featured_products: Json
           id: string
+          landing_page_slug: string | null
+          meta_description: string | null
           name: string
+          open_graph_image: string | null
+          parent_collection: string | null
+          seo_title: string | null
+          shopify_collection_id: string | null
           sort_order: number
+          thumbnail_image: string | null
+          type: string
           updated_at: string
         }
         Insert: {
           active?: boolean
           banner_url?: string | null
+          chatb2k_priority?: number
           collection_code: string
           created_at?: string
           description?: string | null
+          featured_products?: Json
           id?: string
+          landing_page_slug?: string | null
+          meta_description?: string | null
           name: string
+          open_graph_image?: string | null
+          parent_collection?: string | null
+          seo_title?: string | null
+          shopify_collection_id?: string | null
           sort_order?: number
+          thumbnail_image?: string | null
+          type?: string
           updated_at?: string
         }
         Update: {
           active?: boolean
           banner_url?: string | null
+          chatb2k_priority?: number
           collection_code?: string
           created_at?: string
           description?: string | null
+          featured_products?: Json
           id?: string
+          landing_page_slug?: string | null
+          meta_description?: string | null
           name?: string
+          open_graph_image?: string | null
+          parent_collection?: string | null
+          seo_title?: string | null
+          shopify_collection_id?: string | null
           sort_order?: number
+          thumbnail_image?: string | null
+          type?: string
           updated_at?: string
         }
         Relationships: []
@@ -858,27 +930,93 @@ export type Database = {
           },
         ]
       }
+      product_assets: {
+        Row: {
+          alt_text: string | null
+          asset_type: string
+          cdn_url: string | null
+          created_at: string
+          file_name: string
+          file_size_kb: number | null
+          format: string | null
+          height: number | null
+          id: string
+          is_hero: boolean
+          open_graph_asset: boolean
+          relative_path: string | null
+          seo_title: string | null
+          sku: string
+          updated_at: string
+          variant_sku: string | null
+          width: number | null
+        }
+        Insert: {
+          alt_text?: string | null
+          asset_type?: string
+          cdn_url?: string | null
+          created_at?: string
+          file_name: string
+          file_size_kb?: number | null
+          format?: string | null
+          height?: number | null
+          id?: string
+          is_hero?: boolean
+          open_graph_asset?: boolean
+          relative_path?: string | null
+          seo_title?: string | null
+          sku: string
+          updated_at?: string
+          variant_sku?: string | null
+          width?: number | null
+        }
+        Update: {
+          alt_text?: string | null
+          asset_type?: string
+          cdn_url?: string | null
+          created_at?: string
+          file_name?: string
+          file_size_kb?: number | null
+          format?: string | null
+          height?: number | null
+          id?: string
+          is_hero?: boolean
+          open_graph_asset?: boolean
+          relative_path?: string | null
+          seo_title?: string | null
+          sku?: string
+          updated_at?: string
+          variant_sku?: string | null
+          width?: number | null
+        }
+        Relationships: []
+      }
       product_collection_mappings: {
         Row: {
+          collection_code: string | null
           collection_id: string
           created_at: string
           id: string
           position: number
           product_id: string
+          product_sku: string | null
         }
         Insert: {
+          collection_code?: string | null
           collection_id: string
           created_at?: string
           id?: string
           position?: number
           product_id: string
+          product_sku?: string | null
         }
         Update: {
+          collection_code?: string | null
           collection_id?: string
           created_at?: string
           id?: string
           position?: number
           product_id?: string
+          product_sku?: string | null
         }
         Relationships: [
           {
@@ -908,6 +1046,7 @@ export type Database = {
           product_id: string
           size: string | null
           sku: string
+          status: string
           stock_qty: number
           title: string
           updated_at: string
@@ -922,6 +1061,7 @@ export type Database = {
           product_id: string
           size?: string | null
           sku: string
+          status?: string
           stock_qty?: number
           title: string
           updated_at?: string
@@ -936,6 +1076,7 @@ export type Database = {
           product_id?: string
           size?: string | null
           sku?: string
+          status?: string
           stock_qty?: number
           title?: string
           updated_at?: string
@@ -981,51 +1122,81 @@ export type Database = {
         Row: {
           active: boolean
           badge: string | null
+          bulk_price_ngn: number | null
+          bulk_threshold: number
           category: string | null
+          chatb2k_enabled: boolean
           commission_pct: number
           compare_price_ngn: number | null
           created_at: string
           description: string | null
+          digital_product: boolean
+          hero_image_asset: string | null
           hero_url: string | null
           id: string
           image_url: string | null
           name: string
           price_ngn: number
+          recommendation_priority: number
+          requires_shipping: boolean
+          sku: string | null
           slug: string
+          status: string
+          sub_assets: Json
           tagline: string | null
           updated_at: string
         }
         Insert: {
           active?: boolean
           badge?: string | null
+          bulk_price_ngn?: number | null
+          bulk_threshold?: number
           category?: string | null
+          chatb2k_enabled?: boolean
           commission_pct?: number
           compare_price_ngn?: number | null
           created_at?: string
           description?: string | null
+          digital_product?: boolean
+          hero_image_asset?: string | null
           hero_url?: string | null
           id?: string
           image_url?: string | null
           name: string
           price_ngn?: number
+          recommendation_priority?: number
+          requires_shipping?: boolean
+          sku?: string | null
           slug: string
+          status?: string
+          sub_assets?: Json
           tagline?: string | null
           updated_at?: string
         }
         Update: {
           active?: boolean
           badge?: string | null
+          bulk_price_ngn?: number | null
+          bulk_threshold?: number
           category?: string | null
+          chatb2k_enabled?: boolean
           commission_pct?: number
           compare_price_ngn?: number | null
           created_at?: string
           description?: string | null
+          digital_product?: boolean
+          hero_image_asset?: string | null
           hero_url?: string | null
           id?: string
           image_url?: string | null
           name?: string
           price_ngn?: number
+          recommendation_priority?: number
+          requires_shipping?: boolean
+          sku?: string | null
           slug?: string
+          status?: string
+          sub_assets?: Json
           tagline?: string | null
           updated_at?: string
         }
@@ -1314,6 +1485,12 @@ export type Database = {
         | "manager"
         | "editor"
         | "customer"
+        | "super_admin"
+        | "catalog_admin"
+        | "operations_admin"
+        | "finance_admin"
+        | "support_admin"
+        | "content_admin"
       order_status: "pending" | "paid" | "failed" | "refunded"
       plan_type: "meal" | "workout"
       wallet_tx_kind: "commission" | "withdrawal" | "adjustment" | "bonus"
@@ -1451,6 +1628,12 @@ export const Constants = {
         "manager",
         "editor",
         "customer",
+        "super_admin",
+        "catalog_admin",
+        "operations_admin",
+        "finance_admin",
+        "support_admin",
+        "content_admin",
       ],
       order_status: ["pending", "paid", "failed", "refunded"],
       plan_type: ["meal", "workout"],
