@@ -38,6 +38,7 @@ import { Route as Chatb2kHabitsRouteImport } from './routes/chatb2k.habits'
 import { Route as Chatb2kCoachRouteImport } from './routes/chatb2k.coach'
 import { Route as Chatb2kCeoRouteImport } from './routes/chatb2k.ceo'
 import { Route as AdminRevenueAiRouteImport } from './routes/admin.revenue-ai'
+import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as ApiPublicPaystackWebhookRouteImport } from './routes/api/public/paystack-webhook'
 import { Route as ApiPublicAssetProductIdRouteImport } from './routes/api/public/asset.$productId'
 
@@ -186,6 +187,11 @@ const AdminRevenueAiRoute = AdminRevenueAiRouteImport.update({
   path: '/revenue-ai',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiPublicPaystackWebhookRoute =
   ApiPublicPaystackWebhookRouteImport.update({
     id: '/api/public/paystack-webhook',
@@ -214,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/chatb2k/ceo': typeof Chatb2kCeoRoute
   '/chatb2k/coach': typeof Chatb2kCoachRoute
@@ -246,6 +253,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/chatb2k/ceo': typeof Chatb2kCeoRoute
   '/chatb2k/coach': typeof Chatb2kCoachRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/chatb2k/ceo': typeof Chatb2kCeoRoute
   '/chatb2k/coach': typeof Chatb2kCoachRoute
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tiers'
     | '/wallet'
+    | '/admin/media'
     | '/admin/revenue-ai'
     | '/chatb2k/ceo'
     | '/chatb2k/coach'
@@ -347,6 +357,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tiers'
     | '/wallet'
+    | '/admin/media'
     | '/admin/revenue-ai'
     | '/chatb2k/ceo'
     | '/chatb2k/coach'
@@ -380,6 +391,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tiers'
     | '/wallet'
+    | '/admin/media'
     | '/admin/revenue-ai'
     | '/chatb2k/ceo'
     | '/chatb2k/coach'
@@ -628,6 +640,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRevenueAiRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/public/paystack-webhook': {
       id: '/api/public/paystack-webhook'
       path: '/api/public/paystack-webhook'
@@ -646,10 +665,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminMediaRoute: typeof AdminMediaRoute
   AdminRevenueAiRoute: typeof AdminRevenueAiRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminMediaRoute: AdminMediaRoute,
   AdminRevenueAiRoute: AdminRevenueAiRoute,
 }
 
