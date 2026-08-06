@@ -9,102 +9,42 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WalletRouteImport } from './routes/wallet'
-import { Route as TiersRouteImport } from './routes/tiers'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ShopRouteImport } from './routes/shop'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as RegisterRouteImport } from './routes/register'
-import { Route as MealsRouteImport } from './routes/meals'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as EliteRouteImport } from './routes/elite'
-import { Route as EcosystemRouteImport } from './routes/ecosystem'
-import { Route as Chatb2kRouteImport } from './routes/chatb2k'
-import { Route as AutopilotRouteImport } from './routes/autopilot'
-import { Route as AgentsRouteImport } from './routes/agents'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
-import { Route as Chatb2kIndexRouteImport } from './routes/chatb2k.index'
-import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
-import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
-import { Route as CollectionsCodeRouteImport } from './routes/collections.$code'
-import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
-import { Route as CheckoutCallbackRouteImport } from './routes/checkout.callback'
-import { Route as Chatb2kWorkoutsRouteImport } from './routes/chatb2k.workouts'
-import { Route as Chatb2kOnboardingRouteImport } from './routes/chatb2k.onboarding'
-import { Route as Chatb2kMealsRouteImport } from './routes/chatb2k.meals'
-import { Route as Chatb2kHabitsRouteImport } from './routes/chatb2k.habits'
-import { Route as Chatb2kCoachRouteImport } from './routes/chatb2k.coach'
-import { Route as Chatb2kCeoRouteImport } from './routes/chatb2k.ceo'
-import { Route as AdminRevenueAiRouteImport } from './routes/admin.revenue-ai'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AgentsRouteImport } from './routes/agents'
+import { Route as AutopilotRouteImport } from './routes/autopilot'
+import { Route as Chatb2kRouteImport } from './routes/chatb2k'
+import { Route as EcosystemRouteImport } from './routes/ecosystem'
+import { Route as EliteRouteImport } from './routes/elite'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MealsRouteImport } from './routes/meals'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TiersRouteImport } from './routes/tiers'
+import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
+import { Route as AdminRevenueAiRouteImport } from './routes/admin.revenue-ai'
+import { Route as Chatb2kIndexRouteImport } from './routes/chatb2k.index'
+import { Route as Chatb2kCeoRouteImport } from './routes/chatb2k.ceo'
+import { Route as Chatb2kCoachRouteImport } from './routes/chatb2k.coach'
+import { Route as Chatb2kHabitsRouteImport } from './routes/chatb2k.habits'
+import { Route as Chatb2kMealsRouteImport } from './routes/chatb2k.meals'
+import { Route as Chatb2kOnboardingRouteImport } from './routes/chatb2k.onboarding'
+import { Route as Chatb2kWorkoutsRouteImport } from './routes/chatb2k.workouts'
+import { Route as CheckoutCallbackRouteImport } from './routes/checkout.callback'
+import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
+import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
+import { Route as CollectionsCodeRouteImport } from './routes/collections.$code'
+import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
+import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as ApiPublicPaystackWebhookRouteImport } from './routes/api/public/paystack-webhook'
 import { Route as ApiPublicAssetProductIdRouteImport } from './routes/api/public/asset.$productId'
 
-const WalletRoute = WalletRouteImport.update({
-  id: '/wallet',
-  path: '/wallet',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TiersRoute = TiersRouteImport.update({
-  id: '/tiers',
-  path: '/tiers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShopRoute = ShopRouteImport.update({
-  id: '/shop',
-  path: '/shop',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MealsRoute = MealsRouteImport.update({
-  id: '/meals',
-  path: '/meals',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EliteRoute = EliteRouteImport.update({
-  id: '/elite',
-  path: '/elite',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EcosystemRoute = EcosystemRouteImport.update({
-  id: '/ecosystem',
-  path: '/ecosystem',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Chatb2kRoute = Chatb2kRouteImport.update({
-  id: '/chatb2k',
-  path: '/chatb2k',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AutopilotRoute = AutopilotRouteImport.update({
-  id: '/autopilot',
-  path: '/autopilot',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AgentsRoute = AgentsRouteImport.update({
-  id: '/agents',
-  path: '/agents',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -112,69 +52,84 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AgentsRoute = AgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CollectionsIndexRoute = CollectionsIndexRouteImport.update({
-  id: '/collections/',
-  path: '/collections/',
+const AutopilotRoute = AutopilotRouteImport.update({
+  id: '/autopilot',
+  path: '/autopilot',
   getParentRoute: () => rootRouteImport,
+} as any)
+const Chatb2kRoute = Chatb2kRouteImport.update({
+  id: '/chatb2k',
+  path: '/chatb2k',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EcosystemRoute = EcosystemRouteImport.update({
+  id: '/ecosystem',
+  path: '/ecosystem',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EliteRoute = EliteRouteImport.update({
+  id: '/elite',
+  path: '/elite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MealsRoute = MealsRouteImport.update({
+  id: '/meals',
+  path: '/meals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TiersRoute = TiersRouteImport.update({
+  id: '/tiers',
+  path: '/tiers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalletRoute = WalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRevenueAiRoute = AdminRevenueAiRouteImport.update({
+  id: '/revenue-ai',
+  path: '/revenue-ai',
+  getParentRoute: () => AdminRoute,
 } as any)
 const Chatb2kIndexRoute = Chatb2kIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => Chatb2kRoute,
-} as any)
-const ShopProductIdRoute = ShopProductIdRouteImport.update({
-  id: '/$productId',
-  path: '/$productId',
-  getParentRoute: () => ShopRoute,
-} as any)
-const ProductsSlugRoute = ProductsSlugRouteImport.update({
-  id: '/products/$slug',
-  path: '/products/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CollectionsCodeRoute = CollectionsCodeRouteImport.update({
-  id: '/collections/$code',
-  path: '/collections/$code',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckoutSuccessRoute = CheckoutSuccessRouteImport.update({
-  id: '/checkout/success',
-  path: '/checkout/success',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckoutCallbackRoute = CheckoutCallbackRouteImport.update({
-  id: '/checkout/callback',
-  path: '/checkout/callback',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Chatb2kWorkoutsRoute = Chatb2kWorkoutsRouteImport.update({
-  id: '/workouts',
-  path: '/workouts',
-  getParentRoute: () => Chatb2kRoute,
-} as any)
-const Chatb2kOnboardingRoute = Chatb2kOnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => Chatb2kRoute,
-} as any)
-const Chatb2kMealsRoute = Chatb2kMealsRouteImport.update({
-  id: '/meals',
-  path: '/meals',
-  getParentRoute: () => Chatb2kRoute,
-} as any)
-const Chatb2kHabitsRoute = Chatb2kHabitsRouteImport.update({
-  id: '/habits',
-  path: '/habits',
-  getParentRoute: () => Chatb2kRoute,
-} as any)
-const Chatb2kCoachRoute = Chatb2kCoachRouteImport.update({
-  id: '/coach',
-  path: '/coach',
   getParentRoute: () => Chatb2kRoute,
 } as any)
 const Chatb2kCeoRoute = Chatb2kCeoRouteImport.update({
@@ -182,15 +137,60 @@ const Chatb2kCeoRoute = Chatb2kCeoRouteImport.update({
   path: '/ceo',
   getParentRoute: () => Chatb2kRoute,
 } as any)
-const AdminRevenueAiRoute = AdminRevenueAiRouteImport.update({
-  id: '/revenue-ai',
-  path: '/revenue-ai',
-  getParentRoute: () => AdminRoute,
+const Chatb2kCoachRoute = Chatb2kCoachRouteImport.update({
+  id: '/coach',
+  path: '/coach',
+  getParentRoute: () => Chatb2kRoute,
 } as any)
-const AdminMediaRoute = AdminMediaRouteImport.update({
-  id: '/media',
-  path: '/media',
-  getParentRoute: () => AdminRoute,
+const Chatb2kHabitsRoute = Chatb2kHabitsRouteImport.update({
+  id: '/habits',
+  path: '/habits',
+  getParentRoute: () => Chatb2kRoute,
+} as any)
+const Chatb2kMealsRoute = Chatb2kMealsRouteImport.update({
+  id: '/meals',
+  path: '/meals',
+  getParentRoute: () => Chatb2kRoute,
+} as any)
+const Chatb2kOnboardingRoute = Chatb2kOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => Chatb2kRoute,
+} as any)
+const Chatb2kWorkoutsRoute = Chatb2kWorkoutsRouteImport.update({
+  id: '/workouts',
+  path: '/workouts',
+  getParentRoute: () => Chatb2kRoute,
+} as any)
+const CheckoutCallbackRoute = CheckoutCallbackRouteImport.update({
+  id: '/checkout/callback',
+  path: '/checkout/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutSuccessRoute = CheckoutSuccessRouteImport.update({
+  id: '/checkout/success',
+  path: '/checkout/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionsIndexRoute = CollectionsIndexRouteImport.update({
+  id: '/collections/',
+  path: '/collections/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionsCodeRoute = CollectionsCodeRouteImport.update({
+  id: '/collections/$code',
+  path: '/collections/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsSlugRoute = ProductsSlugRouteImport.update({
+  id: '/products/$slug',
+  path: '/products/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopProductIdRoute = ShopProductIdRouteImport.update({
+  id: '/$productId',
+  path: '/$productId',
+  getParentRoute: () => ShopRoute,
 } as any)
 const ApiPublicPaystackWebhookRoute =
   ApiPublicPaystackWebhookRouteImport.update({
@@ -437,95 +437,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/wallet': {
-      id: '/wallet'
-      path: '/wallet'
-      fullPath: '/wallet'
-      preLoaderRoute: typeof WalletRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tiers': {
-      id: '/tiers'
-      path: '/tiers'
-      fullPath: '/tiers'
-      preLoaderRoute: typeof TiersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/shop': {
-      id: '/shop'
-      path: '/shop'
-      fullPath: '/shop'
-      preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/meals': {
-      id: '/meals'
-      path: '/meals'
-      fullPath: '/meals'
-      preLoaderRoute: typeof MealsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/elite': {
-      id: '/elite'
-      path: '/elite'
-      fullPath: '/elite'
-      preLoaderRoute: typeof EliteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ecosystem': {
-      id: '/ecosystem'
-      path: '/ecosystem'
-      fullPath: '/ecosystem'
-      preLoaderRoute: typeof EcosystemRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chatb2k': {
-      id: '/chatb2k'
-      path: '/chatb2k'
-      fullPath: '/chatb2k'
-      preLoaderRoute: typeof Chatb2kRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/autopilot': {
-      id: '/autopilot'
-      path: '/autopilot'
-      fullPath: '/autopilot'
-      preLoaderRoute: typeof AutopilotRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/agents': {
-      id: '/agents'
-      path: '/agents'
-      fullPath: '/agents'
-      preLoaderRoute: typeof AgentsRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -535,95 +451,116 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/agents': {
+      id: '/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof AgentsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/collections/': {
-      id: '/collections/'
-      path: '/collections'
-      fullPath: '/collections/'
-      preLoaderRoute: typeof CollectionsIndexRouteImport
+    '/autopilot': {
+      id: '/autopilot'
+      path: '/autopilot'
+      fullPath: '/autopilot'
+      preLoaderRoute: typeof AutopilotRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/chatb2k': {
+      id: '/chatb2k'
+      path: '/chatb2k'
+      fullPath: '/chatb2k'
+      preLoaderRoute: typeof Chatb2kRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ecosystem': {
+      id: '/ecosystem'
+      path: '/ecosystem'
+      fullPath: '/ecosystem'
+      preLoaderRoute: typeof EcosystemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/elite': {
+      id: '/elite'
+      path: '/elite'
+      fullPath: '/elite'
+      preLoaderRoute: typeof EliteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meals': {
+      id: '/meals'
+      path: '/meals'
+      fullPath: '/meals'
+      preLoaderRoute: typeof MealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tiers': {
+      id: '/tiers'
+      path: '/tiers'
+      fullPath: '/tiers'
+      preLoaderRoute: typeof TiersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wallet': {
+      id: '/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof WalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/revenue-ai': {
+      id: '/admin/revenue-ai'
+      path: '/revenue-ai'
+      fullPath: '/admin/revenue-ai'
+      preLoaderRoute: typeof AdminRevenueAiRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/chatb2k/': {
       id: '/chatb2k/'
       path: '/'
       fullPath: '/chatb2k/'
       preLoaderRoute: typeof Chatb2kIndexRouteImport
-      parentRoute: typeof Chatb2kRoute
-    }
-    '/shop/$productId': {
-      id: '/shop/$productId'
-      path: '/$productId'
-      fullPath: '/shop/$productId'
-      preLoaderRoute: typeof ShopProductIdRouteImport
-      parentRoute: typeof ShopRoute
-    }
-    '/products/$slug': {
-      id: '/products/$slug'
-      path: '/products/$slug'
-      fullPath: '/products/$slug'
-      preLoaderRoute: typeof ProductsSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/collections/$code': {
-      id: '/collections/$code'
-      path: '/collections/$code'
-      fullPath: '/collections/$code'
-      preLoaderRoute: typeof CollectionsCodeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkout/success': {
-      id: '/checkout/success'
-      path: '/checkout/success'
-      fullPath: '/checkout/success'
-      preLoaderRoute: typeof CheckoutSuccessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkout/callback': {
-      id: '/checkout/callback'
-      path: '/checkout/callback'
-      fullPath: '/checkout/callback'
-      preLoaderRoute: typeof CheckoutCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chatb2k/workouts': {
-      id: '/chatb2k/workouts'
-      path: '/workouts'
-      fullPath: '/chatb2k/workouts'
-      preLoaderRoute: typeof Chatb2kWorkoutsRouteImport
-      parentRoute: typeof Chatb2kRoute
-    }
-    '/chatb2k/onboarding': {
-      id: '/chatb2k/onboarding'
-      path: '/onboarding'
-      fullPath: '/chatb2k/onboarding'
-      preLoaderRoute: typeof Chatb2kOnboardingRouteImport
-      parentRoute: typeof Chatb2kRoute
-    }
-    '/chatb2k/meals': {
-      id: '/chatb2k/meals'
-      path: '/meals'
-      fullPath: '/chatb2k/meals'
-      preLoaderRoute: typeof Chatb2kMealsRouteImport
-      parentRoute: typeof Chatb2kRoute
-    }
-    '/chatb2k/habits': {
-      id: '/chatb2k/habits'
-      path: '/habits'
-      fullPath: '/chatb2k/habits'
-      preLoaderRoute: typeof Chatb2kHabitsRouteImport
-      parentRoute: typeof Chatb2kRoute
-    }
-    '/chatb2k/coach': {
-      id: '/chatb2k/coach'
-      path: '/coach'
-      fullPath: '/chatb2k/coach'
-      preLoaderRoute: typeof Chatb2kCoachRouteImport
       parentRoute: typeof Chatb2kRoute
     }
     '/chatb2k/ceo': {
@@ -633,19 +570,82 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Chatb2kCeoRouteImport
       parentRoute: typeof Chatb2kRoute
     }
-    '/admin/revenue-ai': {
-      id: '/admin/revenue-ai'
-      path: '/revenue-ai'
-      fullPath: '/admin/revenue-ai'
-      preLoaderRoute: typeof AdminRevenueAiRouteImport
-      parentRoute: typeof AdminRoute
+    '/chatb2k/coach': {
+      id: '/chatb2k/coach'
+      path: '/coach'
+      fullPath: '/chatb2k/coach'
+      preLoaderRoute: typeof Chatb2kCoachRouteImport
+      parentRoute: typeof Chatb2kRoute
     }
-    '/admin/media': {
-      id: '/admin/media'
-      path: '/media'
-      fullPath: '/admin/media'
-      preLoaderRoute: typeof AdminMediaRouteImport
-      parentRoute: typeof AdminRoute
+    '/chatb2k/habits': {
+      id: '/chatb2k/habits'
+      path: '/habits'
+      fullPath: '/chatb2k/habits'
+      preLoaderRoute: typeof Chatb2kHabitsRouteImport
+      parentRoute: typeof Chatb2kRoute
+    }
+    '/chatb2k/meals': {
+      id: '/chatb2k/meals'
+      path: '/meals'
+      fullPath: '/chatb2k/meals'
+      preLoaderRoute: typeof Chatb2kMealsRouteImport
+      parentRoute: typeof Chatb2kRoute
+    }
+    '/chatb2k/onboarding': {
+      id: '/chatb2k/onboarding'
+      path: '/onboarding'
+      fullPath: '/chatb2k/onboarding'
+      preLoaderRoute: typeof Chatb2kOnboardingRouteImport
+      parentRoute: typeof Chatb2kRoute
+    }
+    '/chatb2k/workouts': {
+      id: '/chatb2k/workouts'
+      path: '/workouts'
+      fullPath: '/chatb2k/workouts'
+      preLoaderRoute: typeof Chatb2kWorkoutsRouteImport
+      parentRoute: typeof Chatb2kRoute
+    }
+    '/checkout/callback': {
+      id: '/checkout/callback'
+      path: '/checkout/callback'
+      fullPath: '/checkout/callback'
+      preLoaderRoute: typeof CheckoutCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/success': {
+      id: '/checkout/success'
+      path: '/checkout/success'
+      fullPath: '/checkout/success'
+      preLoaderRoute: typeof CheckoutSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collections/': {
+      id: '/collections/'
+      path: '/collections'
+      fullPath: '/collections/'
+      preLoaderRoute: typeof CollectionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collections/$code': {
+      id: '/collections/$code'
+      path: '/collections/$code'
+      fullPath: '/collections/$code'
+      preLoaderRoute: typeof CollectionsCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products/$slug': {
+      id: '/products/$slug'
+      path: '/products/$slug'
+      fullPath: '/products/$slug'
+      preLoaderRoute: typeof ProductsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop/$productId': {
+      id: '/shop/$productId'
+      path: '/$productId'
+      fullPath: '/shop/$productId'
+      preLoaderRoute: typeof ShopProductIdRouteImport
+      parentRoute: typeof ShopRoute
     }
     '/api/public/paystack-webhook': {
       id: '/api/public/paystack-webhook'

@@ -39,6 +39,7 @@ export const Route = createFileRoute("/products/$slug")({
   head: ({ loaderData }) => {
     const sku = loaderData?.sku;
     if (!sku) return { meta: [{ title: "Product — ResoFlex OS" }] };
+    const url = `https://shop-resoflex.lovable.app/products/${sku.slug}`;
     return {
       meta: [
         { title: `${sku.name} — ResoFlex Sovereign OS` },
@@ -46,27 +47,47 @@ export const Route = createFileRoute("/products/$slug")({
         { property: "og:title", content: sku.name },
         { property: "og:description", content: sku.description },
         { property: "og:type", content: "product" },
-        { property: "og:url", content: `https://shop-resoflex.lovable.app/products/${sku.slug}` },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: sku.name },
+        { name: "twitter:description", content: sku.description },
       ],
-      links: [{ rel: "canonical", href: `https://shop-resoflex.lovable.app/products/${sku.slug}` }],
-      scripts: [{
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Product",
-          name: sku.name,
-          description: sku.description,
-          offers: {
-            "@type": "Offer",
-            priceCurrency: "NGN",
-            price: sku.priceNGN,
-            availability: "https://schema.org/InStock",
-            url: `https://shop-resoflex.lovable.app/products/${sku.slug}`,
-          },
-        }),
-      }],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: sku.name,
+            description: sku.description,
+            sku: sku.slug,
+            brand: { "@type": "Brand", name: "ResoFlex OS" },
+            offers: {
+              "@type": "Offer",
+              priceCurrency: "NGN",
+              price: sku.priceNGN,
+              availability: "https://schema.org/InStock",
+              url,
+            },
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://shop-resoflex.lovable.app/" },
+              { "@type": "ListItem", position: 2, name: "Tiers", item: "https://shop-resoflex.lovable.app/tiers" },
+              { "@type": "ListItem", position: 3, name: sku.name, item: url },
+            ],
+          }),
+        },
+      ],
     };
   },
+
 });
 
 function NotFoundSKU() {
