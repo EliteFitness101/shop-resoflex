@@ -24,6 +24,7 @@ import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TiersRouteImport } from './routes/tiers'
 import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as AdminCatalogRouteImport } from './routes/admin.catalog'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminRevenueAiRouteImport } from './routes/admin.revenue-ai'
 import { Route as Chatb2kIndexRouteImport } from './routes/chatb2k.index'
@@ -116,6 +117,11 @@ const WalletRoute = WalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCatalogRoute = AdminCatalogRouteImport.update({
+  id: '/catalog',
+  path: '/catalog',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminMediaRoute = AdminMediaRouteImport.update({
   id: '/media',
@@ -220,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
+  '/admin/catalog': typeof AdminCatalogRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/chatb2k/ceo': typeof Chatb2kCeoRoute
@@ -253,6 +260,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
+  '/admin/catalog': typeof AdminCatalogRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/chatb2k/ceo': typeof Chatb2kCeoRoute
@@ -288,6 +296,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tiers': typeof TiersRoute
   '/wallet': typeof WalletRoute
+  '/admin/catalog': typeof AdminCatalogRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/revenue-ai': typeof AdminRevenueAiRoute
   '/chatb2k/ceo': typeof Chatb2kCeoRoute
@@ -324,6 +333,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tiers'
     | '/wallet'
+    | '/admin/catalog'
     | '/admin/media'
     | '/admin/revenue-ai'
     | '/chatb2k/ceo'
@@ -357,6 +367,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tiers'
     | '/wallet'
+    | '/admin/catalog'
     | '/admin/media'
     | '/admin/revenue-ai'
     | '/chatb2k/ceo'
@@ -391,6 +402,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tiers'
     | '/wallet'
+    | '/admin/catalog'
     | '/admin/media'
     | '/admin/revenue-ai'
     | '/chatb2k/ceo'
@@ -542,6 +554,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WalletRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/catalog': {
+      id: '/admin/catalog'
+      path: '/catalog'
+      fullPath: '/admin/catalog'
+      preLoaderRoute: typeof AdminCatalogRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/media': {
       id: '/admin/media'
       path: '/media'
@@ -665,11 +684,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminCatalogRoute: typeof AdminCatalogRoute
   AdminMediaRoute: typeof AdminMediaRoute
   AdminRevenueAiRoute: typeof AdminRevenueAiRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminCatalogRoute: AdminCatalogRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminRevenueAiRoute: AdminRevenueAiRoute,
 }

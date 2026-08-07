@@ -69,12 +69,18 @@ function Admin() {
       </div>
       <h1 className="font-display text-4xl font-bold">Command Console</h1>
 
-      <nav aria-label="Admin sections" className="mt-3">
+      <nav aria-label="Admin sections" className="mt-3 flex flex-wrap gap-2">
         <Link
           to="/admin/media"
           className="inline-flex items-center gap-2 rounded-md border border-gold/40 px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-gold hover:bg-gold/10"
         >
           <ImageIcon className="size-3.5" /> Media Library
+        </Link>
+        <Link
+          to="/admin/catalog"
+          className="inline-flex items-center gap-2 rounded-md border border-gold/40 px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-gold hover:bg-gold/10"
+        >
+          <ImageIcon className="size-3.5" /> Catalog Readiness
         </Link>
       </nav>
 
