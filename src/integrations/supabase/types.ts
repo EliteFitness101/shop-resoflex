@@ -1124,6 +1124,7 @@ export type Database = {
           badge: string | null
           bulk_price_ngn: number | null
           bulk_threshold: number
+          catalog_source: string
           category: string | null
           chatb2k_enabled: boolean
           commission_pct: number
@@ -1151,6 +1152,7 @@ export type Database = {
           badge?: string | null
           bulk_price_ngn?: number | null
           bulk_threshold?: number
+          catalog_source?: string
           category?: string | null
           chatb2k_enabled?: boolean
           commission_pct?: number
@@ -1178,6 +1180,7 @@ export type Database = {
           badge?: string | null
           bulk_price_ngn?: number | null
           bulk_threshold?: number
+          catalog_source?: string
           category?: string | null
           chatb2k_enabled?: boolean
           commission_pct?: number

@@ -10,6 +10,8 @@ import {
   buildReadinessReport,
   crossSells,
   PRODUCTION_COLLECTIONS,
+  IMAGE_MANIFEST,
+
 } from "@/lib/production-catalog";
 
 export const Route = createFileRoute("/admin/catalog")({
@@ -148,7 +150,43 @@ function AdminCatalog() {
       </section>
 
       <section className="mt-8">
+        <h2 className="font-display text-2xl font-bold">Image upload checklist</h2>
+        <p className="text-sm text-muted-foreground">
+          {IMAGE_MANIFEST.length} required assets across {PRODUCTION_CATALOG.length} launch SKUs.
+          Status stays UPLOAD REQUIRED until a real asset is discovered and verified.
+        </p>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[860px] text-left text-xs">
+            <thead className="text-telemetry">
+              <tr>
+                {["Product", "SKU", "Role", "Filename", "Alt text", "Status"].map((h) => (
+                  <th key={h} className="border-b border-border/60 px-2 py-2 font-mono uppercase">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {IMAGE_MANIFEST.map((m) => (
+                <tr key={`${m.sku}-${m.role}`} className="border-b border-border/30">
+                  <td className="px-2 py-1.5 text-muted-foreground">
+                    {PRODUCTION_CATALOG.find((p) => p.sku === m.sku)?.title ?? m.slug}
+                  </td>
+                  <td className="px-2 py-1.5 font-mono text-gold">{m.sku}</td>
+                  <td className="px-2 py-1.5 font-mono uppercase">{m.role}</td>
+                  <td className="px-2 py-1.5 font-mono text-[10px] text-muted-foreground">{m.path}</td>
+                  <td className="px-2 py-1.5 text-muted-foreground">{m.alt}</td>
+                  <td className="px-2 py-1.5 font-mono text-destructive">UPLOAD REQUIRED</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="mt-8">
         <h2 className="font-display text-2xl font-bold">Relationships & collections</h2>
+
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           <TacticalPanel className="p-4">
             <div className="text-telemetry mb-2">Cross-sell ladder</div>
