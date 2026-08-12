@@ -10,6 +10,8 @@ import {
   buildReadinessReport,
   crossSells,
   PRODUCTION_COLLECTIONS,
+  IMAGE_MANIFEST,
+
 } from "@/lib/production-catalog";
 
 export const Route = createFileRoute("/admin/catalog")({
