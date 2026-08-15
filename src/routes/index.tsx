@@ -14,7 +14,7 @@ import { attachScrollDepthTracking, track } from "@/lib/analytics";
 import { decorateUrl, ensureAttribution } from "@/lib/attribution";
 import { Activity, Coins, Flame, ShieldCheck, Sparkles, TrendingUp, Users, ExternalLink } from "lucide-react";
 
-const CHATB2K_URL = "https://reso-fit.lovable.app";
+const CHATB2K_URL = "https://chatb2k.resofit.fit";
 
 export const Route = createFileRoute("/")({
   component: Landing,

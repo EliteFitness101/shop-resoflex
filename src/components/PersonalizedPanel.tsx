@@ -8,7 +8,7 @@ import { usePersonalization } from "@/hooks/use-personalization";
 import { track } from "@/lib/analytics";
 import { decorateUrl } from "@/lib/attribution";
 
-const CHATB2K_URL = "https://reso-fit.lovable.app";
+const CHATB2K_URL = "https://chatb2k.resofit.fit";
 
 interface Props {
   variant?: "wide" | "compact";

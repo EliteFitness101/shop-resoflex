@@ -19,7 +19,7 @@ export async function initiatePayment(input: PaystackInitInput): Promise<{
   authorizationUrl: string;
 }> {
   const origin =
-    typeof window !== "undefined" ? window.location.origin : "https://shop-resoflex.lovable.app";
+    typeof window !== "undefined" ? window.location.origin : "https://store.resofit.fit";
   const attribution = typeof window !== "undefined" ? ensureAttribution() : null;
   return initiatePaystackPayment({
     data: {

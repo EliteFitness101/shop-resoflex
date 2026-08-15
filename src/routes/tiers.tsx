@@ -13,9 +13,9 @@ export const Route = createFileRoute("/tiers")({
       { name: "description", content: "Tier 1 to Tier 6 progression: Commander entry through VIP concierge. Locked Paystack catalog, zero fallback." },
       { property: "og:title", content: "NaijaFit™ Tier System" },
       { property: "og:description", content: "The full ResoFlex progression path — 8 sovereign SKUs across 6 tiers." },
-      { property: "og:url", content: "https://shop-resoflex.lovable.app/tiers" },
+      { property: "og:url", content: "https://store.resofit.fit/tiers" },
     ],
-    links: [{ rel: "canonical", href: "https://shop-resoflex.lovable.app/tiers" }],
+    links: [{ rel: "canonical", href: "https://store.resofit.fit/tiers" }],
   }),
 });
 

@@ -3,7 +3,7 @@ import type {} from "@tanstack/react-start";
 import { SOVEREIGN_CATALOG } from "@/lib/sovereign-catalog";
 import { visibleCollections } from "@/lib/catalog-engine";
 
-const BASE_URL = "https://shop-resoflex.lovable.app";
+const BASE_URL = "https://store.resofit.fit";
 
 interface SitemapEntry {
   path: string;
