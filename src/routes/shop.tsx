@@ -21,12 +21,12 @@ export const Route = createFileRoute("/shop")({
       { name: "description", content: "Access premium high-performance fitness hardware arrays and digital SaaS expansion tools built for absolute biometric telemetry tracking." },
       { property: "og:title", content: "Tactical Commerce Arsenal — ResoFlex™ Hardware Ecosystem" },
       { property: "og:description", content: "Access premium high-performance fitness hardware arrays and digital SaaS expansion tools built for absolute biometric telemetry tracking." },
-      { property: "og:url", content: "/shop" },
+      { property: "og:url", content: "https://store.resofit.fit/shop" },
       { property: "og:image", content: heroShop },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: heroShop },
     ],
-    links: [{ rel: "canonical", href: "/shop" }],
+    links: [{ rel: "canonical", href: "https://store.resofit.fit/shop" }],
   }),
 });
 
