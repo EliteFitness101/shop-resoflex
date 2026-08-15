@@ -4,7 +4,7 @@ import { filterByCollection, featuredProducts } from "@/lib/catalog-engine";
 import { PriceTag } from "@/components/PriceTag";
 import { TacticalPanel } from "@/components/TacticalPanel";
 
-const BASE = "https://shop-resoflex.lovable.app";
+const BASE = "https://store.resofit.fit";
 
 export const Route = createFileRoute("/collections/$code")({
   loader: ({ params }) => {

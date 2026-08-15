@@ -39,7 +39,7 @@ export const Route = createFileRoute("/products/$slug")({
   head: ({ loaderData }) => {
     const sku = loaderData?.sku;
     if (!sku) return { meta: [{ title: "Product — ResoFlex OS" }] };
-    const url = `https://shop-resoflex.lovable.app/products/${sku.slug}`;
+    const url = `https://store.resofit.fit/products/${sku.slug}`;
     return {
       meta: [
         { title: `${sku.name} — ResoFlex Sovereign OS` },
@@ -78,8 +78,8 @@ export const Route = createFileRoute("/products/$slug")({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: "https://shop-resoflex.lovable.app/" },
-              { "@type": "ListItem", position: 2, name: "Tiers", item: "https://shop-resoflex.lovable.app/tiers" },
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://store.resofit.fit/" },
+              { "@type": "ListItem", position: 2, name: "Tiers", item: "https://store.resofit.fit/tiers" },
               { "@type": "ListItem", position: 3, name: sku.name, item: url },
             ],
           }),

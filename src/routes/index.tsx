@@ -14,7 +14,7 @@ import { attachScrollDepthTracking, track } from "@/lib/analytics";
 import { decorateUrl, ensureAttribution } from "@/lib/attribution";
 import { Activity, Coins, Flame, ShieldCheck, Sparkles, TrendingUp, Users, ExternalLink } from "lucide-react";
 
-const CHATB2K_URL = "https://reso-fit.lovable.app";
+const CHATB2K_URL = "https://chatb2k.resofit.fit";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -24,9 +24,9 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Nigerian luxury fitness ecosystem: elite supplements, training programs, meal plans, and a referral commerce engine." },
       { property: "og:title", content: "ResoFlex OS™ — Sovereign Performance Operating System" },
       { property: "og:description", content: "Nigerian luxury fitness ecosystem: elite supplements, training programs, meal plans, and a referral commerce engine." },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: "https://store.resofit.fit/" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: "https://store.resofit.fit/" }],
   }),
 });
 

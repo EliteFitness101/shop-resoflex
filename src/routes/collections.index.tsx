@@ -19,10 +19,10 @@ export const Route = createFileRoute("/collections/")({
         content: "16 curated ResoFlex collections spanning apparel, equipment, digital programs and memberships.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://shop-resoflex.lovable.app/collections" },
+      { property: "og:url", content: "https://store.resofit.fit/collections" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://shop-resoflex.lovable.app/collections" }],
+    links: [{ rel: "canonical", href: "https://store.resofit.fit/collections" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/collections/")({
           hasPart: visibleCollections().map((c) => ({
             "@type": "CollectionPage",
             name: c.name,
-            url: `https://shop-resoflex.lovable.app/collections/${c.code}`,
+            url: `https://store.resofit.fit/collections/${c.code}`,
           })),
         }),
       },

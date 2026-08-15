@@ -2,3 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /autopilot
+
+Sitemap: https://store.resofit.fit/sitemap.xml

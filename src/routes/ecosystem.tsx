@@ -15,19 +15,19 @@ export const Route = createFileRoute("/ecosystem")({
       { property: "og:title", content: "Ecosystem Network — ResoFlex Unified OS™" },
       { property: "og:description", content: "An interconnected institutional-grade ecosystem of wellness, creator economy, commerce and AI infrastructure." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://sovereign-resofit.lovable.app/ecosystem" },
+      { property: "og:url", content: "https://store.resofit.fit/ecosystem" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Ecosystem Network — ResoFlex Unified OS™" },
       { name: "twitter:description", content: "Africa's connected wellness, commerce, creator economy and AI infrastructure ecosystem." },
     ],
-    links: [{ rel: "canonical", href: "https://sovereign-resofit.lovable.app/ecosystem" }],
+    links: [{ rel: "canonical", href: "https://store.resofit.fit/ecosystem" }],
     scripts: [{
       type: "application/ld+json",
       children: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Organization",
         name: "ResoFlex Unified OS",
-        url: "https://sovereign-resofit.lovable.app/ecosystem",
+        url: "https://store.resofit.fit/ecosystem",
         description: "Africa's connected wellness, commerce, creator economy and AI infrastructure ecosystem.",
         subOrganization: [
           { "@type": "Organization", name: "Elite NG" },

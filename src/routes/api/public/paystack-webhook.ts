@@ -20,7 +20,7 @@ async function forwardToMake(event: string, payload: Record<string, unknown>) {
 // Real Paystack webhook. Verifies HMAC SHA512 of the raw body with
 // PAYSTACK_SECRET_KEY, then persists the order and mints a signed asset URL.
 // Configure: Paystack dashboard → Settings → API & Webhooks → URL:
-//   https://sovereign-resofit.lovable.app/api/public/paystack-webhook
+//   https://store.resofit.fit/api/public/paystack-webhook
 export const Route = createFileRoute("/api/public/paystack-webhook")({
   server: {
     handlers: {
