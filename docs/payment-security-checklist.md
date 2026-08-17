@@ -1,0 +1,22 @@
+# Global Payment Security Checklist
+
+- [ ] Provider capability registry is server-side and versioned.
+- [ ] Paystack is the primary configured Nigeria rail where supported.
+- [ ] Foreign-currency checkout uses only provider-supported currencies and current merchant configuration.
+- [ ] FX rates have source, timestamp, TTL and stale-rate behavior.
+- [ ] No client can choose an arbitrary provider, currency or amount.
+- [ ] Order amount is resolved server-side from canonical offer/order data.
+- [ ] Checkout registration is idempotent.
+- [ ] Webhooks are signature verified and idempotent.
+- [ ] Payment success is not trusted from a browser redirect.
+- [ ] Entitlements are issued only after verified payment state.
+- [ ] Manual payments remain pending until verified.
+- [ ] Custom Pay account details are secret/server-only.
+- [ ] Public catalog/product APIs cannot return payment account details.
+- [ ] Logs redact account numbers, payment tokens and provider secrets.
+- [ ] Refunds require an existing transaction and auditable workflow.
+- [ ] Delivery tracking is tied to fulfillment records.
+- [ ] Location is minimized and explicit user country overrides passive geolocation.
+- [ ] Crypto/enterprise payment rails remain hidden until configured and compliant.
+- [ ] `/ .well-known` resources contain public metadata only.
+- [ ] Rate limits and abuse controls cover payment endpoints.
