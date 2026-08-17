@@ -1,10 +1,5 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-export type CustomPayReason =
-  | "primary_payment_unavailable"
-  | "customer_requested_manual"
-  | "no_online_payment_method";
-
 export type CustomPayAccount = {
   id: string;
   account_name: string;
@@ -18,7 +13,6 @@ export async function getCustomPayConfig() {
   if (error) throw new Error(`Custom payment configuration unavailable: ${error.message}`);
   const payload = (data ?? {}) as {
     enabled?: boolean;
-    mode?: string;
     accounts?: CustomPayAccount[];
     display_policy?: Record<string, boolean>;
     notes?: Record<string, string>;
@@ -34,6 +28,9 @@ export async function getCustomPayConfig() {
 
 export async function createCustomPaymentRequest(input: {
   orderReference: string;
+  sku: string;
+  productName: string;
+  quantity?: number;
   userId?: string | null;
   customerName?: string | null;
   customerEmail?: string | null;
@@ -50,6 +47,26 @@ export async function createCustomPaymentRequest(input: {
   const account = config.accounts.find((item) => item.id === input.accountId);
   if (!account) throw new Error("Invalid fallback payment account");
   if (!account.channels.includes(input.method)) throw new Error("Payment method is not available for this account");
+
+  const quantity = Math.max(1, Math.min(99, input.quantity ?? 1));
+  const { data: existingOrder } = await supabaseAdmin
+    .from("orders")
+    .select("reference")
+    .eq("reference", input.orderReference)
+    .maybeSingle();
+
+  if (!existingOrder) {
+    const { error: orderError } = await supabaseAdmin.from("orders").insert({
+      user_id: input.userId ?? null,
+      reference: input.orderReference,
+      product_id: input.sku,
+      product_name: input.productName,
+      amount_ngn: input.amountNgn,
+      status: "pending",
+      customer_email: input.customerEmail ?? null,
+    });
+    if (orderError) throw new Error(`Manual order persistence failed: ${orderError.message}`);
+  }
 
   const { data, error } = await supabaseAdmin
     .from("custom_payment_requests")
