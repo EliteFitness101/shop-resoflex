@@ -4,6 +4,9 @@ import { createCustomPaymentRequest, getCustomPayConfig } from "@/lib/custom-pay
 
 const RequestSchema = z.object({
   orderReference: z.string().min(3).max(120),
+  sku: z.string().min(1).max(64),
+  productName: z.string().min(1).max(240),
+  quantity: z.number().int().positive().max(99).default(1),
   userId: z.string().uuid().nullable().optional(),
   customerName: z.string().max(160).nullable().optional(),
   customerEmail: z.string().email().max(200).nullable().optional(),
