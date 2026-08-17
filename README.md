@@ -32,7 +32,7 @@ ChatB2K™ may hand off an exact canonical SKU/handle based on visitor intent. T
 
 The browser supplies customer identity, SKU and quantity. The server resolves the product and amount from the canonical catalog, persists the pending order, initializes Paystack, verifies the transaction server-side, and relies on the signed webhook/payment ledger for fulfillment. A client-supplied amount is never trusted.
 
-Paystack is the active Nigeria route. Other gateways remain inactive until independently enabled and tested. Paystack supports international cards and Nigeria can receive USD when the merchant account is enabled for that currency; otherwise the safe default remains NGN. citeturn0search0turn0search8
+Paystack is the active Nigeria route. Other gateways remain inactive until independently enabled and tested. International cards and USD presentment are only used when the merchant account is enabled for them; otherwise the safe default remains NGN.
 
 ## Lovable two-way development
 
