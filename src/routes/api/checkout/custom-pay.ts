@@ -26,8 +26,7 @@ function sameSiteCheckout(request: Request) {
   if (!origin) return false;
 
   try {
-    const host = new URL(origin).hostname;
-    return host === "store.resofit.fit" || host.endsWith(".vercel.app");
+    return new URL(origin).hostname === "store.resofit.fit";
   } catch {
     return false;
   }
