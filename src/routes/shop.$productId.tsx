@@ -3,6 +3,7 @@ import { products } from "@/lib/mock-data";
 import { PriceTag } from "@/components/PriceTag";
 import { GoldButton } from "@/components/GoldButton";
 import { TacticalPanel } from "@/components/TacticalPanel";
+import { CustomPayFallback } from "@/components/CustomPayFallback";
 import { initiatePayment } from "@/lib/paystack";
 import { useAuth } from "@/hooks/use-auth";
 import { useEffect, useState } from "react";
@@ -48,6 +49,9 @@ function ProductPage() {
   const [size, setSize] = useState<string | null>(product.sizes?.[0] ?? null);
   const [busy, setBusy] = useState(false);
   const [guardError, setGuardError] = useState<VariantRejection | null>(null);
+  const [showCustomPay, setShowCustomPay] = useState(false);
+  const [customPayReason, setCustomPayReason] = useState<"primary_payment_unavailable" | "customer_requested_manual">("customer_requested_manual");
+  const [manualReference] = useState(() => `RSFX-MANUAL-${crypto.randomUUID().replaceAll("-", "").slice(0, 20).toUpperCase()}`);
 
   useEffect(() => {
     if (user?.email) setEmail(user.email);
@@ -68,7 +72,6 @@ function ProductPage() {
       return;
     }
 
-    // Centralized variant → SKU → checkout resolution.
     const resolution = resolveVariantCheckout({ product, size });
     if (!resolution.ok) {
       setGuardError(resolution);
@@ -89,6 +92,7 @@ function ProductPage() {
     setGuardError(null);
 
     setBusy(true);
+    setShowCustomPay(false);
     track("checkout_started", { productId: product.id, sku: resolution.sku, variant: resolution.variant, qty, total });
     try {
       const { authorizationUrl } = await initiatePayment({
@@ -106,7 +110,9 @@ function ProductPage() {
       window.location.href = authorizationUrl;
     } catch (e) {
       setBusy(false);
-      toast.error(e instanceof Error ? e.message : "Checkout failed — please retry.");
+      setCustomPayReason("primary_payment_unavailable");
+      setShowCustomPay(true);
+      toast.error("Online payment is unavailable. Alternative payment is available below.");
     }
   };
 
@@ -175,7 +181,6 @@ function ProductPage() {
             </div>
           )}
 
-          {/* Bulk / wholesale tier */}
           <div id="bulk-tier" className={`mt-6 rounded-lg p-4 border transition ${isBulk ? "border-emerald-400/60 bg-emerald-400/5" : "border-gold/15 bg-background/40"}`}>
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -221,11 +226,7 @@ function ProductPage() {
               <span className="text-gold font-bold text-base">₦{total.toLocaleString()}</span>
             </div>
             {guardError && (
-              <div
-                role="alert"
-                aria-live="assertive"
-                className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm"
-              >
+              <div role="alert" aria-live="assertive" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="size-4 mt-0.5 text-destructive shrink-0" aria-hidden />
                   <div className="flex-1 space-y-2">
@@ -236,12 +237,7 @@ function ProductPage() {
                     {guardError.expectedVariants.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 pt-1" aria-label="Available sizes">
                         {guardError.expectedVariants.map((v) => (
-                          <button
-                            key={v}
-                            type="button"
-                            onClick={() => { setSize(v); setGuardError(null); }}
-                            className="px-2 py-1 rounded border border-gold/30 text-xs font-mono uppercase tracking-wider hover:border-gold hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold min-h-9"
-                          >
+                          <button key={v} type="button" onClick={() => { setSize(v); setGuardError(null); }} className="px-2 py-1 rounded border border-gold/30 text-xs font-mono uppercase tracking-wider hover:border-gold hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold min-h-9">
                             {v}
                           </button>
                         ))}
@@ -254,9 +250,25 @@ function ProductPage() {
             <GoldButton size="lg" className="w-full" disabled={busy} onClick={handleCheckout}>
               {busy ? "Routing…" : `Pay ₦${total.toLocaleString()} via Paystack`}
             </GoldButton>
+            <button type="button" onClick={() => { setCustomPayReason("customer_requested_manual"); setShowCustomPay((current) => !current); }} className="w-full text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-gold transition">
+              Can't pay online? Use Custom Pay™
+            </button>
             <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground flex items-center justify-center gap-1.5">
               <Shield className="size-3"/> Secure · NGN settlement · Instant receipt
             </p>
+            {showCustomPay && (
+              <CustomPayFallback
+                reason={customPayReason}
+                orderReference={manualReference}
+                sku={product.id}
+                productName={product.name}
+                amountNgn={total}
+                quantity={qty}
+                userId={user?.id ?? null}
+                email={email}
+                onClose={() => setShowCustomPay(false)}
+              />
+            )}
           </div>
         </div>
       </div>
