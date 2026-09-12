@@ -17,7 +17,7 @@ const CanonicalProduct = z.object({
   status: z.string().nullable().optional(),
   lifecycle_state: z.string().nullable().optional(),
   image_url: z.string().url().nullable().optional(),
-  image_src: z.string().url().nullable().optional(),
+  image_src: z.string().nullable().optional(),
 });
 
 export type CanonicalProduct = z.infer<typeof CanonicalProduct>;
@@ -33,12 +33,16 @@ export async function getCanonicalProduct(sku: string): Promise<CanonicalProduct
 
   const payload = await response.json();
   const raw = payload?.data ?? payload;
+  const imageCandidate = raw.image_url ?? raw.image_src ?? null;
+  const absoluteImage = typeof imageCandidate === "string" && /^https?:\/\//i.test(imageCandidate) ? imageCandidate : null;
+
   return CanonicalProduct.parse({
     ...raw,
     name: raw.name ?? raw.title,
     price_ngn: raw.price_ngn ?? raw.variant_price,
     inventory: raw.inventory ?? raw.variant_inventory_qty,
-    image_url: raw.image_url ?? raw.image_src,
+    image_url: absoluteImage,
+    image_src: imageCandidate,
   });
 }
 
