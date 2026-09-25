@@ -5,8 +5,8 @@ import { PriceTag } from "./PriceTag";
 export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
-      to="/shop/$productId"
-      params={{ productId: product.slug }}
+      to="/products/$slug"
+      params={{ slug: product.slug }}
       className="group glass-panel rounded-lg overflow-hidden flex flex-col hover:shadow-gold transition-shadow"
     >
       <div
@@ -19,9 +19,11 @@ export function ProductCard({ product }: { product: Product }) {
             {product.badge}
           </span>
         )}
-        <span className="absolute top-3 right-3 text-telemetry">
-          {product.commissionPct}% REF
-        </span>
+        {product.commissionPct > 0 && (
+          <span className="absolute top-3 right-3 text-telemetry">
+            {product.commissionPct}% REF
+          </span>
+        )}
       </div>
       <div className="p-4 flex flex-col gap-2 flex-1">
         <div className="text-telemetry">{product.category}</div>
