@@ -12,25 +12,6 @@ import { listProducts, type DbProduct } from "@/lib/products.functions";
 import type { Product } from "@/lib/types";
 import heroShop from "@/assets/hero-shop.jpg";
 
-export const Route = createFileRoute("/shop")({
-  component: Shop,
-  pendingComponent: () => <RouteSkeleton rows={6} />,
-  errorComponent: ({ error, reset }) => <RouteErrorBoundary error={error} reset={reset} />,
-  head: () => ({
-    meta: [
-      { title: "Tactical Commerce Arsenal — ResoFlex™ Hardware Ecosystem" },
-      { name: "description", content: "Access premium high-performance fitness hardware arrays and digital SaaS expansion tools built for absolute biometric telemetry tracking." },
-      { property: "og:title", content: "Tactical Commerce Arsenal — ResoFlex™ Hardware Ecosystem" },
-      { property: "og:description", content: "Access premium high-performance fitness hardware arrays and digital SaaS expansion tools built for absolute biometric telemetry tracking." },
-      { property: "og:url", content: "https://store.resofit.fit/shop" },
-      { property: "og:image", content: `https://store.resofit.fit${heroShop}` },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: `https://store.resofit.fit${heroShop}` },
-    ],
-    links: [{ rel: "canonical", href: "https://store.resofit.fit/shop" }],
-  }),
-});
-
 function toStoreProduct(product: DbProduct): Product {
   const allowedCategories = new Set(["supplement", "gear", "program", "digital"]);
   const category = allowedCategories.has(String(product.category).toLowerCase())
@@ -53,28 +34,62 @@ function toStoreProduct(product: DbProduct): Product {
   };
 }
 
+export const Route = createFileRoute("/shop")({
+  component: Shop,
+  loader: async () => {
+    try {
+      const result = await listProducts();
+      return { liveProducts: result.products.map(toStoreProduct) };
+    } catch {
+      return { liveProducts: [] as Product[] };
+    }
+  },
+  pendingComponent: () => <RouteSkeleton rows={6} />,
+  errorComponent: ({ error, reset }) => <RouteErrorBoundary error={error} reset={reset} />,
+  head: () => ({
+    meta: [
+      { title: "Tactical Commerce Arsenal — ResoFlex™ Hardware Ecosystem" },
+      { name: "description", content: "Access premium high-performance fitness hardware arrays and digital SaaS expansion tools built for absolute biometric telemetry tracking." },
+      { property: "og:title", content: "Tactical Commerce Arsenal — ResoFlex™ Hardware Ecosystem" },
+      { property: "og:description", content: "Access premium high-performance fitness hardware arrays and digital SaaS expansion tools built for absolute biometric telemetry tracking." },
+      { property: "og:url", content: "https://store.resofit.fit/shop" },
+      { property: "og:image", content: `https://store.resofit.fit${heroShop}` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: `https://store.resofit.fit${heroShop}` },
+    ],
+    links: [{ rel: "canonical", href: "https://store.resofit.fit/shop" }],
+  }),
+});
+
 function Shop() {
-  const [liveProducts, setLiveProducts] = useState<Product[] | null>(null);
+  const { liveProducts } = Route.useLoaderData();
+  const [refreshedProducts, setRefreshedProducts] = useState<Product[] | null>(null);
   const persona = usePersonalization();
 
   useEffect(() => {
     listProducts()
-      .then((r) => setLiveProducts(r.products.map(toStoreProduct)))
-      .catch(() => setLiveProducts([]));
+      .then((r) => setRefreshedProducts(r.products.map(toStoreProduct)))
+      .catch(() => {});
   }, []);
 
   // Production source of truth is the canonical ResoFit catalog. The bundled
   // Lovable/mock catalog remains only as an explicit fallback if the canonical
   // catalog endpoint is temporarily unavailable.
   const products = useMemo(() => {
-    const baseProducts = liveProducts && liveProducts.length > 0 ? liveProducts : mockProducts;
+    const baseProducts =
+      refreshedProducts && refreshedProducts.length > 0
+        ? refreshedProducts
+        : liveProducts.length > 0
+          ? liveProducts
+          : mockProducts;
+
     if (!persona.hasProfile) return baseProducts;
 
     const boostSlugs = new Set(persona.ranked.map((r) => r.slug));
     return [...baseProducts].sort(
       (a, b) => Number(boostSlugs.has(b.slug)) - Number(boostSlugs.has(a.slug)),
     );
-  }, [liveProducts, persona.hasProfile, persona.ranked]);
+  }, [liveProducts, refreshedProducts, persona.hasProfile, persona.ranked]);
 
   return (
     <>
