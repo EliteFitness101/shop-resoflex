@@ -8,7 +8,8 @@ import { PersonalizedPanel } from "@/components/PersonalizedPanel";
 import { usePersonalization } from "@/hooks/use-personalization";
 
 import { products as mockProducts } from "@/lib/mock-data";
-import { listProducts } from "@/lib/products.functions";
+import { listProducts, type DbProduct } from "@/lib/products.functions";
+import type { Product } from "@/lib/types";
 import heroShop from "@/assets/hero-shop.jpg";
 
 export const Route = createFileRoute("/shop")({
@@ -30,27 +31,50 @@ export const Route = createFileRoute("/shop")({
   }),
 });
 
+function toStoreProduct(product: DbProduct): Product {
+  const allowedCategories = new Set(["supplement", "gear", "program", "digital"]);
+  const category = allowedCategories.has(String(product.category).toLowerCase())
+    ? (String(product.category).toLowerCase() as Product["category"])
+    : "gear";
+
+  return {
+    id: product.id,
+    slug: product.slug,
+    name: product.name,
+    tagline: product.tagline ?? product.category ?? "ResoFlex™ product",
+    description: product.description ?? "",
+    priceNGN: product.price_ngn,
+    comparePriceNGN: product.compare_price_ngn ?? undefined,
+    commissionPct: product.commission_pct,
+    category,
+    badge: product.badge ?? undefined,
+    imageGradient: "linear-gradient(135deg, oklch(0.22 0.04 60), oklch(0.78 0.09 65))",
+    imageUrl: product.image_url ?? product.hero_url ?? null,
+  };
+}
+
 function Shop() {
-  const [imageMap, setImageMap] = useState<Record<string, string>>({});
+  const [liveProducts, setLiveProducts] = useState<Product[] | null>(null);
   const persona = usePersonalization();
+
   useEffect(() => {
     listProducts()
-      .then((r) => {
-        const m: Record<string, string> = {};
-        for (const p of r.products) if (p.image_url) m[p.slug] = p.image_url;
-        setImageMap(m);
-      })
-      .catch(() => {});
+      .then((r) => setLiveProducts(r.products.map(toStoreProduct)))
+      .catch(() => setLiveProducts([]));
   }, []);
 
-  // Reorder mock products so ones matching persona intent surface first.
+  // Production source of truth is the canonical ResoFit catalog. The bundled
+  // Lovable/mock catalog remains only as an explicit fallback if the canonical
+  // catalog endpoint is temporarily unavailable.
   const products = useMemo(() => {
-    const decorated = mockProducts.map((p) => ({ ...p, imageUrl: imageMap[p.slug] ?? null }));
-    if (!persona.hasProfile) return decorated;
-    // Weight: exact-slug match to a recommended SKU beats category match.
+    const baseProducts = liveProducts && liveProducts.length > 0 ? liveProducts : mockProducts;
+    if (!persona.hasProfile) return baseProducts;
+
     const boostSlugs = new Set(persona.ranked.map((r) => r.slug));
-    return [...decorated].sort((a, b) => Number(boostSlugs.has(b.slug)) - Number(boostSlugs.has(a.slug)));
-  }, [imageMap, persona.hasProfile, persona.ranked]);
+    return [...baseProducts].sort(
+      (a, b) => Number(boostSlugs.has(b.slug)) - Number(boostSlugs.has(a.slug)),
+    );
+  }, [liveProducts, persona.hasProfile, persona.ranked]);
 
   return (
     <>
