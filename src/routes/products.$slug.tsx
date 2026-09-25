@@ -63,7 +63,7 @@ export const Route = createFileRoute("/products/$slug")({
       slug: canonical.handle ?? params.slug,
       name: canonical.name ?? canonical.title ?? params.slug,
       tagline: canonical.product_type ?? "Canonical catalog product",
-      description: canonical.body_html?.replace(/<[^>]*>/g, " ").replace(/\\s+/g, " ").trim() ?? "",
+      description: canonical.body_html?.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() ?? "",
       badge: canonical.tags?.[0] ?? null,
     };
 
