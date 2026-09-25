@@ -35,8 +35,7 @@ type CanonicalAsset = {
 
 export const Route = createFileRoute("/products/$slug")({
   loader: async ({ params }) => {
-    const sku = getSKU(params.slug);
-    if (!sku) throw notFound();
+    const knownSku = getSKU(params.slug);
 
     const [productResponse, assetResponse] = await Promise.all([
       fetch(`${CATALOG_BASE}/api/public/products/${encodeURIComponent(params.slug)}`, {
@@ -59,6 +58,14 @@ export const Route = createFileRoute("/products/$slug")({
     const heroImage = images[0] ?? canonical.image_url ?? canonical.image_src ?? null;
 
     if (!canonical.sku || (canonical.variant_price ?? canonical.price_ngn) == null) throw new Error("Canonical product is missing a payable SKU or price");
+
+    const sku = knownSku ?? {
+      slug: canonical.handle ?? params.slug,
+      name: canonical.name ?? canonical.title ?? params.slug,
+      tagline: canonical.product_type ?? "Canonical catalog product",
+      description: canonical.body_html?.replace(/<[^>]*>/g, " ").replace(/\\s+/g, " ").trim() ?? "",
+      badge: canonical.tags?.[0] ?? null,
+    };
 
     let recommendation: CanonicalProduct | null = null;
     try {
