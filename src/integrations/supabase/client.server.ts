@@ -6,8 +6,10 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
 function createSupabaseAdminClient() {
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  // Prefer modern Supabase server secret naming, while retaining a backward-compatible
+  // fallback so an existing deployment is not broken during secret migration.
+  const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     const missing = [
@@ -18,6 +20,13 @@ function createSupabaseAdminClient() {
     console.error(`[Supabase] ${message}`);
     throw new Error(message);
   }
+
+  const keyFamily = SUPABASE_SERVICE_ROLE_KEY?.startsWith("sb_secret_")
+    ? "modern-secret"
+    : SUPABASE_SERVICE_ROLE_KEY?.startsWith("eyJ")
+      ? "legacy-jwt"
+      : "unknown";
+  console.info("[Supabase] server credential family:", keyFamily);
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     auth: {
