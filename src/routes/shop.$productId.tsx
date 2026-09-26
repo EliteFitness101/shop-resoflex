@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { products } from "@/lib/mock-data";
+import { getProduct, type DbProduct } from "@/lib/products.functions";
 import { PriceTag } from "@/components/PriceTag";
 import { GoldButton } from "@/components/GoldButton";
 import { TacticalPanel } from "@/components/TacticalPanel";
@@ -10,12 +10,34 @@ import { toast } from "sonner";
 import { track } from "@/lib/analytics";
 import { resolveVariantCheckout, type VariantRejection } from "@/lib/checkout-variants";
 import { ArrowLeft, Shield, Truck, BadgeCheck, AlertTriangle } from "lucide-react";
+import type { Product } from "@/lib/types";
+
+function toStoreProduct(product: DbProduct): Product {
+  const allowedCategories = new Set(["supplement", "gear", "program", "digital"]);
+  const category = allowedCategories.has(String(product.category).toLowerCase())
+    ? (String(product.category).toLowerCase() as Product["category"])
+    : "gear";
+  return {
+    id: product.id,
+    slug: product.slug,
+    name: product.name,
+    tagline: product.tagline ?? product.category ?? "ResoFlex™ product",
+    description: product.description ?? "",
+    priceNGN: product.price_ngn,
+    comparePriceNGN: product.compare_price_ngn ?? undefined,
+    commissionPct: product.commission_pct,
+    category,
+    badge: product.badge ?? undefined,
+    imageGradient: "linear-gradient(135deg, oklch(0.22 0.04 60), oklch(0.78 0.09 65))",
+    imageUrl: product.image_url ?? product.hero_url ?? null,
+  };
+}
 
 export const Route = createFileRoute("/shop/$productId")({
-  loader: ({ params }) => {
-    const product = products.find((p) => p.slug === params.productId);
-    if (!product) throw notFound();
-    return { product };
+  loader: async ({ params }) => {
+    const result = await getProduct({ data: { slug: params.productId } });
+    if (!result.product) throw notFound();
+    return { product: toStoreProduct(result.product) };
   },
   head: ({ loaderData }) => ({
     meta: loaderData ? [
