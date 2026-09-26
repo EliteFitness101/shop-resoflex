@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { mealPlans } from "@/lib/mock-data";
+import { listProducts } from "@/lib/products.functions";
 import { GoldButton } from "@/components/GoldButton";
 import { RouteHero } from "@/components/RouteHero";
 import { RouteErrorBoundary, RouteSkeleton } from "@/components/RouteFallbacks";
@@ -7,6 +7,13 @@ import { Check } from "lucide-react";
 import heroMeals from "@/assets/hero-meals.jpg";
 
 export const Route = createFileRoute("/meals")({
+  loader: async () => {
+    const { products } = await listProducts();
+    const mealProducts = products.filter((p) =>
+      /meal|nutrition|diet/i.test(`${p.name} ${p.tagline ?? ""} ${p.category ?? ""}`)
+    );
+    return { mealProducts };
+  },
   component: Meals,
   pendingComponent: () => <RouteSkeleton rows={4} />,
   errorComponent: ({ error, reset }) => <RouteErrorBoundary error={error} reset={reset} />,
@@ -26,6 +33,7 @@ export const Route = createFileRoute("/meals")({
 });
 
 function Meals() {
+  const { mealProducts } = Route.useLoaderData();
   return (
     <>
       <RouteHero
@@ -39,28 +47,25 @@ function Meals() {
 
       <div id="meal-grid" className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
         <div className="grid md:grid-cols-2 gap-4">
-          {mealPlans.map((m) => (
+          {mealProducts.map((m) => (
             <div key={m.id} className="bg-[#121215] border border-gold/15 overflow-hidden flex flex-col md:flex-row">
-              <div
-                className="md:w-48 aspect-video md:aspect-auto relative"
-                style={{ backgroundImage: m.gradient }}
-              >
+              <div className="md:w-48 aspect-video md:aspect-auto relative bg-gradient-to-br from-gold/20 to-background">
                 <div className="absolute inset-0 telemetry-grid opacity-30 mix-blend-overlay" />
-                <span className="absolute top-3 left-3 text-telemetry">{m.region.toUpperCase()}</span>
+                <span className="absolute top-3 left-3 text-telemetry">CANONICAL</span>
               </div>
               <div className="p-5 flex-1 flex flex-col">
                 <h3 className="font-display text-xl font-semibold">{m.name}</h3>
-                <div className="text-xs font-mono text-muted-foreground mt-1">{m.calories} kcal · daily target</div>
+                <div className="text-xs font-mono text-muted-foreground mt-1">{m.category ?? "Meal Plan"} · production catalog</div>
                 <ul className="mt-4 space-y-1.5 text-sm">
-                  {m.highlights.map((h) => (
+                  {[m.tagline, m.description].filter(Boolean).slice(0, 2).map((h) => (
                     <li key={h} className="flex items-start gap-2 text-muted-foreground">
                       <Check className="size-4 text-gold mt-0.5 shrink-0" />{h}
                     </li>
                   ))}
                 </ul>
                 <div className="mt-auto pt-4 flex items-center justify-between">
-                  <span className="font-display font-bold text-2xl text-gold">₦{m.priceNGN.toLocaleString()}</span>
-                  <GoldButton size="sm" className="!rounded-none">Enroll</GoldButton>
+                  <span className="font-display font-bold text-2xl text-gold">₦{m.price_ngn.toLocaleString()}</span>
+                  <GoldButton size="sm" className="!rounded-none" onClick={() => { window.location.href = `/products/${encodeURIComponent(m.slug)}`; }}>View</GoldButton>
                 </div>
               </div>
             </div>
