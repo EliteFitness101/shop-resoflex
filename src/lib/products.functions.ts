@@ -99,15 +99,24 @@ export const listProducts = createServerFn({ method: "GET" }).handler(async () =
 export const getProduct = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ slug: z.string().min(1).max(120) }).parse(d))
   .handler(async ({ data }) => {
-    const [productPayload, assetPayload] = await Promise.all([
-      fetchCanonical<{ data?: CanonicalProduct }>("product", { handle: data.slug }),
-      fetchCanonical<{ data: CanonicalAsset[] }>("assets", { handle: data.slug, limit: "50", offset: "0" }),
-    ]);
-    return {
-      product: productPayload.data
-        ? toDbProduct(productPayload.data, assetPayload.data ?? [])
-        : null,
-    };
+    // Direct canonical DB lookup is the authoritative fallback for single-product
+    // resolution. This prevents a catalog-public route mismatch from producing
+    // false 404s on legacy /shop/$productId deep links.
+    const { data: row, error } = await supabaseAdmin
+      .from("products")
+      .select("id,sku,handle,title,vendor,product_type,tags,published,variant_price,variant_inventory_qty,image_src,body_html")
+      .eq("handle", data.slug)
+      .eq("published", true)
+      .maybeSingle();
+    if (error) throw new Error(`Canonical product lookup failed: ${error.message}`);
+    if (!row) return { product: null };
+    const { data: assets, error: assetError } = await supabaseAdmin
+      .from("resofit_catalog_assets")
+      .select("sku,handle,role,canonical_url,image_position")
+      .or(`handle.eq.${data.slug},sku.eq.${row.sku}`)
+      .order("image_position", { ascending: true });
+    if (assetError) throw new Error(`Canonical asset lookup failed: ${assetError.message}`);
+    return { product: toDbProduct(row as CanonicalProduct, (assets ?? []) as CanonicalAsset[]) };
   });
 
 export const upsertProductImage = createServerFn({ method: "POST" })
