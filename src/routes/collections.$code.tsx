@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getCollection } from "@/lib/collections";
+import { listProducts, type DbProduct } from "@/lib/products.functions";
 import { filterByCollection, featuredProducts } from "@/lib/catalog-engine";
 import { PriceTag } from "@/components/PriceTag";
 import { TacticalPanel } from "@/components/TacticalPanel";
@@ -7,10 +8,16 @@ import { TacticalPanel } from "@/components/TacticalPanel";
 const BASE = "https://store.resofit.fit";
 
 export const Route = createFileRoute("/collections/$code")({
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
     const collection = getCollection(params.code);
     if (!collection) throw notFound();
-    return { collection };
+    let canonicalProducts: DbProduct[] = [];
+    try {
+      canonicalProducts = (await listProducts()).products;
+    } catch {
+      canonicalProducts = [];
+    }
+    return { collection, canonicalProducts };
   },
   notFoundComponent: () => (
     <div className="mx-auto max-w-lg px-4 py-16 text-center">
@@ -57,10 +64,11 @@ export const Route = createFileRoute("/collections/$code")({
 });
 
 function CollectionPage() {
-  const { collection } = Route.useLoaderData();
+  const { collection, canonicalProducts } = Route.useLoaderData();
   const records = collection.skus.length
     ? filterByCollection(collection.code)
     : featuredProducts(8);
+  const canonicalBySlug = new Map(canonicalProducts.map((p) => [p.slug, p]));
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
@@ -72,10 +80,10 @@ function CollectionPage() {
         {records.map((r) => (
           <TacticalPanel key={r.sku.slug} className="p-5 flex flex-col">
             <div className="text-telemetry uppercase">{r.category}</div>
-            <h2 className="font-display text-lg font-semibold mt-1">{r.sku.name}</h2>
-            <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{r.sku.tagline}</p>
+            <h2 className="font-display text-lg font-semibold mt-1">{canonicalBySlug.get(r.sku.slug)?.name ?? r.sku.name}</h2>
+            <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{canonicalBySlug.get(r.sku.slug)?.tagline ?? r.sku.tagline}</p>
             <div className="mt-4 flex items-end justify-between">
-              <PriceTag amountNGN={r.sku.priceNGN} />
+              <PriceTag amountNGN={canonicalBySlug.get(r.sku.slug)?.price_ngn ?? r.sku.priceNGN} />
               <Link
                 to="/products/$slug"
                 params={{ slug: r.sku.slug }}
