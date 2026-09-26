@@ -1,0 +1,25 @@
+name: Vercel Production Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    if: ${{ secrets.VERCEL_TOKEN != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_iRyfIbkZpnmY0x43nnOI0Q9I
+      VERCEL_PROJECT_ID: prj_QeiXB0eBuRCiFBCL0gpIpckFxwWG
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: mkdir -p .vercel && printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > .vercel/project.json
+      - run: npx vercel@latest deploy --prod --token "$VERCEL_TOKEN" --yes --scope resonancefitnessng-2206
