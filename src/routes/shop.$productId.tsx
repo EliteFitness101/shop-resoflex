@@ -60,7 +60,6 @@ export const Route = createFileRoute("/shop/$productId")({
 });
 
 const BULK_MIN_QTY = 10;
-const BULK_UNIT_NGN = 8500;
 
 function ProductPage() {
   const { product } = Route.useLoaderData();
@@ -80,9 +79,10 @@ function ProductPage() {
   }, [product.id, product.slug, product.name, product.priceNGN]);
 
   const isBulk = qty >= BULK_MIN_QTY;
-  const unitPrice = isBulk ? Math.min(BULK_UNIT_NGN, product.priceNGN) : product.priceNGN;
+  // No hard-coded bulk price: canonical catalog remains the sole production price authority.
+  const unitPrice = product.priceNGN;
   const total = unitPrice * qty;
-  const savings = isBulk ? (product.priceNGN - unitPrice) * qty : 0;
+  const savings = 0;
 
   const handleCheckout = async () => {
     if (!email.includes("@")) {
