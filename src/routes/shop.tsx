@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { ProductCard } from "@/components/ProductCard";
 import { CurrencySwitcher } from "@/components/PriceTag";
 import { RouteHero } from "@/components/RouteHero";
@@ -63,8 +64,27 @@ export const Route = createFileRoute("/shop")({
 
 function Shop() {
   const { liveProducts } = Route.useLoaderData();
+  const navigate = useNavigate();
   const [refreshedProducts, setRefreshedProducts] = useState<Product[] | null>(null);
   const persona = usePersonalization();
+
+  useEffect(() => {
+    const sku = new URLSearchParams(window.location.search).get("sku")?.trim();
+    if (!sku) return;
+
+    listProducts()
+      .then((r) => {
+        const product = r.products.find((p) => p.sku === sku);
+        if (product?.slug) {
+          navigate({
+            to: "/shop/$productId",
+            params: { productId: product.slug },
+            replace: true,
+          });
+        }
+      })
+      .catch(() => {});
+  }, [navigate]);
 
   useEffect(() => {
     listProducts()
