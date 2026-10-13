@@ -23,7 +23,7 @@ export function ProductCard({ product }: { product: Product }) {
           />
         ) : (
           <div className="absolute inset-0 telemetry-grid opacity-40 mix-blend-overlay" />
-        )}}
+        )}
         {product.badge && (
           <span className="absolute top-3 left-3 text-[10px] font-mono uppercase tracking-widest bg-gold text-primary-foreground px-2 py-1 rounded">
             {product.badge}
