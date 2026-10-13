@@ -8,6 +8,7 @@ const CATALOG_PUBLIC_URL =
 
 export type DbProduct = {
   id: string;
+  sku: string;
   slug: string;
   name: string;
   tagline: string | null;
@@ -19,6 +20,7 @@ export type DbProduct = {
   badge: string | null;
   image_url: string | null;
   hero_url: string | null;
+  gallery_urls: string[];
   active: boolean;
 };
 
@@ -66,10 +68,12 @@ function toDbProduct(product: CanonicalProduct, assets: CanonicalAsset[]): DbPro
       return aHero - bHero || Number(a.image_position ?? 999) - Number(b.image_position ?? 999);
     });
 
-  const hero = productAssets[0]?.canonical_url ?? product.image_src ?? null;
+  const galleryUrls = Array.from(new Set(productAssets.map((asset) => asset.canonical_url).filter((url): url is string => typeof url === "string" && url.length > 0)));
+  const hero = productAssets.find((asset) => String(asset.role ?? "").toLowerCase() === "hero")?.canonical_url ?? galleryUrls[0] ?? product.image_src ?? null;
 
   return {
     id: product.id,
+    sku: product.sku,
     slug: product.handle,
     name: product.title,
     tagline: product.product_type ?? null,
@@ -81,6 +85,7 @@ function toDbProduct(product: CanonicalProduct, assets: CanonicalAsset[]): DbPro
     badge: Array.isArray(product.tags) ? product.tags[0] ?? null : null,
     image_url: hero,
     hero_url: hero,
+    gallery_urls: galleryUrls.length ? galleryUrls : hero ? [hero] : [],
     active: product.published !== false,
   };
 }
