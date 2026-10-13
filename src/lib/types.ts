@@ -15,6 +15,7 @@ export interface User {
 
 export interface Product {
   id: string;
+  sku?: string;
   slug: string;
   name: string;
   tagline: string;
@@ -25,7 +26,8 @@ export interface Product {
   category: "supplement" | "gear" | "program" | "digital";
   badge?: string;
   imageGradient: string; // CSS gradient used as fallback
-  imageUrl?: string | null; // admin-uploaded image (overrides gradient)
+  imageUrl?: string | null; // canonical hero image
+  imageGallery?: string[]; // canonical registered media, hero first
   sizes?: string[]; // optional size variants
 }
 
