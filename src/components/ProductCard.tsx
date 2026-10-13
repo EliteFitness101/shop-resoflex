@@ -5,15 +5,25 @@ import { PriceTag } from "./PriceTag";
 export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
-      to="/products/$slug"
-      params={{ slug: product.slug }}
+      to="/shop/$productId"
+      params={{ productId: product.slug }}
       className="group glass-panel rounded-lg overflow-hidden flex flex-col hover:shadow-gold transition-shadow"
     >
       <div
-        className="aspect-[4/3] relative bg-cover bg-center"
-        style={product.imageUrl ? { backgroundImage: `url(${product.imageUrl})` } : { backgroundImage: product.imageGradient }}
+        className="aspect-[4/3] relative overflow-hidden bg-cover bg-center"
+        style={!product.imageUrl ? { backgroundImage: product.imageGradient } : undefined}
       >
-        {!product.imageUrl && <div className="absolute inset-0 telemetry-grid opacity-40 mix-blend-overlay" />}
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <div className="absolute inset-0 telemetry-grid opacity-40 mix-blend-overlay" />
+        )}}
         {product.badge && (
           <span className="absolute top-3 left-3 text-[10px] font-mono uppercase tracking-widest bg-gold text-primary-foreground px-2 py-1 rounded">
             {product.badge}
