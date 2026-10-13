@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ScarcityBanner } from "@/components/ScarcityBanner";
 import { TacticalPanel } from "@/components/TacticalPanel";
 import { ProductCard } from "@/components/ProductCard";
@@ -10,11 +10,36 @@ import { HeroCarousel } from "@/components/HeroCarousel";
 import { StickyCTA } from "@/components/StickyCTA";
 import { PersonalizedPanel } from "@/components/PersonalizedPanel";
 import { products, mealPlans, stats } from "@/lib/mock-data";
+import { listProducts, type DbProduct } from "@/lib/products.functions";
+import type { Product } from "@/lib/types";
 import { attachScrollDepthTracking, track } from "@/lib/analytics";
 import { decorateUrl, ensureAttribution } from "@/lib/attribution";
 import { Activity, Coins, Flame, ShieldCheck, Sparkles, TrendingUp, Users, ExternalLink } from "lucide-react";
 
 const CHATB2K_URL = "https://chatb2k.resofit.fit";
+
+function toStoreProduct(product: DbProduct): Product {
+  const allowedCategories = new Set(["supplement", "gear", "program", "digital"]);
+  const category = allowedCategories.has(String(product.category).toLowerCase())
+    ? (String(product.category).toLowerCase() as Product["category"])
+    : "gear";
+  return {
+    id: product.id,
+    sku: product.sku,
+    slug: product.slug,
+    name: product.name,
+    tagline: product.tagline ?? product.category ?? "ResoFlex™ product",
+    description: product.description ?? "",
+    priceNGN: product.price_ngn,
+    comparePriceNGN: product.compare_price_ngn ?? undefined,
+    commissionPct: product.commission_pct,
+    category,
+    badge: product.badge ?? undefined,
+    imageGradient: "linear-gradient(135deg, oklch(0.22 0.04 60), oklch(0.78 0.09 65))",
+    imageUrl: product.image_url ?? product.hero_url ?? null,
+    imageGallery: product.gallery_urls ?? [],
+  };
+}
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -31,12 +56,17 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const [catalogProducts, setCatalogProducts] = useState<Product[]>([]);
+
   useEffect(() => {
     ensureAttribution();
     track("landing_view");
     const cleanup = attachScrollDepthTracking();
+    listProducts().then((result) => setCatalogProducts(result.products.map(toStoreProduct))).catch(() => {});
     return cleanup;
   }, []);
+  const showcaseProducts = catalogProducts.length > 0 ? catalogProducts.slice(0, 3) : products.slice(0, 3);
+
   return (
     <>
       <ScarcityBanner />
@@ -111,7 +141,7 @@ function Landing() {
           <Link to="/shop" className="text-xs font-mono uppercase tracking-widest text-gold hover:underline">View all →</Link>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {products.slice(0, 3).map((p) => <ProductCard key={p.id} product={p} />)}
+          {showcaseProducts.map((p) => <ProductCard key={p.id} product={p} />)}
         </div>
       </section>
 
