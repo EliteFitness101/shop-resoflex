@@ -21,6 +21,7 @@ function toStoreProduct(product: DbProduct): Product {
 
   return {
     id: product.id,
+    sku: product.sku,
     slug: product.slug,
     name: product.name,
     tagline: product.tagline ?? product.category ?? "ResoFlex™ product",
@@ -32,6 +33,7 @@ function toStoreProduct(product: DbProduct): Product {
     badge: product.badge ?? undefined,
     imageGradient: "linear-gradient(135deg, oklch(0.22 0.04 60), oklch(0.78 0.09 65))",
     imageUrl: product.image_url ?? product.hero_url ?? null,
+    imageGallery: product.gallery_urls ?? [],
   };
 }
 

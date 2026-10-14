@@ -8,6 +8,7 @@ const CATALOG_PUBLIC_URL =
 
 export type DbProduct = {
   id: string;
+  sku: string;
   slug: string;
   name: string;
   tagline: string | null;
@@ -19,6 +20,7 @@ export type DbProduct = {
   badge: string | null;
   image_url: string | null;
   hero_url: string | null;
+  gallery_urls: string[];
   active: boolean;
 };
 
@@ -57,19 +59,42 @@ async function fetchCanonical<T>(resource: string, params: Record<string, string
 }
 
 function toDbProduct(product: CanonicalProduct, assets: CanonicalAsset[]): DbProduct {
+  const isUsableImageUrl = (url: string | null | undefined): url is string => {
+    if (typeof url !== "string" || !url.startsWith("https://")) return false;
+    const normalized = url.toLowerCase();
+    // Old Vercel Blob copies are returning 403; don't surface them as storefront images.
+    if (normalized.includes("public.blob.vercel-storage.com")) return false;
+    // These older ImageKit paths are not in the current live manifest.
+    if (normalized.includes("ik.imagekit.io/resofit/catalog/")) return false;
+    if (normalized.includes("ik.imagekit.io/resofit808/assets/products/") && !normalized.includes("updatedat=")) return false;
+    return true;
+  };
+  const isProviderCdn = (url: string | null | undefined): url is string =>
+    isUsableImageUrl(url) &&
+    (url.includes("cdn.shopify.com") || url.includes("res.cloudinary.com/paystack"));
+
   const productAssets = assets
     .filter((asset) => asset.handle === product.handle || asset.sku === product.sku)
-    .filter((asset) => typeof asset.canonical_url === "string" && asset.canonical_url.length > 0)
+    .filter((asset) => isUsableImageUrl(asset.canonical_url))
     .sort((a, b) => {
       const aHero = String(a.role ?? "").toLowerCase() === "hero" ? 0 : 1;
       const bHero = String(b.role ?? "").toLowerCase() === "hero" ? 0 : 1;
       return aHero - bHero || Number(a.image_position ?? 999) - Number(b.image_position ?? 999);
     });
 
-  const hero = productAssets[0]?.canonical_url ?? product.image_src ?? null;
+  // Keep the canonical provider's CDN image as the storefront hero (Shopify or
+  // Paystack). ImageKit remains a fallback/gallery source for roles the provider
+  // has not uploaded. This prevents stale Blob or legacy ImageKit URLs winning.
+  const providerHero = isProviderCdn(product.image_src) ? product.image_src : null;
+  const assetHero = productAssets.find((asset) => String(asset.role ?? "").toLowerCase() === "hero")?.canonical_url ?? productAssets[0]?.canonical_url ?? null;
+  const hero = providerHero ?? assetHero ?? (isUsableImageUrl(product.image_src) ? product.image_src : null);
+  const galleryUrls = Array.from(
+    new Set([hero, ...productAssets.map((asset) => asset.canonical_url), product.image_src].filter(isUsableImageUrl)),
+  ).slice(0, 6);
 
   return {
     id: product.id,
+    sku: product.sku,
     slug: product.handle,
     name: product.title,
     tagline: product.product_type ?? null,
@@ -81,6 +106,7 @@ function toDbProduct(product: CanonicalProduct, assets: CanonicalAsset[]): DbPro
     badge: Array.isArray(product.tags) ? product.tags[0] ?? null : null,
     image_url: hero,
     hero_url: hero,
+    gallery_urls: galleryUrls.length ? galleryUrls : hero ? [hero] : [],
     active: product.published !== false,
   };
 }

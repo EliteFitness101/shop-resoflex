@@ -19,6 +19,7 @@ function toStoreProduct(product: DbProduct): Product {
     : "gear";
   return {
     id: product.id,
+    sku: product.sku,
     slug: product.slug,
     name: product.name,
     tagline: product.tagline ?? product.category ?? "ResoFlex™ product",
@@ -30,6 +31,7 @@ function toStoreProduct(product: DbProduct): Product {
     badge: product.badge ?? undefined,
     imageGradient: "linear-gradient(135deg, oklch(0.22 0.04 60), oklch(0.78 0.09 65))",
     imageUrl: product.image_url ?? product.hero_url ?? null,
+    imageGallery: product.gallery_urls ?? [],
   };
 }
 
@@ -46,6 +48,17 @@ export const Route = createFileRoute("/shop/$productId")({
       { property: "og:title", content: loaderData.product.name },
       { property: "og:description", content: loaderData.product.tagline },
       { property: "og:type", content: "product" },
+      { property: "og:url", content: `https://store.resofit.fit/shop/${loaderData.product.slug}` },
+      ...(loaderData.product.imageUrl ? [
+        { property: "og:image", content: loaderData.product.imageUrl },
+        { name: "twitter:image", content: loaderData.product.imageUrl },
+      ] : []),
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "product:price:amount", content: String(loaderData.product.priceNGN) },
+      { property: "product:price:currency", content: "NGN" },
+    ] : [],
+    links: loaderData ? [
+      { rel: "canonical", href: `https://store.resofit.fit/shop/${loaderData.product.slug}` },
     ] : [],
   }),
   component: ProductPage,
@@ -69,6 +82,12 @@ function ProductPage() {
   const [size, setSize] = useState<string | null>(product.sizes?.[0] ?? null);
   const [busy, setBusy] = useState(false);
   const [guardError, setGuardError] = useState<VariantRejection | null>(null);
+  const [activeImage, setActiveImage] = useState(product.imageGallery?.[0] ?? product.imageUrl ?? null);
+  const gallery = product.imageGallery?.length ? product.imageGallery.slice(0, 6) : product.imageUrl ? [product.imageUrl] : [];
+
+  useEffect(() => {
+    setActiveImage(product.imageGallery?.[0] ?? product.imageUrl ?? null);
+  }, [product.id, product.imageUrl, product.imageGallery]);
 
   useEffect(() => {
     if (user?.email) setEmail(user.email);
@@ -138,17 +157,36 @@ function ProductPage() {
         <ArrowLeft className="size-3.5" /> Back
       </Link>
       <div className="grid md:grid-cols-2 gap-8">
-        <div
-          className="aspect-square rounded-xl relative overflow-hidden glass-panel bg-cover bg-center"
-          style={product.imageUrl ? { backgroundImage: `url(${product.imageUrl})` } : { backgroundImage: product.imageGradient }}
-        >
-          {!product.imageUrl && <div className="absolute inset-0 telemetry-grid opacity-40 mix-blend-overlay" />}
-          {product.badge && (
-            <span className="absolute top-4 left-4 text-xs font-mono uppercase tracking-widest bg-gold text-primary-foreground px-3 py-1.5 rounded">
-              {product.badge}
-            </span>
+        <div className="space-y-3">
+          <div className="aspect-square rounded-xl relative overflow-hidden glass-panel" style={!activeImage ? { backgroundImage: product.imageGradient } : undefined}>
+            {activeImage ? (
+              <img src={activeImage} alt={product.name} fetchPriority="high" decoding="async" className="size-full object-cover" />
+            ) : (
+              <div className="absolute inset-0 telemetry-grid opacity-40 mix-blend-overlay" />
+            )}
+            {product.badge && (
+              <span className="absolute top-4 left-4 text-xs font-mono uppercase tracking-widest bg-gold text-primary-foreground px-3 py-1.5 rounded">
+                {product.badge}
+              </span>
+            )}
+            <div className="absolute bottom-4 right-4 text-telemetry">SKU · {(product.sku ?? product.id).toUpperCase()}</div>
+          </div>
+          {gallery.length > 1 && (
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2" aria-label="Product image gallery">
+              {gallery.map((url, index) => (
+                <button
+                  key={url}
+                  type="button"
+                  onClick={() => setActiveImage(url)}
+                  aria-label={`Show ${product.name} image ${index + 1}`}
+                  aria-pressed={activeImage === url}
+                  className={`aspect-square overflow-hidden rounded-lg border transition ${activeImage === url ? "border-gold ring-1 ring-gold/50" : "border-gold/15 hover:border-gold/50"}`}
+                >
+                  <img src={url} alt={`${product.name} view ${index + 1}`} loading="lazy" decoding="async" className="size-full object-cover" />
+                </button>
+              ))}
+            </div>
           )}
-          <div className="absolute bottom-4 right-4 text-telemetry">SKU · {product.id.toUpperCase()}</div>
         </div>
 
         <div>
