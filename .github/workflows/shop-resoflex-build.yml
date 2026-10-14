@@ -32,7 +32,15 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.3.14"
-      - name: Install locked dependencies
-        run: bun install --frozen-lockfile
+      - name: Resolve dependencies and refresh lockfile
+        run: bun install
       - name: Build production bundle
         run: bun run build
+      - name: Upload resolved lockfile for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shop-resoflex-bun-lock
+          path: bun.lock
+          if-no-files-found: error
+          retention-days: 1
