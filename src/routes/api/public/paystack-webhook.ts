@@ -48,6 +48,7 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
           data?: {
             reference?: string;
             amount?: number;
+            currency?: string;
             customer?: { email?: string };
             metadata?: Record<string, unknown>;
           };
@@ -85,6 +86,15 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
               console.warn(`[paystack-webhook] amount mismatch ref=${ref}`);
               return new Response("Verified amount mismatch", { status: 409 });
             }
+            const priorPaystackData = existingOrder.paystack_data && typeof existingOrder.paystack_data === "object"
+              ? existingOrder.paystack_data as Record<string, unknown>
+              : {};
+            if (existingOrder.status === "paid" && priorPaystackData.webhook_processed === true) {
+              return new Response(JSON.stringify({ received: true, duplicate: true }), {
+                status: 200,
+                headers: { "Content-Type": "application/json" },
+              });
+            }
 
             // The stored order is authoritative for SKU and amount. Never mint a
             // delivery token from untrusted Paystack metadata or a request Host header.
@@ -117,7 +127,7 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
                 .from("orders")
                 .update({
                   status: "paid",
-                  paystack_data: event.data as unknown as Record<string, unknown> as never,
+                  paystack_data: { ...(event.data as unknown as Record<string, unknown>), webhook_processed: true } as never,
                   download_url: downloadUrl,
                   download_expires_at: expiresAt,
                   customer_email: email ?? existingOrder.customer_email ?? undefined,
@@ -143,6 +153,22 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
                   return new Response("Order state changed; retry webhook", { status: 409 });
                 }
                 updated = latestOrder;
+              }
+            } else {
+              const { error: markError } = await supabaseAdmin
+                .from("orders")
+                .update({
+                  paystack_data: {
+                    ...priorPaystackData,
+                    ...(event.data as unknown as Record<string, unknown>),
+                    webhook_processed: true,
+                  } as never,
+                })
+                .eq("reference", ref)
+                .eq("status", "paid");
+              if (markError) {
+                console.error("[paystack-webhook] idempotency marker failed:", markError);
+                return new Response("Order marker update failed", { status: 500 });
               }
             }
 
