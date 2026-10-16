@@ -134,7 +134,7 @@ function Shop() {
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="reso-product-grid grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
           {products.map((p) => <ProductCard key={p.id} product={p} />)}
         </div>
       </div>
