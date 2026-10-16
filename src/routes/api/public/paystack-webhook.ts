@@ -105,7 +105,7 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
               let downloadUrl: string | null = null;
               let expiresAt: string | null = null;
               try {
-                const { data: job } = await supabaseAdmin
+                const { data: job } = await (supabaseAdmin as any)
                   .from("digital_product_delivery_jobs")
                   .select("status,output_bucket,output_path")
                   .eq("payment_reference", ref)
