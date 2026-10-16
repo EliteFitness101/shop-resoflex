@@ -7,6 +7,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { getCanonicalProduct, priceNgnMinor } from "./catalog-canonical.server";
 
 const PAYSTACK_BASE = "https://api.paystack.co";
+const CANONICAL_STORE_ORIGIN = "https://store.resofit.fit";
 
 function getSecret(): string {
   const s = process.env.PAYSTACK_SECRET_KEY;
@@ -35,7 +36,6 @@ export const initiatePaystackPayment = createServerFn({ method: "POST" })
         email: z.string().email().max(200),
         sku: z.string().min(1).max(64),
         userId: z.string().uuid().nullable().optional(),
-        callbackOrigin: z.string().url(),
         attribution: Attribution,
         variant: z.string().max(64).optional().nullable(),
         quantity: z.number().int().positive().max(99).default(1),
@@ -72,7 +72,7 @@ export const initiatePaystackPayment = createServerFn({ method: "POST" })
         amount: amountKobo,
         reference,
         currency: "NGN",
-        callback_url: `${data.callbackOrigin}/checkout/callback?reference=${encodeURIComponent(reference)}`,
+        callback_url: `${CANONICAL_STORE_ORIGIN}/checkout/callback?reference=${encodeURIComponent(reference)}`,
         metadata: {
           sku: product.sku,
           productName: product.name,
