@@ -29,7 +29,7 @@ export const Route = createFileRoute("/api/public/asset/$productId")({
         if (order.status !== "paid") return new Response("Payment is not confirmed", { status: 403 });
         if (String(order.product_id) !== payload.pid) return new Response("Order / product mismatch", { status: 403 });
 
-        const { data: job, error: jobError } = await supabaseAdmin
+        const { data: job, error: jobError } = await (supabaseAdmin as any)
           .from("digital_product_delivery_jobs")
           .select("status,output_bucket,output_path")
           .eq("payment_reference", payload.ref)
