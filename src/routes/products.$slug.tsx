@@ -8,7 +8,8 @@ import { ensureAttribution } from "@/lib/attribution";
 import { ArrowRight, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 
 const WHATSAPP_E164 = "2348000000000";
-const CATALOG_BASE = "https://catalog.resofit.fit";
+const CATALOG_BASE = "https://vbqjvmnhdtdhmeeudqnn.supabase.co/functions/v1/catalog-public";
+const CANONICAL_SUPABASE_URL = "https://vbqjvmnhdtdhmeeudqnn.supabase.co";
 
 type CanonicalProduct = {
   sku: string;
@@ -36,24 +37,36 @@ type CanonicalAsset = {
 export const Route = createFileRoute("/products/$slug")({
   loader: async ({ params }) => {
     const knownSku = getSKU(params.slug);
+    const lookupKey = params.slug;
+    if (!/^[A-Za-z0-9_-]{1,160}$/.test(lookupKey)) throw new Error("Invalid canonical product key");
 
-    const [productResponse, assetResponse] = await Promise.all([
-      fetch(`${CATALOG_BASE}/api/public/products/${encodeURIComponent(params.slug)}`, {
-        headers: { accept: "application/json" },
-        cache: "no-store",
-      }),
-      fetch(`${CATALOG_BASE}/api/public/assets/${encodeURIComponent(params.slug)}`, {
-        headers: { accept: "application/json" },
-        cache: "no-store",
-      }),
-    ]);
-
+    // Server-only secret key: never expose this in client code or loader data.
+    const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || CANONICAL_SUPABASE_URL).replace(/\/+$/, "");
+    const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseKey) throw new Error("Canonical catalog server credential is not configured");
+    const headers = { accept: "application/json", apikey: supabaseKey, authorization: `Bearer ${supabaseKey}` };
+    const productQuery = new URLSearchParams({
+      select: "id,sku,handle,title,vendor,product_type,tags,published,variant_price,variant_inventory_qty,image_src,body_html",
+      published: "eq.true",
+      or: `(sku.eq.${lookupKey},handle.eq.${lookupKey})`,
+      limit: "1",
+    });
+    const productResponse = await fetch(`${supabaseUrl}/rest/v1/products?${productQuery}`, { headers, cache: "no-store" });
     if (!productResponse.ok) throw new Error(`Canonical catalog lookup failed (${productResponse.status})`);
+    const productRows = await productResponse.json();
+    const canonical = (Array.isArray(productRows) ? productRows[0] : null) as CanonicalProduct | undefined;
+    if (!canonical) throw notFound();
 
-    const productPayload = await productResponse.json();
-    const canonical = (productPayload?.data ?? productPayload) as CanonicalProduct;
-    const assetPayload = assetResponse.ok ? await assetResponse.json() : { assets: [] };
-    const assets = (assetPayload?.assets ?? []) as CanonicalAsset[];
+    const assetQuery = new URLSearchParams({
+      select: "sku,handle,canonical_url,role,image_type,image_position,alt_text,format,mime_type,width,height",
+      web_ready: "eq.true",
+      canonical_url: "not.is.null",
+      or: `(sku.eq.${lookupKey},handle.eq.${lookupKey})`,
+      order: "image_position.asc.nullsfirst",
+    });
+    const assetResponse = await fetch(`${supabaseUrl}/rest/v1/resofit_catalog_assets?${assetQuery}`, { headers, cache: "no-store" });
+    const assetRows = assetResponse.ok ? await assetResponse.json() : [];
+    const assets = (Array.isArray(assetRows) ? assetRows : []) as CanonicalAsset[];
     const images = assets.map((asset) => asset.canonical_url).filter((url): url is string => Boolean(url));
     const heroImage = images[0] ?? canonical.image_url ?? canonical.image_src ?? null;
 
@@ -70,7 +83,7 @@ export const Route = createFileRoute("/products/$slug")({
     let recommendation: CanonicalProduct | null = null;
     try {
       const intent = encodeURIComponent(canonical.product_type ?? canonical.title ?? params.slug);
-      const recommendationResponse = await fetch(`${CATALOG_BASE}/api/public/recommendations?intent=${intent}&limit=4`, {
+      const recommendationResponse = await fetch(`${CATALOG_BASE}/recommendations?intent=${intent}&limit=4`, {
         headers: { accept: "application/json" },
         cache: "no-store",
       });
