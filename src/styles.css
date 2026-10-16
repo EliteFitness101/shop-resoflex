@@ -163,3 +163,12 @@
     color: var(--telemetry);
   }
 }
+
+/* RESOFIT PITCH-NOIR STORE UX — touch-native gallery and restrained GPU hints */
+.reso-card { transform: translateZ(0); backface-visibility: hidden; transition: transform .38s ease, border-color .32s ease, box-shadow .38s ease; }
+.reso-gallery-rail { -webkit-overflow-scrolling: touch; overscroll-behavior-inline: contain; scroll-padding-inline: .5rem; scrollbar-width: none; }
+.reso-gallery-rail::-webkit-scrollbar { display: none; }
+.reso-product-grid > * { min-width: 0; }
+.reso-product-media { background-color: var(--card); }
+@media (hover: hover) and (pointer: fine) { .reso-card:hover { will-change: transform, opacity; } }
+@media (prefers-reduced-motion: reduce) { .reso-card { transition: none !important; } }

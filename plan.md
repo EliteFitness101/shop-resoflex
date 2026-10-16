@@ -20,3 +20,10 @@ For Nigeria, Paystack is the active production route. The server resolves SKU an
 
 ## Member continuity
 Preserve safe state across every ecosystem boundary: anonymous/member ID, attribution, funnel origin, intent, recommended SKU, return path and payment reference. Never put secrets or service credentials in URLs.
+
+## Pitch-Noir mobile commerce UX — 2026-10-16
+- Keep store.resofit.fit independent from shop.resofit.fit and resolve all price, stock, images and delivery data through the canonical catalog.
+- Product cards use responsive two-column mobile layouts, rounded glass panels, champagne-gold focus/hover states and restrained transforms. Product galleries use touch-native horizontal scrolling and clickable snap thumbnails.
+- Dynamic product pages retain canonical SKU, price, product description, attribution and server-side checkout initialization. Do not cache checkout or customer state as immutable content.
+- Use verified canonical product details for features and deliverables. Do not infer purchases, scarcity, reviews or bonuses. Email/fulfillment confirmations depend on verified webhook and entitlement events.
+- Acceptance requires lint/build, mobile route tests, canonical catalog checks, and a checkout → signed webhook → order/entitlement → Resend email trace. Styling or plan changes alone do not prove production readiness.

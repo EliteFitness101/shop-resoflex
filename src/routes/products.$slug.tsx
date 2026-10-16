@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getSKU } from "@/lib/sovereign-catalog";
 import { GoldButton } from "@/components/GoldButton";
 import { TacticalPanel } from "@/components/TacticalPanel";
@@ -141,6 +141,8 @@ function NotFoundSKU() {
 
 function ProductRoute() {
   const { sku, canonical, images, heroImage, recommendation } = Route.useLoaderData();
+  const [activeImage, setActiveImage] = useState<string | null>(heroImage);
+  useEffect(() => setActiveImage(heroImage), [heroImage]);
   const [qty, setQty] = useState(1);
   const [email, setEmail] = useState("");
   const [checkingOut, setCheckingOut] = useState(false);
@@ -182,16 +184,16 @@ function ProductRoute() {
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10">
       <Link to="/tiers" className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground hover:text-gold">← Catalog</Link>
       <div className="mt-4 grid md:grid-cols-2 gap-8">
-        <div className="glass-panel rounded-xl overflow-hidden aspect-square relative bg-cover bg-center" style={heroImage ? { backgroundImage: `url(${heroImage})` } : undefined}>
+        <div className="reso-card glass-panel rounded-[1.5rem] overflow-hidden aspect-square relative bg-black/30">
           {!heroImage && <><div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(135deg, oklch(0.2 0.04 60), oklch(0.78 0.09 65))" }} /><div className="absolute inset-0 telemetry-grid opacity-40 mix-blend-overlay" /></>}
-          {heroImage && images.length > 1 && <div className="absolute bottom-4 right-4 flex gap-1.5 max-w-[80%] overflow-x-auto rounded-lg bg-black/40 p-1.5 backdrop-blur-sm">{images.slice(0, 6).map((image, index) => <img key={`${image}-${index}`} src={image} alt={`${name} image ${index + 1}`} className="size-12 rounded object-cover border border-white/20" loading={index === 0 ? "eager" : "lazy"} />)}</div>}
+          {images.length > 1 && <div aria-label="Product image gallery" className="reso-gallery-rail absolute bottom-4 right-4 flex max-w-[80%] snap-x snap-mandatory gap-2 overflow-x-auto rounded-2xl border border-gold/20 bg-black/55 p-2 backdrop-blur-xl">{images.slice(0, 6).map((image, index) => <button key={`${image}-${index}`} type="button" onClick={() => setActiveImage(image)} aria-label={`View product image ${index + 1}`} aria-pressed={activeImage === image} className={`shrink-0 snap-start overflow-hidden rounded-xl border ${activeImage === image ? "border-gold shadow-gold" : "border-white/20"}`}><img src={image} alt={`${name} image ${index + 1}`} className="size-12 object-cover sm:size-14" loading={index === 0 ? "eager" : "lazy"} decoding="async" /></button>)}</div>}
           <div className="absolute bottom-4 left-4"><div className="text-telemetry">// CANONICAL SKU {canonical.sku}</div>{sku.badge && <div className="text-[10px] font-mono uppercase tracking-widest text-gold mt-1">{sku.badge}</div>}</div>
         </div>
 
         <div className="flex flex-col gap-4">
           <div><h1 className="font-display text-3xl sm:text-4xl font-bold">{name}</h1><p className="text-muted-foreground mt-1">{sku.tagline}</p></div>
           <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
-          <div className="glass-panel rounded-lg p-5">
+          <div className="reso-card glass-panel rounded-[1.5rem] border border-gold/20 p-4 shadow-panel backdrop-blur-xl sm:p-5">
             <div className="flex items-baseline justify-between"><div className="font-display text-3xl font-bold text-gold">{priceNGN === 0 ? "FREE" : `₦${total.toLocaleString()}`}</div>{priceNGN > 0 && <div className="text-xs text-muted-foreground">₦{priceNGN.toLocaleString()} × {qty}</div>}</div>
             {priceNGN > 0 && <>
               <div className="mt-4 flex items-center gap-2"><span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Qty</span>{[1, 2, 3, 5, 10].map((n) => <button key={n} onClick={() => setQty(n)} className={`px-2.5 py-1 text-xs font-mono rounded border transition ${qty === n ? "bg-gold border-gold text-black font-bold" : "border-gold/20 text-muted-foreground hover:border-gold/50"}`}>{n}</button>)}</div>

@@ -1,0 +1,53 @@
+name: Verify patched TanStack storefront build
+on:
+  push:
+    branches:
+      - feat/pitch-noir-store-ux-2026-10-16
+    paths:
+      - package.json
+      - bun.lock
+      - src/**
+      - vite.config.*
+      - tsconfig.json
+permissions:
+  contents: write
+jobs:
+  patched-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/pitch-noir-store-ux-2026-10-16
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Refresh Bun lock without lifecycle scripts
+        run: bun install --lockfile-only --ignore-scripts
+      - name: Assert patched TanStack versions
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const l=JSON.parse(fs.readFileSync('bun.lock','utf8').replace(/,\s*([}\]])/g,'$1'));
+          const versions=Object.fromEntries(['@tanstack/react-start','@tanstack/start-server-core','@tanstack/router-core','@tanstack/react-router','@tanstack/router-plugin'].map(n=>[n,l.packages?.[n]?.[0]||'missing']));
+          console.log(versions);
+          const checks=[
+            ['@tanstack/react-start',/^@tanstack\/react-start@1\.168\.(6[0-9]|[7-9]\d)|^@tanstack\/react-start@1\.(16[9-9]|17\d)\./],
+            ['@tanstack/start-server-core',/^@tanstack\/start-server-core@1\.(169\.(3[9]|[4-9]\d)|1[7-9]\d\.)/],
+            ['@tanstack/router-core',/^@tanstack\/router-core@1\.171\.(3[7-9]|[4-9]\d)|^@tanstack\/router-core@1\.(172|17[3-9])\./],
+          ];
+          for(const [name,re] of checks) if(!re.test(versions[name])) throw new Error('Unpatched/mismatched '+name+': '+versions[name]);
+          NODE
+      - name: Install exact lock and build
+        run: |
+          bun install --frozen-lockfile --ignore-scripts
+          bun run build
+      - name: Commit refreshed lock only after a successful build
+        if: success()
+        run: |
+          if ! git diff --quiet -- bun.lock; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add bun.lock
+            git commit -m "fix(security): align patched TanStack lockfile"
+            git push
+          fi

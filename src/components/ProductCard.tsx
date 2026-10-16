@@ -7,10 +7,10 @@ export function ProductCard({ product }: { product: Product }) {
     <Link
       to="/products/$slug"
       params={{ slug: product.slug }}
-      className="group glass-panel rounded-lg overflow-hidden flex flex-col hover:shadow-gold transition-shadow"
+      className="reso-card group glass-panel rounded-[1.25rem] overflow-hidden flex min-w-0 flex-col border border-gold/20 shadow-panel transition-all duration-300 hover:-translate-y-1 hover:border-gold/50 hover:shadow-gold"
     >
       <div
-        className="aspect-[4/3] relative bg-cover bg-center"
+        className="reso-product-media aspect-[4/3] relative overflow-hidden bg-cover bg-center"
         style={product.imageUrl ? { backgroundImage: `url(${product.imageUrl})` } : { backgroundImage: product.imageGradient }}
       >
         {!product.imageUrl && <div className="absolute inset-0 telemetry-grid opacity-40 mix-blend-overlay" />}
@@ -25,9 +25,9 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         )}
       </div>
-      <div className="p-4 flex flex-col gap-2 flex-1">
+      <div className="p-3 sm:p-4 flex flex-col gap-2 flex-1">
         <div className="text-telemetry">{product.category}</div>
-        <h3 className="font-display font-semibold text-lg leading-tight group-hover:text-gold transition">{product.name}</h3>
+        <h3 className="font-display font-semibold text-base sm:text-lg leading-tight group-hover:text-gold transition">{product.name}</h3>
         <p className="text-sm text-muted-foreground line-clamp-2">{product.tagline}</p>
         <div className="mt-auto pt-3 flex items-end justify-between">
           <PriceTag amountNGN={product.priceNGN} compareAtNGN={product.comparePriceNGN} />
