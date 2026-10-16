@@ -1,9 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { buildSignedAssetUrl } from "./asset-signing.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const STORE_ORIGIN = process.env.RESOFIT_STORE_URL || "https://store.resofit.fit";
 const DASHBOARD_URL = "https://dashboard.resofit.fit";
 
 export type AssetDeliveryResult =
@@ -47,13 +45,11 @@ export const issueAssetDownload = createServerFn({ method: "POST" })
         .createSignedUrl(job.output_path, 60 * 60 * 24 * 7);
       if (signedError || !signed?.signedUrl) throw new Error("DELIVERY_ASSET_SIGNING_FAILED");
 
-      const origin = new URL(STORE_ORIGIN);
-      if (origin.protocol !== "https:") throw new Error("RESOFIT_STORE_URL_MUST_USE_HTTPS");
       return {
         mode: "download",
-        url: buildSignedAssetUrl(origin.origin, data.reference, data.productId),
+        url: signed.signedUrl,
         expiresInHours: 24 * 7,
-        message: "Your paid download is ready. This link expires in 7 days.",
+        message: "Your paid download is ready. This private-storage link expires in 7 days.",
       };
     }
 
