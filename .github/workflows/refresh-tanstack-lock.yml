@@ -1,0 +1,50 @@
+name: Temporary TanStack security lock refresh
+on:
+  push:
+    branches:
+      - feat/pitch-noir-store-ux-2026-10-16
+    paths:
+      - package.json
+permissions:
+  contents: write
+jobs:
+  refresh-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/pitch-noir-store-ux-2026-10-16
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Regenerate Bun lockfile without running lifecycle scripts
+        run: bun install --lockfile-only --ignore-scripts
+      - name: Verify patched TanStack dependency graph
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const lock = JSON.parse(fs.readFileSync('bun.lock','utf8').replace(/,\\s*([}\\]])/g,'$1'));
+          const cmp = (a,b) => {
+            const x=a.split('.').map(Number), y=b.split('.').map(Number);
+            for (let i=0;i<3;i++) if ((x[i]||0)!==(y[i]||0)) return (x[i]||0)-(y[i]||0);
+            return 0;
+          };
+          const version = (name) => {
+            const entry = lock.packages?.[name]?.[0] || '';
+            const match = entry.match(/@(\\d+\\.\\d+\\.\\d+)/);
+            return match?.[1];
+          };
+          const start = version('@tanstack/react-start');
+          const core = version('@tanstack/start-server-core');
+          console.log({reactStart:start, startServerCore:core});
+          if (!start || cmp(start,'1.168.60') < 0) throw new Error('Vulnerable @tanstack/react-start remains');
+          if (!core || cmp(core,'1.169.39') < 0) throw new Error('Vulnerable @tanstack/start-server-core remains');
+          NODE
+      - name: Commit regenerated lock and remove temporary workflow
+        run: |
+          rm .github/workflows/refresh-tanstack-lock.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bun.lock .github/workflows/refresh-tanstack-lock.yml
+          git commit -m "fix(security): refresh patched TanStack lockfile"
+          git push
