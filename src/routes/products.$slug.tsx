@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getSKU } from "@/lib/sovereign-catalog";
 import { GoldButton } from "@/components/GoldButton";
 import { TacticalPanel } from "@/components/TacticalPanel";
@@ -142,6 +142,7 @@ function NotFoundSKU() {
 function ProductRoute() {
   const { sku, canonical, images, heroImage, recommendation } = Route.useLoaderData();
   const [activeImage, setActiveImage] = useState<string | null>(heroImage);
+  useEffect(() => setActiveImage(heroImage), [heroImage]);
   const [qty, setQty] = useState(1);
   const [email, setEmail] = useState("");
   const [checkingOut, setCheckingOut] = useState(false);
