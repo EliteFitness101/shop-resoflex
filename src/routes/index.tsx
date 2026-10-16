@@ -9,14 +9,46 @@ import { PlusSizeHero } from "@/components/PlusSizeHero";
 import { HeroCarousel } from "@/components/HeroCarousel";
 import { StickyCTA } from "@/components/StickyCTA";
 import { PersonalizedPanel } from "@/components/PersonalizedPanel";
-import { products, mealPlans, stats } from "@/lib/mock-data";
+import { mealPlans } from "@/lib/mock-data";
+import { listProducts, type DbProduct } from "@/lib/products.functions";
+import type { Product } from "@/lib/types";
 import { attachScrollDepthTracking, track } from "@/lib/analytics";
 import { decorateUrl, ensureAttribution } from "@/lib/attribution";
-import { Activity, Coins, Flame, ShieldCheck, Sparkles, TrendingUp, Users, ExternalLink } from "lucide-react";
+import { Coins, Flame, Sparkles, ExternalLink } from "lucide-react";
 
 const CHATB2K_URL = "https://chatb2k.resofit.fit";
 
+function toStoreProduct(product: DbProduct): Product {
+  const allowedCategories = new Set(["supplement", "gear", "program", "digital"]);
+  const category = allowedCategories.has(String(product.category).toLowerCase())
+    ? (String(product.category).toLowerCase() as Product["category"])
+    : "gear";
+
+  return {
+    id: product.id,
+    slug: product.slug,
+    name: product.name,
+    tagline: product.tagline ?? product.category ?? "ResoFlex™ product",
+    description: product.description ?? "",
+    priceNGN: product.price_ngn,
+    comparePriceNGN: product.compare_price_ngn ?? undefined,
+    commissionPct: product.commission_pct,
+    category,
+    badge: product.badge ?? undefined,
+    imageGradient: "linear-gradient(135deg, oklch(0.22 0.04 60), oklch(0.78 0.09 65))",
+    imageUrl: product.image_url ?? product.hero_url ?? null,
+  };
+}
+
 export const Route = createFileRoute("/")({
+  loader: async () => {
+    try {
+      const result = await listProducts();
+      return { liveProducts: result.products.map(toStoreProduct) };
+    } catch {
+      return { liveProducts: [] as Product[] };
+    }
+  },
   component: Landing,
   head: () => ({
     meta: [
@@ -31,6 +63,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const { liveProducts } = Route.useLoaderData();
   useEffect(() => {
     ensureAttribution();
     track("landing_view");
@@ -79,19 +112,16 @@ function Landing() {
             // Free 60-second readiness scan · unified backend · no signup required
           </div>
 
-          {/* Metric strip */}
+          {/* Capability strip — product capabilities, not unverified social-proof metrics */}
           <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
             {[
-              { label: "ACTIVE OPERATORS", value: stats.activeOperators.toLocaleString(), Icon: Users },
-              { label: "MONTHLY VOLUME", value: `₦${(stats.monthlyVolumeNGN/1_000_000).toFixed(1)}M`, Icon: TrendingUp },
-              { label: "AGENTS ONLINE", value: stats.agentsOnline.toString(), Icon: Activity },
-              { label: "UPTIME", value: `${stats.systemUptime}%`, Icon: ShieldCheck },
-            ].map((m) => (
-              <TacticalPanel key={m.label} label={m.label}>
-                <div className="flex items-center justify-between">
-                  <span className="font-display font-bold text-2xl text-gold">{m.value}</span>
-                  <m.Icon className="size-5 text-gold/60" />
-                </div>
+              { label: "TRAINING", detail: "Structured programs" },
+              { label: "NUTRITION", detail: "Naija-native plans" },
+              { label: "EQUIPMENT", detail: "Home to studio" },
+              { label: "DIGITAL ACCESS", detail: "Order-linked delivery" },
+            ].map((item) => (
+              <TacticalPanel key={item.label} label={item.label}>
+                <div className="font-display font-semibold text-sm sm:text-base text-gold">{item.detail}</div>
               </TacticalPanel>
             ))}
           </div>
@@ -110,9 +140,16 @@ function Landing() {
           </div>
           <Link to="/shop" className="text-xs font-mono uppercase tracking-widest text-gold hover:underline">View all →</Link>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {products.slice(0, 3).map((p) => <ProductCard key={p.id} product={p} />)}
-        </div>
+        {liveProducts.length > 0 ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {liveProducts.slice(0, 3).map((p) => <ProductCard key={p.id} product={p} />)}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-gold/20 bg-card/40 p-6 text-sm text-muted-foreground">
+            Live catalog items are temporarily unavailable. Open the shop to retry loading current product data.
+            <div className="mt-4"><Link to="/shop" className="text-gold font-mono uppercase tracking-widest text-xs hover:underline">Open live shop →</Link></div>
+          </div>
+        )}
       </section>
 
       {/* WELLNESS / MEAL PLANS */}
@@ -186,10 +223,10 @@ function Landing() {
         <div className="text-telemetry mb-2 text-center">// SIGNALS</div>
         <h2 className="font-display text-3xl sm:text-4xl font-bold text-center mb-8">Frequently transmitted</h2>
         <FAQAccordion items={[
-          { q: "Is ResoFlex shipping inside Nigeria?", a: "Yes — flagship hubs in Lagos, Abuja, and Port Harcourt. 24–72h delivery nationwide via vetted couriers. Digital products deliver instantly." },
-          { q: "How do referral commissions work?", a: "Every product carries a fixed commission (15–40%). Earnings credit to your wallet in real-time on charge.success and clear for withdrawal in <24h." },
-          { q: "Can I pay in USD?", a: "Pricing is NGN-native. The currency switcher in the header previews USD equivalents; checkout settles in NGN via Paystack." },
-          { q: "Are meal plans halal-compatible?", a: "Yes — every regional protocol includes halal and non-halal swaps documented per meal." },
+          { q: "Is ResoFlex shipping inside Nigeria?", a: "Shipping eligibility, available delivery methods, and estimated timing are shown for the selected physical product and destination during checkout. Digital products follow the delivery instructions shown after payment is verified." },
+          { q: "How do referral commissions work?", a: "Eligible products show their applicable referral terms. Attribution, commission eligibility, wallet credit, and withdrawal availability depend on the recorded order and the published program rules." },
+          { q: "Which currency is used at checkout?", a: "Product pages and checkout display the current price and accepted payment options. Confirm the final amount and currency before authorizing payment." },
+          { q: "Can meal plans accommodate dietary preferences?", a: "Dietary guidance varies by plan. Review the individual product description and included materials, and confirm any important restrictions before purchase." },
         ]} />
       </section>
 
