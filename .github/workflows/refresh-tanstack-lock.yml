@@ -5,6 +5,7 @@ on:
       - feat/pitch-noir-store-ux-2026-10-16
     paths:
       - package.json
+      - .github/workflows/refresh-tanstack-lock.yml
 permissions:
   contents: write
 jobs:
