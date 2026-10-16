@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ResoFlex">
+  <rect width="512" height="512" rx="112" fill="#050505"/>
+  <path d="M126 386V126h136c82 0 126 42 126 104 0 47-27 80-73 94l83 62h-92l-72-57h-25v57zm83-128h48c30 0 47-9 47-28s-17-28-47-28h-48z" fill="#D7B56D"/>
+  <path d="M103 410h306" stroke="#D7B56D" stroke-width="8" stroke-linecap="round" opacity=".6"/>
+</svg>
