@@ -8,7 +8,7 @@ import { ensureAttribution } from "@/lib/attribution";
 import { ArrowRight, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 
 const WHATSAPP_E164 = "2348000000000";
-const CATALOG_BASE = "https://resocatalog-git-main-resonancefitnessng-2206.vercel.app";
+const CATALOG_BASE = "https://vbqjvmnhdtdhmeeudqnn.supabase.co/functions/v1/catalog-public";
 
 type CanonicalProduct = {
   sku: string;
@@ -38,11 +38,11 @@ export const Route = createFileRoute("/products/$slug")({
     const knownSku = getSKU(params.slug);
 
     const [productResponse, assetResponse] = await Promise.all([
-      fetch(`${CATALOG_BASE}/api/public/products/${encodeURIComponent(params.slug)}`, {
+      fetch(`${CATALOG_BASE}/product/${encodeURIComponent(params.slug)}`, {
         headers: { accept: "application/json" },
         cache: "no-store",
       }),
-      fetch(`${CATALOG_BASE}/api/public/assets/${encodeURIComponent(params.slug)}`, {
+      fetch(`${CATALOG_BASE}/assets?handle=${encodeURIComponent(params.slug)}`, {
         headers: { accept: "application/json" },
         cache: "no-store",
       }),
@@ -53,7 +53,7 @@ export const Route = createFileRoute("/products/$slug")({
     const productPayload = await productResponse.json();
     const canonical = (productPayload?.data ?? productPayload) as CanonicalProduct;
     const assetPayload = assetResponse.ok ? await assetResponse.json() : { assets: [] };
-    const assets = (assetPayload?.assets ?? []) as CanonicalAsset[];
+    const assets = (assetPayload?.data ?? assetPayload?.assets ?? []) as CanonicalAsset[];
     const images = assets.map((asset) => asset.canonical_url).filter((url): url is string => Boolean(url));
     const heroImage = images[0] ?? canonical.image_url ?? canonical.image_src ?? null;
 
@@ -70,7 +70,7 @@ export const Route = createFileRoute("/products/$slug")({
     let recommendation: CanonicalProduct | null = null;
     try {
       const intent = encodeURIComponent(canonical.product_type ?? canonical.title ?? params.slug);
-      const recommendationResponse = await fetch(`${CATALOG_BASE}/api/public/recommendations?intent=${intent}&limit=4`, {
+      const recommendationResponse = await fetch(`${CATALOG_BASE}/recommendations?intent=${intent}&limit=4`, {
         headers: { accept: "application/json" },
         cache: "no-store",
       });
