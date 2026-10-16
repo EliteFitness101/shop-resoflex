@@ -141,7 +141,7 @@ function Landing() {
             { key: "program", number: "02", title: "Training programs", detail: "Structured plans" },
             { key: "digital", number: "03", title: "Digital products", detail: "Guides and access" },
             { key: "supplement", number: "04", title: "Nutrition & recovery", detail: "Product-specific support" },
-          ].map((item) => (
+          ] as const).map((item) => (
             <Link
               key={item.key}
               to="/shop"
