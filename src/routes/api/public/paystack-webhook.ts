@@ -61,38 +61,92 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
         switch (event.event) {
           case "charge.success": {
             const ref = event.data?.reference ?? "";
-            const amountNGN = (event.data?.amount ?? 0) / 100;
+            const amountMinor = Number(event.data?.amount ?? 0);
+            const amountNGN = amountMinor / 100;
             const email = event.data?.customer?.email;
-            const productId =
-              (event.data?.metadata?.productId as string | undefined) ??
-              (event.data?.metadata?.product_id as string | undefined) ??
-              "unknown";
-
-            const host = request.headers.get("host") ?? "";
-            const proto = request.headers.get("x-forwarded-proto") ?? "https";
-            const origin = `${proto}://${host}`;
-            const downloadUrl = buildSignedAssetUrl(origin, ref, productId);
-            const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-
-            const { data: updated, error } = await supabaseAdmin
-              .from("orders")
-              .update({
-                status: "paid",
-                paystack_data: event.data as unknown as Record<string, unknown> as never,
-                download_url: downloadUrl,
-                download_expires_at: expiresAt,
-                amount_ngn: amountNGN,
-                customer_email: email ?? undefined,
-              })
-              .eq("reference", ref)
-              .select("id, user_id")
-              .maybeSingle();
-
-            if (error) {
-              console.error("[paystack-webhook] order update failed:", error);
-            } else {
-              console.log(`[paystack-webhook] charge.success ref=${ref} amount=NGN${amountNGN}`);
+            if (!ref || amountMinor <= 0 || (event.data?.currency && event.data.currency !== "NGN")) {
+              return new Response("Invalid payment payload", { status: 400 });
             }
+
+            const { data: existingOrder, error: lookupError } = await supabaseAdmin
+              .from("orders")
+              .select("id,user_id,product_id,product_name,amount_ngn,status,customer_email,paystack_data")
+              .eq("reference", ref)
+              .maybeSingle();
+            if (lookupError) {
+              console.error("[paystack-webhook] order lookup failed:", lookupError);
+              return new Response("Order lookup failed", { status: 500 });
+            }
+            if (!existingOrder) return new Response("Order not found", { status: 404 });
+            if (!["pending", "paid"].includes(String(existingOrder.status))) {
+              return new Response("Order is not payable", { status: 409 });
+            }
+            if (Math.round(Number(existingOrder.amount_ngn) * 100) !== amountMinor) {
+              console.warn(`[paystack-webhook] amount mismatch ref=${ref}`);
+              return new Response("Verified amount mismatch", { status: 409 });
+            }
+
+            // The stored order is authoritative for SKU and amount. Never mint a
+            // delivery token from untrusted Paystack metadata or a request Host header.
+            const productId = String(existingOrder.product_id);
+            let updated: any = existingOrder;
+
+            if (existingOrder.status !== "paid") {
+              let downloadUrl: string | null = null;
+              let expiresAt: string | null = null;
+              try {
+                const { data: job } = await supabaseAdmin
+                  .from("digital_product_delivery_jobs")
+                  .select("status,output_bucket,output_path")
+                  .eq("payment_reference", ref)
+                  .eq("product_sku", productId)
+                  .maybeSingle();
+                if (job?.status === "ready" && job.output_bucket && job.output_path) {
+                  downloadUrl = buildSignedAssetUrl(
+                    process.env.RESOFIT_STORE_URL || "https://store.resofit.fit",
+                    ref,
+                    productId,
+                  );
+                  expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+                }
+              } catch (e) {
+                console.error("[paystack-webhook] delivery readiness lookup failed:", e);
+              }
+
+              const { data: paidOrder, error: updateError } = await supabaseAdmin
+                .from("orders")
+                .update({
+                  status: "paid",
+                  paystack_data: event.data as unknown as Record<string, unknown> as never,
+                  download_url: downloadUrl,
+                  download_expires_at: expiresAt,
+                  customer_email: email ?? existingOrder.customer_email ?? undefined,
+                })
+                .eq("reference", ref)
+                .eq("status", "pending")
+                .select("id,user_id,product_id,status")
+                .maybeSingle();
+
+              if (updateError) {
+                console.error("[paystack-webhook] order update failed:", updateError);
+                return new Response("Order update failed", { status: 500 });
+              }
+              if (paidOrder) {
+                updated = paidOrder;
+              } else {
+                const { data: latestOrder, error: latestError } = await supabaseAdmin
+                  .from("orders")
+                  .select("id,user_id,product_id,status")
+                  .eq("reference", ref)
+                  .maybeSingle();
+                if (latestError || latestOrder?.status !== "paid") {
+                  return new Response("Order state changed; retry webhook", { status: 409 });
+                }
+                updated = latestOrder;
+              }
+            }
+
+            console.log(`[paystack-webhook] charge.success ref=${ref} amount=NGN${amountNGN}`);
 
             // Credit referral commission to the buyer's referrer, if any.
             try {
