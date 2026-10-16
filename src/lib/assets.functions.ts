@@ -30,7 +30,7 @@ export const issueAssetDownload = createServerFn({ method: "POST" })
     if (order.status !== "paid") throw new Error("ORDER_NOT_PAID");
     if (String(order.product_id) !== data.productId) throw new Error("ORDER_PRODUCT_MISMATCH");
 
-    const { data: job, error: jobError } = await supabaseAdmin
+    const { data: job, error: jobError } = await (supabaseAdmin as any)
       .from("digital_product_delivery_jobs")
       .select("status,product_sku,output_bucket,output_path,provenance")
       .eq("payment_reference", data.reference)
