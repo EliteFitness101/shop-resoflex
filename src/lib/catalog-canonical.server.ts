@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-const CATALOG_BASE = (process.env.CATALOG_BASE_URL || "https://catalog.resofit.fit").replace(/\/$/, "");
-
 const CanonicalProduct = z.object({
   sku: z.string().min(1),
   handle: z.string().nullable().optional(),
@@ -23,27 +21,36 @@ const CanonicalProduct = z.object({
 export type CanonicalProduct = z.infer<typeof CanonicalProduct>;
 
 export async function getCanonicalProduct(sku: string): Promise<CanonicalProduct | null> {
-  const safeSku = encodeURIComponent(sku.trim());
-  const response = await fetch(`${CATALOG_BASE}/api/public/products/${safeSku}`, {
-    headers: { accept: "application/json" },
-    cache: "no-store",
-  });
-  if (response.status === 404) return null;
-  if (!response.ok) throw new Error(`Canonical catalog unavailable (${response.status})`);
+  const lookupKey = sku.trim();
+  if (!lookupKey || lookupKey.length > 160 || !/^[A-Za-z0-9_-]+$/.test(lookupKey)) return null;
 
-  const payload = await response.json();
-  const raw = payload?.data ?? payload;
-  const imageCandidate = raw.image_url ?? raw.image_src ?? null;
-  const absoluteImage = typeof imageCandidate === "string" && /^https?:\/\//i.test(imageCandidate) ? imageCandidate : null;
+  // Checkout must read the canonical database directly, not fetch the public catalog hostname
+  // (which may be protected by Cloudflare). Credentials remain server-only.
+  const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://vbqjvmnhdtdhmeeudqnn.supabase.co").replace(/\\/+$/, "");
+  const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseKey) throw new Error("Canonical catalog server credential is not configured");
+  const headers = { accept: "application/json", apikey: supabaseKey, authorization: `Bearer ${supabaseKey}` };
+  const select = "sku,handle,title,product_type,tags,variant_price,variant_inventory_qty,image_src,body_html,published";
 
-  return CanonicalProduct.parse({
-    ...raw,
-    name: raw.name ?? raw.title,
-    price_ngn: raw.price_ngn ?? raw.variant_price,
-    inventory: raw.inventory ?? raw.variant_inventory_qty,
-    image_url: absoluteImage,
-    image_src: imageCandidate,
-  });
+  for (const field of ["sku", "handle"] as const) {
+    const params = new URLSearchParams({ select, published: "eq.true", [field]: `eq.${lookupKey}`, limit: "1" });
+    const response = await fetch(`${supabaseUrl}/rest/v1/products?${params}`, { headers, cache: "no-store" });
+    if (!response.ok) throw new Error(`Canonical catalog unavailable (${response.status})`);
+    const rows = await response.json();
+    const raw = Array.isArray(rows) ? rows[0] : null;
+    if (!raw) continue;
+    const imageCandidate = raw.image_url ?? raw.image_src ?? null;
+    const absoluteImage = typeof imageCandidate === "string" && /^https?:\\/\\//i.test(imageCandidate) ? imageCandidate : null;
+    return CanonicalProduct.parse({
+      ...raw,
+      name: raw.name ?? raw.title,
+      price_ngn: raw.price_ngn ?? raw.variant_price,
+      inventory: raw.inventory ?? raw.variant_inventory_qty,
+      image_url: absoluteImage,
+      image_src: imageCandidate,
+    });
+  }
+  return null;
 }
 
 export function assertPurchasable(product: CanonicalProduct, quantity: number) {
