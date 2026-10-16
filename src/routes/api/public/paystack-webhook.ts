@@ -65,7 +65,7 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
             const amountMinor = Number(event.data?.amount ?? 0);
             const amountNGN = amountMinor / 100;
             const email = event.data?.customer?.email;
-            if (!ref || amountMinor <= 0 || (event.data?.currency && event.data.currency !== "NGN")) {
+            if (!ref || amountMinor <= 0 || event.data?.currency !== "NGN") {
               return new Response("Invalid payment payload", { status: 400 });
             }
 
@@ -186,7 +186,7 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
                   const { data: prod } = await supabaseAdmin
                     .from("products")
                     .select("commission_pct, name")
-                    .eq("slug", productId)
+                    .eq("sku", productId)
                     .maybeSingle();
                   const pct = Number(prod?.commission_pct ?? 0);
                   if (pct > 0 && amountNGN > 0) {
