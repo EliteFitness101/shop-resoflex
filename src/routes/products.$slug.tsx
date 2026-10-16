@@ -42,7 +42,7 @@ export const Route = createFileRoute("/products/$slug")({
 
     // Server-only secret key: never expose this in client code or loader data.
     const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || CANONICAL_SUPABASE_URL).replace(/\/+$/, "");
-    const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!supabaseKey) throw new Error("Canonical catalog server credential is not configured");
     const headers = { accept: "application/json", apikey: supabaseKey, authorization: `Bearer ${supabaseKey}` };
     const productQuery = new URLSearchParams({
