@@ -26,7 +26,7 @@ export async function getCanonicalProduct(sku: string): Promise<CanonicalProduct
 
   // Checkout must read the canonical database directly, not fetch the public catalog hostname
   // (which may be protected by Cloudflare). Credentials remain server-only.
-  const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://vbqjvmnhdtdhmeeudqnn.supabase.co").replace(/\\/+$/, "");
+  const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://vbqjvmnhdtdhmeeudqnn.supabase.co").replace(/\/+$/, "");
   const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!supabaseKey) throw new Error("Canonical catalog server credential is not configured");
   const headers = { accept: "application/json", apikey: supabaseKey, authorization: `Bearer ${supabaseKey}` };
@@ -40,7 +40,7 @@ export async function getCanonicalProduct(sku: string): Promise<CanonicalProduct
     const raw = Array.isArray(rows) ? rows[0] : null;
     if (!raw) continue;
     const imageCandidate = raw.image_url ?? raw.image_src ?? null;
-    const absoluteImage = typeof imageCandidate === "string" && /^https?:\\/\\//i.test(imageCandidate) ? imageCandidate : null;
+    const absoluteImage = typeof imageCandidate === "string" && /^https?:\/\//i.test(imageCandidate) ? imageCandidate : null;
     return CanonicalProduct.parse({
       ...raw,
       name: raw.name ?? raw.title,
