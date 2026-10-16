@@ -35,6 +35,9 @@ function Success() {
   const [attempt, setAttempt] = useState(0);
   const [upsellIndex, setUpsellIndex] = useState(0);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [accessUrl, setAccessUrl] = useState<string | null>(null);
+  const [deliveryMode, setDeliveryMode] = useState<"download" | "entitlement" | "pending" | null>(null);
+  const [deliveryMessage, setDeliveryMessage] = useState("");
   const [issuing, setIssuing] = useState(false);
   const [downloadError, setDownloadError] = useState(false);
 
@@ -42,6 +45,9 @@ function Success() {
     let cancelled = false;
     setInfo(null);
     setDownloadUrl(null);
+    setAccessUrl(null);
+    setDeliveryMode(null);
+    setDeliveryMessage("");
     setDownloadError(false);
     setIssuing(false);
     setVerificationState("checking");
@@ -68,7 +74,12 @@ function Success() {
         setIssuing(true);
         try {
           const asset = await issueAssetDownload({ data: { reference, productId: result.productId } });
-          if (!cancelled) setDownloadUrl(asset.url);
+          if (!cancelled) {
+            setDeliveryMode(asset.mode);
+            setDeliveryMessage(asset.message);
+            if (asset.mode === "download") setDownloadUrl(asset.url);
+            if (asset.mode === "entitlement") setAccessUrl(asset.url);
+          }
         } catch {
           if (!cancelled) setDownloadError(true);
         } finally {
@@ -141,13 +152,20 @@ function Success() {
               <div className="text-telemetry mt-1">PAID ₦{info.amountNGN.toLocaleString()}</div>
             </div>
             {downloadUrl ? (
-              <a href={downloadUrl} download>
+              <a href={downloadUrl}>
                 <GoldButton><Download className="size-4" /> Download asset</GoldButton>
+              </a>
+            ) : accessUrl ? (
+              <a href={accessUrl} target="_blank" rel="noopener noreferrer">
+                <GoldButton>Open ResoFit dashboard →</GoldButton>
               </a>
             ) : (
               <GoldButton disabled>
-                {issuing ? <><Loader2 className="size-4 animate-spin" /> Issuing link…</> : downloadError ? "Delivery link unavailable" : <><Download className="size-4" /> Preparing…</>}
+                {issuing ? <><Loader2 className="size-4 animate-spin" /> Checking delivery…</> : deliveryMode === "pending" ? "Delivery pending" : downloadError ? "Delivery unavailable" : <><Download className="size-4" /> Preparing…</>}
               </GoldButton>
+            )}
+            {deliveryMessage && (
+              <p className="basis-full text-sm text-muted-foreground">{deliveryMessage}</p>
             )}
             {downloadUrl && (
               <div className="basis-full text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
@@ -155,7 +173,7 @@ function Success() {
               </div>
             )}
             {downloadError && (
-              <p className="basis-full text-sm text-muted-foreground">Payment is verified, but automatic delivery-link issuance failed. Keep your reference and request help; do not pay again.</p>
+              <p className="basis-full text-sm text-muted-foreground">Payment is verified. Automatic delivery could not be prepared; keep your reference and contact support. Do not pay again.</p>
             )}
           </div>
         </TacticalPanel>
