@@ -8,7 +8,7 @@ import { ensureAttribution } from "@/lib/attribution";
 import { ArrowRight, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 
 const WHATSAPP_E164 = "2348000000000";
-const CATALOG_BASE = "https://catalog.resofit.fit";
+const CATALOG_BASE = "https://resocatalog-git-main-resonancefitnessng-2206.vercel.app";
 
 type CanonicalProduct = {
   sku: string;
