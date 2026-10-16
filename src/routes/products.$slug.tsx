@@ -186,7 +186,7 @@ function ProductRoute() {
       const response = await fetch("/api/checkout/initiate", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), sku: canonical.sku, quantity: qty, callbackOrigin: window.location.origin }),
+        body: JSON.stringify({ email: email.trim(), sku: canonical.sku, quantity: qty }),
       });
       const body = await response.json();
       if (!response.ok || !body.authorizationUrl) throw new Error(body.error || "Checkout initialization failed");
