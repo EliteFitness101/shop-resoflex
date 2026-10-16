@@ -7,7 +7,7 @@ import { track } from "@/lib/analytics";
 import { ensureAttribution } from "@/lib/attribution";
 import { ArrowRight, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 
-const WHATSAPP_E164 = "2348000000000";
+const WHATSAPP_E164 = "2348132255842";
 const CATALOG_BASE = "https://vbqjvmnhdtdhmeeudqnn.supabase.co/functions/v1/catalog-public";
 const CANONICAL_SUPABASE_URL = "https://vbqjvmnhdtdhmeeudqnn.supabase.co";
 
@@ -134,7 +134,7 @@ export const Route = createFileRoute("/products/$slug")({
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [
-        { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Product", name, description, sku: canonical.sku, brand: { "@type": "Brand", name: "ResoFlex OS" }, ...(image ? { image: [image] } : {}), offers: { "@type": "Offer", priceCurrency: "NGN", price, availability: "https://schema.org/InStock", url } }) },
+        { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Product", name, description, sku: canonical.sku, brand: { "@type": "Brand", name: "ResoFlex OS" }, ...(image ? { image: [image] } : {}), offers: { "@type": "Offer", priceCurrency: "NGN", price, availability: ((canonical.product_type ?? "").toLowerCase().includes("physical") && (canonical.variant_inventory_qty ?? canonical.inventory ?? 0) <= 0) ? "https://schema.org/OutOfStock" : "https://schema.org/InStock", url } }) },
         { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [ { "@type": "ListItem", position: 1, name: "Home", item: "https://store.resofit.fit/" }, { "@type": "ListItem", position: 2, name: "Tiers", item: "https://store.resofit.fit/tiers" }, { "@type": "ListItem", position: 3, name, item: url } ] }) },
       ],
     };
@@ -162,9 +162,16 @@ function ProductRoute() {
   const name = canonical.name ?? canonical.title ?? sku.name;
   const description = canonical.body_html?.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() || sku.description;
   const priceNGN = canonical.variant_price ?? canonical.price_ngn ?? 0;
+  const isPhysical = (canonical.product_type ?? "").toLowerCase().includes("physical");
+  const inventoryQty = canonical.variant_inventory_qty ?? canonical.inventory;
+  const outOfStock = isPhysical && typeof inventoryQty === "number" && inventoryQty <= 0;
   const total = priceNGN * qty;
 
   const checkout = async () => {
+    if (outOfStock) {
+      window.alert("This physical item is currently out of stock. Contact the ResoFit concierge for availability.");
+      return;
+    }
     if (priceNGN <= 0) {
       window.location.href = "/me";
       return;
@@ -208,11 +215,12 @@ function ProductRoute() {
           <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
           <div className="reso-card glass-panel rounded-[1.5rem] border border-gold/20 p-4 shadow-panel backdrop-blur-xl sm:p-5">
             <div className="flex items-baseline justify-between"><div className="font-display text-3xl font-bold text-gold">{priceNGN === 0 ? "FREE" : `₦${total.toLocaleString()}`}</div>{priceNGN > 0 && <div className="text-xs text-muted-foreground">₦{priceNGN.toLocaleString()} × {qty}</div>}</div>
-            {priceNGN > 0 && <>
+            {outOfStock && <p role="status" className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">Currently out of stock. Checkout is disabled until inventory is confirmed.</p>}
+            {priceNGN > 0 && !outOfStock && <>
               <div className="mt-4 flex items-center gap-2"><span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Qty</span>{[1, 2, 3, 5, 10].map((n) => <button key={n} onClick={() => setQty(n)} className={`px-2.5 py-1 text-xs font-mono rounded border transition ${qty === n ? "bg-gold border-gold text-black font-bold" : "border-gold/20 text-muted-foreground hover:border-gold/50"}`}>{n}</button>)}</div>
               <label className="block mt-4"><span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Receipt email</span><input value={email} onChange={(event) => setEmail(event.target.value)} type="email" autoComplete="email" placeholder="you@example.com" className="mt-1 w-full rounded border border-gold/20 bg-black/20 px-3 py-2.5 text-sm outline-none focus:border-gold/60" /></label>
             </>}
-            <button type="button" disabled={checkingOut} onClick={checkout} className="mt-5 block w-full disabled:opacity-60"><GoldButton size="lg" className="w-full">{checkingOut ? "Opening Secure Checkout…" : priceNGN === 0 ? "Start My Personalized Plan" : "Secure Checkout via Paystack"}</GoldButton></button>
+            <button type="button" disabled={checkingOut || outOfStock} onClick={checkout} className="mt-5 block w-full disabled:opacity-60"><GoldButton size="lg" className="w-full">{outOfStock ? "Currently Unavailable" : checkingOut ? "Opening Secure Checkout…" : priceNGN === 0 ? "Start My Personalized Plan" : "Secure Checkout via Paystack"}</GoldButton></button>
             <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-muted-foreground"><ShieldCheck className="size-3 text-gold" /> {priceNGN === 0 ? "Canonical catalog · personalized funnel" : "Canonical price · server-side Paystack initialization"}</div>
           </div>
           <a href={`https://wa.me/${WHATSAPP_E164}?text=${encodeURIComponent(`ResoFlex — I want ${name} (${canonical.sku}).`)}`} target="_blank" rel="noopener noreferrer" onClick={() => track("whatsapp_click", { sku: canonical.sku, source: "product_page" })} className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-gold/30 text-gold hover:bg-gold/10 transition text-sm font-mono uppercase tracking-wider min-h-11"><MessageCircle className="size-4" /> Chat concierge on WhatsApp</a>
