@@ -27,3 +27,10 @@ Preserve safe state across every ecosystem boundary: anonymous/member ID, attrib
 - Dynamic product pages retain canonical SKU, price, product description, attribution and server-side checkout initialization. Do not cache checkout or customer state as immutable content.
 - Use verified canonical product details for features and deliverables. Do not infer purchases, scarcity, reviews or bonuses. Email/fulfillment confirmations depend on verified webhook and entitlement events.
 - Acceptance requires lint/build, mobile route tests, canonical catalog checks, and a checkout → signed webhook → order/entitlement → Resend email trace. Styling or plan changes alone do not prove production readiness.
+## Payment and digital-delivery safety patch — 2026-10-16
+- Paystack verification must require an existing server-created order, NGN currency, successful provider status and an exact amount match before the order can transition to paid.
+- The signed webhook must verify the stored order/reference and amount, use the stored SKU rather than untrusted metadata, and be idempotent on repeated charge.success events.
+- Download URLs are issued only when a paid order has a ready digital_product_delivery_jobs row with a real private-storage bucket and path. Account-entitlement products route to the ResoFit dashboard; products without a ready file or entitlement show a pending-delivery state instead of a placeholder download.
+- The asset endpoint must independently verify the paid order, product/SKU match and ready delivery job before redirecting to a short-lived private-storage signed URL.
+- Signing fails closed if ASSET_SIGNING_SECRET and PAYSTACK_SECRET_KEY are absent. Never ship a development signing secret or fake downloadable payload.
+- Release gate: build/lint pass, test amount mismatch and unknown reference, confirm unpaid order cannot issue a link, confirm paid ready asset produces a signed URL, confirm entitlement SKU opens account access, and confirm pending SKU cannot masquerade as delivered.

@@ -27,3 +27,11 @@ Updated: 2026-10-16
 - Lint/build and mobile product-page tests must pass.
 - Verify store, catalog, checkout and product routes on production domains.
 - Trace checkout → signed payment webhook → order/entitlement → transactional email before declaring production-ready.
+## Payment and delivery trust boundaries
+- Canonical commerce amount and product SKU come from the stored order and catalog, not the browser or webhook metadata.
+- A signed Paystack webhook is HMAC-verified, must match an existing pending/paid order, must be NGN and must match the expected amount before fulfillment transitions.
+- Payment verification cannot authorize an arbitrary reference: the order must exist and the stored product SKU must match the requested delivery SKU.
+- Private digital delivery requires a ready delivery-job record and an output bucket/path. The delivery endpoint re-checks payment state and product identity before redirecting to a signed storage URL.
+- If a product is delivered through an account entitlement, send the buyer to the dashboard; if neither a ready file nor entitlement exists, show a pending-delivery message. Never return a fabricated placeholder file.
+- ASSET_SIGNING_SECRET or PAYSTACK_SECRET_KEY is required for HMAC signing. No development fallback secret is allowed.
+- Provider/media route state is configuration, not proof of runtime health. media.resofit.fit stays planned until R2 bucket binding, DNS/TLS, upload/read, and cache-header smoke tests pass.
