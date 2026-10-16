@@ -1,51 +1,58 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { verifyAssetToken } from "@/lib/asset-signing.server";
-import { products } from "@/lib/mock-data";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-// Public signed-URL endpoint. Verifies the HMAC token from the webhook
-// (or success-page issuer), then streams the digital asset bound to the
-// paid order. No auth header required — the token IS the credential.
+// The HMAC token is not sufficient by itself: every download also requires a
+// paid order matching the product and a ready private-storage delivery job.
 export const Route = createFileRoute("/api/public/asset/$productId")({
   server: {
     handlers: {
       GET: async ({ params, request }) => {
         const url = new URL(request.url);
         const token = url.searchParams.get("token") ?? "";
-
-        const payload = verifyAssetToken(token);
-        if (!payload) {
-          return new Response("Invalid or expired download link", { status: 403 });
+        let payload: ReturnType<typeof verifyAssetToken>;
+        try {
+          payload = verifyAssetToken(token);
+        } catch {
+          return new Response("Asset delivery is not configured", { status: 503 });
         }
-        if (payload.pid !== params.productId) {
-          return new Response("Token / product mismatch", { status: 403 });
+        if (!payload) return new Response("Invalid or expired download link", { status: 403 });
+        if (payload.pid !== params.productId) return new Response("Token / product mismatch", { status: 403 });
+
+        const { data: order, error: orderError } = await supabaseAdmin
+          .from("orders")
+          .select("reference,status,product_id")
+          .eq("reference", payload.ref)
+          .maybeSingle();
+        if (orderError) return new Response("Order verification unavailable", { status: 503 });
+        if (!order) return new Response("Order not found", { status: 404 });
+        if (order.status !== "paid") return new Response("Payment is not confirmed", { status: 403 });
+        if (String(order.product_id) !== payload.pid) return new Response("Order / product mismatch", { status: 403 });
+
+        const { data: job, error: jobError } = await supabaseAdmin
+          .from("digital_product_delivery_jobs")
+          .select("status,output_bucket,output_path")
+          .eq("payment_reference", payload.ref)
+          .eq("product_sku", payload.pid)
+          .maybeSingle();
+        if (jobError) return new Response("Delivery status unavailable", { status: 503 });
+        if (!job || job.status !== "ready" || !job.output_bucket || !job.output_path) {
+          return new Response("Paid order has no ready downloadable asset; contact support with your reference", { status: 409 });
         }
 
-        const product = products.find((p) => p.id === payload.pid);
-        const name = product?.name ?? payload.pid;
+        const { data: signed, error: signedError } = await supabaseAdmin.storage
+          .from(job.output_bucket)
+          .createSignedUrl(job.output_path, Math.max(1, payload.exp - Math.floor(Date.now() / 1000)));
+        if (signedError || !signed?.signedUrl) {
+          return new Response("Download signing failed", { status: 503 });
+        }
 
-        // Placeholder asset payload — swap for real PDF / signed Storage URL
-        // once Lovable Cloud + Supabase Storage are wired up.
-        const body = [
-          "RESOFLEX OS — DIGITAL ASSET DELIVERY",
-          "====================================",
-          ``,
-          `Product : ${name}`,
-          `Order   : ${payload.ref}`,
-          `Issued  : ${new Date().toISOString()}`,
-          `Expires : ${new Date(payload.exp * 1000).toISOString()}`,
-          ``,
-          "Thank you for joining the ResoFlex sovereign protocol.",
-          "Your full program assets, meal plans and onboarding instructions",
-          "will be delivered to this same secure link as they're released.",
-        ].join("\n");
-
-        const filename = `resoflex-${payload.ref}-${payload.pid}.txt`;
-        return new Response(body, {
-          status: 200,
+        return new Response(null, {
+          status: 302,
           headers: {
-            "Content-Type": "text/plain; charset=utf-8",
-            "Content-Disposition": `attachment; filename="${filename}"`,
+            Location: signed.signedUrl,
             "Cache-Control": "private, no-store",
+            "Referrer-Policy": "no-referrer",
           },
         });
       },
