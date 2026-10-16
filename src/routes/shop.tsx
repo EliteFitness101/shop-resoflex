@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ProductCard } from "@/components/ProductCard";
@@ -35,7 +35,15 @@ function toStoreProduct(product: DbProduct): Product {
   };
 }
 
+const SHOP_CATEGORIES = ["gear", "program", "digital", "supplement"] as const;
+type ShopCategory = (typeof SHOP_CATEGORIES)[number];
+
 export const Route = createFileRoute("/shop")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    category: typeof search.category === "string" && SHOP_CATEGORIES.includes(search.category as ShopCategory)
+      ? (search.category as ShopCategory)
+      : undefined,
+  }),
   component: Shop,
   loader: async () => {
     try {
@@ -64,6 +72,7 @@ export const Route = createFileRoute("/shop")({
 
 function Shop() {
   const { liveProducts } = Route.useLoaderData();
+  const { category: selectedCategory } = Route.useSearch();
   const navigate = useNavigate();
   const [refreshedProducts, setRefreshedProducts] = useState<Product[] | null>(null);
   const persona = usePersonalization();
@@ -111,6 +120,17 @@ function Shop() {
     );
   }, [liveProducts, refreshedProducts, persona.hasProfile, persona.ranked]);
 
+  const visibleProducts = useMemo(
+    () => selectedCategory ? products.filter((product) => product.category === selectedCategory) : products,
+    [products, selectedCategory],
+  );
+  const categoryLabel = selectedCategory ? ({
+    gear: "Equipment",
+    program: "Training programs",
+    digital: "Digital products",
+    supplement: "Nutrition & recovery",
+  } as const)[selectedCategory] : "All products";
+
   return (
     <>
       <RouteHero
@@ -134,9 +154,27 @@ function Shop() {
           </div>
         </div>
 
-        <div className="reso-product-grid grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
-          {products.map((p) => <ProductCard key={p.id} product={p} />)}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-display text-xl sm:text-2xl font-semibold">{categoryLabel}</h2>
+            <p className="mt-1 text-xs text-muted-foreground">{visibleProducts.length} catalog items available in this view.</p>
+          </div>
+          {selectedCategory && (
+            <Link to="/shop" search={{ category: undefined }} className="text-[10px] font-mono uppercase tracking-widest text-gold hover:underline">
+              Clear filter ×
+            </Link>
+          )}
         </div>
+        {visibleProducts.length > 0 ? (
+          <div className="reso-product-grid grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+            {visibleProducts.map((p) => <ProductCard key={p.id} product={p} />)}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-gold/20 bg-card/40 p-6 text-sm text-muted-foreground">
+            No products are currently available in this category. Try another category or view the full catalog.
+            <div className="mt-4"><Link to="/shop" search={{ category: undefined }} className="text-gold font-mono uppercase tracking-widest text-xs hover:underline">View all products →</Link></div>
+          </div>
+        )}
       </div>
     </>
   );
