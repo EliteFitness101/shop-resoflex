@@ -128,6 +128,35 @@ function Landing() {
         </div>
       </section>
 
+      {/* SHOP BY INTENT — deep links to the canonical live catalog */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 pt-4 pb-2">
+        <div className="mb-5">
+          <div className="text-telemetry mb-2">// SHOP BY INTENT</div>
+          <h2 className="font-display text-2xl sm:text-3xl font-bold">Choose your next move</h2>
+          <p className="mt-2 text-sm text-muted-foreground">Browse the live ResoFit catalog by product family.</p>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {[
+            { key: "gear", number: "01", title: "Equipment", detail: "Home to studio" },
+            { key: "program", number: "02", title: "Training programs", detail: "Structured plans" },
+            { key: "digital", number: "03", title: "Digital products", detail: "Guides and access" },
+            { key: "supplement", number: "04", title: "Nutrition & recovery", detail: "Product-specific support" },
+          ].map((item) => (
+            <Link
+              key={item.key}
+              to="/shop"
+              search={{ category: item.key }}
+              className="group glass-panel rounded-xl p-4 sm:p-5 min-h-32 border border-gold/15 hover:border-gold/50 hover:bg-gold/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            >
+              <div className="text-[10px] font-mono tracking-widest text-gold/70">{item.number} / {item.key.toUpperCase()}</div>
+              <div className="mt-4 font-display font-semibold text-base sm:text-lg group-hover:text-gold transition-colors">{item.title}</div>
+              <div className="mt-1 text-xs text-muted-foreground">{item.detail}</div>
+              <div className="mt-3 text-[10px] font-mono uppercase tracking-widest text-gold">Explore →</div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* PRODUCT SHOWCASE */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-16">
         <div className="mb-8">
