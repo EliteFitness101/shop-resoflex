@@ -1,8 +1,5 @@
-// Stateless signed-URL helper for digital asset delivery.
-// Tokens are HMAC-SHA256(payload).base64url and embed the order reference,
-// product id, and expiry — verification is pure-crypto, no DB required.
-// When Lovable Cloud lands we'll cross-check the reference against an
-// `orders` row before honouring the token.
+// Signed delivery tokens are only an additional gate. The asset endpoint must
+// also verify a paid order and a ready delivery job before returning any file.
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 const ENC = (s: string) =>
@@ -11,9 +8,9 @@ const DEC = (s: string) =>
   Buffer.from(s, "base64url").toString("utf8");
 
 function secret(): string {
-  // Reuse Paystack secret so we don't need a second env var for MVP.
-  // Falls back to a dev string so preview builds don't crash.
-  return process.env.PAYSTACK_SECRET_KEY || "resoflex-dev-asset-secret";
+  const value = process.env.ASSET_SIGNING_SECRET || process.env.PAYSTACK_SECRET_KEY;
+  if (!value) throw new Error("ASSET_SIGNING_SECRET or PAYSTACK_SECRET_KEY must be configured");
+  return value;
 }
 
 export interface AssetTokenPayload {
