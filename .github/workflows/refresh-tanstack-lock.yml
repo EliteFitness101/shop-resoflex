@@ -23,7 +23,7 @@ jobs:
         run: |
           node <<'NODE'
           const fs = require('fs');
-          const lock = JSON.parse(fs.readFileSync('bun.lock','utf8').replace(/,\\s*([}\\]])/g,'$1'));
+          const lock = JSON.parse(fs.readFileSync('bun.lock','utf8').replace(/,\s*([}\]])/g,'$1'));
           const cmp = (a,b) => {
             const x=a.split('.').map(Number), y=b.split('.').map(Number);
             for (let i=0;i<3;i++) if ((x[i]||0)!==(y[i]||0)) return (x[i]||0)-(y[i]||0);
@@ -31,7 +31,7 @@ jobs:
           };
           const version = (name) => {
             const entry = lock.packages?.[name]?.[0] || '';
-            const match = entry.match(/@(\\d+\\.\\d+\\.\\d+)/);
+            const match = entry.match(/@(\d+\.\d+\.\d+)/);
             return match?.[1];
           };
           const start = version('@tanstack/react-start');
