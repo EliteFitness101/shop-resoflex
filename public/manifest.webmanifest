@@ -1,0 +1,23 @@
+{
+  "id": "/",
+  "name": "ResoFlex Shop | ResoFit",
+  "short_name": "ResoFlex",
+  "description": "ResoFit fitness equipment, training programs, digital products and nutrition essentials.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "categories": ["shopping", "fitness", "health"],
+  "icons": [
+    { "src": "/resoflex-pwa-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" },
+    { "src": "/favicon.ico", "sizes": "any", "type": "image/x-icon", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Shop all products", "short_name": "Shop", "url": "/shop", "icons": [{ "src": "/resoflex-pwa-icon.svg", "sizes": "any", "type": "image/svg+xml" }] },
+    { "name": "Digital products", "short_name": "Digital", "url": "/shop?category=digital", "icons": [{ "src": "/resoflex-pwa-icon.svg", "sizes": "any", "type": "image/svg+xml" }] },
+    { "name": "Fitness equipment", "short_name": "Equipment", "url": "/shop?category=gear", "icons": [{ "src": "/resoflex-pwa-icon.svg", "sizes": "any", "type": "image/svg+xml" }] }
+  ]
+}
