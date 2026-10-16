@@ -136,7 +136,7 @@ function Landing() {
           <p className="mt-2 text-sm text-muted-foreground">Browse the live ResoFit catalog by product family.</p>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {[
+          {([
             { key: "gear", number: "01", title: "Equipment", detail: "Home to studio" },
             { key: "program", number: "02", title: "Training programs", detail: "Structured plans" },
             { key: "digital", number: "03", title: "Digital products", detail: "Guides and access" },
