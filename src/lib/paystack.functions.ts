@@ -113,13 +113,18 @@ export const initiatePaystackPayment = createServerFn({ method: "POST" })
 export const verifyPaystackPayment = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ reference: z.string().min(4).max(128) }).parse(d))
   .handler(async ({ data }) => {
-    const { data: order } = await supabaseAdmin
+    const { data: order, error: orderError } = await supabaseAdmin
       .from("orders")
-      .select("*")
+      .select("reference,amount_ngn,customer_email,product_id,product_name,status")
       .eq("reference", data.reference)
       .maybeSingle();
 
-    if (order && order.status === "paid") {
+    if (orderError) throw new Error("Order lookup failed");
+    // Never treat a valid Paystack reference as proof that this store created
+    // the order. The pending order is the expected commercial state.
+    if (!order) return null;
+
+    if (order.status === "paid") {
       return {
         status: "success" as const,
         amountNGN: Number(order.amount_ngn),
@@ -128,10 +133,11 @@ export const verifyPaystackPayment = createServerFn({ method: "POST" })
         email: order.customer_email,
       };
     }
+    if (order.status !== "pending") return { status: "failed" as const };
 
     const res = await fetch(
       `${PAYSTACK_BASE}/transaction/verify/${encodeURIComponent(data.reference)}`,
-      { headers: { Authorization: `Bearer ${getSecret()}` } },
+      { headers: { Authorization: `Bearer ${getSecret()}` }, cache: "no-store" },
     );
     const body = (await res.json()) as {
       status?: boolean;
@@ -140,31 +146,39 @@ export const verifyPaystackPayment = createServerFn({ method: "POST" })
         amount: number;
         currency?: string;
         customer?: { email?: string };
-        metadata?: { sku?: string; productName?: string };
       };
     };
     if (!res.ok || !body.status || !body.data) return null;
     if (body.data.status !== "success" || body.data.currency !== "NGN") {
       return { status: "failed" as const };
     }
+    if (Number(order.amount_ngn) * 100 !== Number(body.data.amount)) {
+      return { status: "failed" as const };
+    }
 
-    // Payment verification remains server-side. The stored pending order is
-    // the expected commercial state; never trust a client-supplied amount.
-    if (order && order.status !== "paid") {
-      if (Number(order.amount_ngn) * 100 !== Number(body.data.amount)) {
-        return { status: "failed" as const };
-      }
-      await supabaseAdmin
+    const { data: updated, error: updateError } = await supabaseAdmin
+      .from("orders")
+      .update({ status: "paid", paystack_data: body.data })
+      .eq("reference", data.reference)
+      .eq("status", "pending")
+      .select("reference,status")
+      .maybeSingle();
+    if (updateError) throw new Error("Order payment state update failed");
+
+    if (!updated) {
+      const { data: latest, error: latestError } = await supabaseAdmin
         .from("orders")
-        .update({ status: "paid", paystack_data: body.data })
-        .eq("reference", data.reference);
+        .select("status")
+        .eq("reference", data.reference)
+        .maybeSingle();
+      if (latestError || latest?.status !== "paid") return { status: "failed" as const };
     }
 
     return {
       status: "success" as const,
-      amountNGN: body.data.amount / 100,
-      productId: body.data.metadata?.sku ?? order?.product_id ?? "unknown",
-      productName: body.data.metadata?.productName ?? order?.product_name ?? "Order",
-      email: body.data.customer?.email ?? order?.customer_email ?? "",
+      amountNGN: Number(order.amount_ngn),
+      productId: order.product_id,
+      productName: order.product_name,
+      email: body.data.customer?.email ?? order.customer_email ?? "",
     };
   });
