@@ -12,6 +12,17 @@ export function Footer() {
           <p className="text-sm text-muted-foreground max-w-xs">
             Sovereign performance operating system. Built in Lagos. Engineered for elite operators.
           </p>
+          <div className="mt-4">
+            <div className="text-telemetry mb-2">Featured Partner</div>
+            <a
+              href="https://1024terabox.com/s/1c7KDd1s4lQOKg_ABnYCg0Q"
+              target="_blank"
+              rel="sponsored nofollow noopener noreferrer"
+              className="text-sm text-muted-foreground hover:text-gold transition underline underline-offset-4"
+            >
+              Terabox offer · Affiliate link
+            </a>
+          </div>
         </div>
 
         {[
