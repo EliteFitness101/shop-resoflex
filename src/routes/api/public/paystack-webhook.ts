@@ -3,15 +3,54 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { buildSignedAssetUrl } from "@/lib/asset-signing.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/p0c26asklninfrxhp2sw6nkdjjb19a89";
+// Never hard-code Make webhook URLs: this repository is public and the URL is a bearer-like endpoint secret.
+const MAKE_WEBHOOK_URL = process.env.MAKE_PAYSTACK_WEBHOOK_URL;
 
 async function forwardToMake(event: string, payload: Record<string, unknown>) {
+  if (!MAKE_WEBHOOK_URL) {
+    console.info("[paystack-webhook] Make forwarding skipped: MAKE_PAYSTACK_WEBHOOK_URL is not configured.");
+    return;
+  }
+
+  let target: URL;
   try {
-    await fetch(MAKE_WEBHOOK_URL, {
+    target = new URL(MAKE_WEBHOOK_URL);
+  } catch {
+    console.error("[paystack-webhook] Make forwarding skipped: configured URL is invalid.");
+    return;
+  }
+  if (target.protocol !== "https:" || !target.hostname.endsWith(".make.com")) {
+    console.error("[paystack-webhook] Make forwarding skipped: configured URL must be an HTTPS Make webhook.");
+    return;
+  }
+
+  // Whitelist only attribution and transaction fields. Never forward customer email or raw Paystack data.
+  const safePayload = Object.fromEntries(
+    Object.entries({
+      reference: payload.reference,
+      amountNGN: payload.amountNGN,
+      currency: payload.currency ?? "NGN",
+      productId: payload.productId,
+      sku: payload.sku,
+      quantity: payload.quantity,
+      rsid: payload.rsid,
+      utm_source: payload.utm_source,
+      utm_medium: payload.utm_medium,
+      utm_campaign: payload.utm_campaign,
+      utm_content: payload.utm_content,
+      funnel_origin: payload.funnel_origin,
+    }).filter(([, value]) => value !== undefined && value !== null),
+  );
+
+  try {
+    const response = await fetch(target.toString(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event, ts: new Date().toISOString(), source: "paystack_webhook", ...payload }),
+      body: JSON.stringify({ event, ts: new Date().toISOString(), source: "paystack_webhook", ...safePayload }),
     });
+    if (!response.ok) {
+      console.error("[paystack-webhook] Make forward returned HTTP", response.status);
+    }
   } catch (e) {
     console.error("[paystack-webhook] Make forward failed:", e);
   }
@@ -249,7 +288,7 @@ export const Route = createFileRoute("/api/public/paystack-webhook")({
             await forwardToMake("payment_success", {
               reference: ref,
               amountNGN,
-              email,
+              currency: "NGN",
               productId,
               sku: meta.sku ?? productId,
               quantity: meta.quantity ?? 1,
